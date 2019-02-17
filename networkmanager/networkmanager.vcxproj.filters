@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\io">
+      <UniqueIdentifier>{b2af1233-66cc-4dfb-b657-c9274c5920fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\io">
+      <UniqueIdentifier>{d92b4a84-9542-4dab-9f26-46315fd58961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\udp_handler">
+      <UniqueIdentifier>{f7da691d-f988-4ebc-93b7-43b18cc0aa6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\udp_handler">
+      <UniqueIdentifier>{453cebdb-6e88-4aa2-a29e-4b0633c914c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\interface">
+      <UniqueIdentifier>{33fc6daa-b06c-480e-a128-e175d8a55583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\interface">
+      <UniqueIdentifier>{24194106-7e83-401d-88c5-7f38b241461d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy">
+      <UniqueIdentifier>{2747bd87-0e0d-4d80-ab59-4a7beb2dfc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\legacy">
+      <UniqueIdentifier>{ef9bed6b-91c7-43f4-a597-d3c2169fa581}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\networkmanager\interface\nwm_manager.hpp">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\io\nwm_io.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\io\nwm_io_base.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\io\nwm_io_header.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\io\nwm_tcp_io.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\io\nwm_udp_io.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\io\nwm_udp_io_base.h">
+      <Filter>Header Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\legacy\nwm_manager.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\udp_handler\udp_message_base.h">
+      <Filter>Header Files\udp_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\udp_handler\udp_message_dispatcher.h">
+      <Filter>Header Files\udp_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\udp_handler\udp_message_handler.h">
+      <Filter>Header Files\udp_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\udp_handler\udp_message_receiver.h">
+      <Filter>Header Files\udp_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_boost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_endpoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_error_handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_event_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_packet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_tcpconnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_transferrate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\networkmanager\nwm_udpconnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\networkmanager\interface\nwm_manager.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\io\nwm_io.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\io\nwm_io_base.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\io\nwm_io_header.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\io\nwm_tcp_io.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\io\nwm_udp_io.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\io\nwm_udp_io_base.cpp">
+      <Filter>Source Files\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\legacy\nwm_manager_legacy.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\udp_handler\udp_message_base.cpp">
+      <Filter>Source Files\udp_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\udp_handler\udp_message_dispatcher.cpp">
+      <Filter>Source Files\udp_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\udp_handler\udp_message_dispatcher_message.cpp">
+      <Filter>Source Files\udp_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\udp_handler\udp_message_handler.cpp">
+      <Filter>Source Files\udp_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\udp_handler\udp_message_receiver.cpp">
+      <Filter>Source Files\udp_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_connection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_endpoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_error_handle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_event_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_packet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_tcpconnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_transferrate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\networkmanager\nwm_udpconnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

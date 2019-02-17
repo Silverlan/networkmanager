@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\session">
+      <UniqueIdentifier>{9b69be92-9c8a-47d3-abc2-6507cebfc9e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\session">
+      <UniqueIdentifier>{d91d1ab0-47b2-4520-9e2a-fa4af9cf53fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\connection">
+      <UniqueIdentifier>{40fb7555-9113-4283-a9b9-848edc0ac271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\connection">
+      <UniqueIdentifier>{194fc0c0-70a4-4699-8178-962c8210e966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\interface">
+      <UniqueIdentifier>{b2cd18f4-ea0e-4a07-abe5-698a2ff2401f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\interface">
+      <UniqueIdentifier>{721470f1-d5c1-4c81-88db-93012e9fcba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\legacy">
+      <UniqueIdentifier>{6e59fce4-02d4-4feb-96f2-5ad0b6c8c5e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\legacy">
+      <UniqueIdentifier>{8dfe3d32-6d5c-443e-af9c-9fd4a8bd9add}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\servermanager\connection\sv_nwm_connection.h">
+      <Filter>Header Files\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\connection\sv_nwm_tcpconnection.h">
+      <Filter>Header Files\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\connection\sv_nwm_udpconnection.h">
+      <Filter>Header Files\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\interface\sv_nwm_clienthandle.hpp">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\interface\sv_nwm_manager.hpp">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\interface\sv_nwm_manager_create.hpp">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\interface\sv_nwm_serverclient.hpp">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\legacy\sv_nwm_manager.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\legacy\sv_nwm_serverclient.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\legacy\sv_nwm_session.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\legacy\sv_nwm_sessionhandle.h">
+      <Filter>Header Files\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\session\sv_nwm_tcp_session.h">
+      <Filter>Header Files\session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\session\sv_nwm_udp_session.h">
+      <Filter>Header Files\session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\servermanager\sv_nwm_recipientfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\servermanager\connection\sv_nwm_connection.cpp">
+      <Filter>Source Files\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\connection\sv_nwm_tcpconnection.cpp">
+      <Filter>Source Files\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\connection\sv_nwm_udpconnection.cpp">
+      <Filter>Source Files\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\interface\sv_nwm_clienthandle.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\interface\sv_nwm_manager.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\interface\sv_nwm_recipientfilter.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\interface\sv_nwm_serverclient.cpp">
+      <Filter>Source Files\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\legacy\sv_nwm_manager_legacy.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\legacy\sv_nwm_recipientfilter_legacy.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\legacy\sv_nwm_serverclient_legacy.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\legacy\sv_nwm_session.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\legacy\sv_nwm_sessionhandle_legacy.cpp">
+      <Filter>Source Files\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\session\sv_nwm_tcp_session.cpp">
+      <Filter>Source Files\session</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\session\sv_nwm_udp_session.cpp">
+      <Filter>Source Files\session</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\servermanager\sv_nwm_packets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
