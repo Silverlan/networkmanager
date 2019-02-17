@@ -1,0 +1,116 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#include "networkmanager/io/nwm_io_base.h"
+
+#ifdef NWM_DISABLE_OPTIMIZATION
+#pragma optimize("",off)
+#endif
+NWMIOBase::NWMIOBase()
+	: std::enable_shared_from_this<NWMIOBase>(),NWMEventBase(),m_bClosing(false),m_bTerminated(false),m_bTerminating(false),
+	m_remoteEndpoint(),m_localEndpoint(),m_tTimeout(0.0),m_bTimedOut(false),m_closeHandle(),m_lastError{}
+{
+	m_tLastMessage = std::chrono::high_resolution_clock::now();
+}
+
+NWMIOBase::~NWMIOBase()
+{}
+
+void NWMIOBase::SetTimeoutDuration(double duration,bool bIfConnectionActive)
+{
+	m_tTimeout = duration;
+	m_tLastMessage = std::chrono::high_resolution_clock::now(); // Make sure we're not causing a timeout right after this function has been called
+}
+
+const boost::system::error_code &NWMIOBase::GetLastError() const {return m_lastError;}
+void NWMIOBase::OnError(const boost::system::error_code &error) {m_lastError = error;}
+
+const NWMEndpoint &NWMIOBase::GetRemoteEndPoint() const {return m_remoteEndpoint;}
+const NWMEndpoint &NWMIOBase::GetLocalEndPoint() const {return m_localEndpoint;}
+bool NWMIOBase::IsTerminated() const {return m_bTerminated;}
+
+bool NWMIOBase::ShouldTerminate() {return (m_bClosing == false || m_bTerminating == true || m_bTerminated == true) ? false : true;}
+
+bool NWMIOBase::UpdateTermination()
+{
+	if(!ShouldTerminate())
+		return false;
+	ScheduleTermination();
+	return true;
+}
+
+void NWMIOBase::OnTerminated() {}
+
+void NWMIOBase::SetCloseHandle(const std::function<void(void)> &cbClose) {m_closeHandle = cbClose;}
+
+void NWMIOBase::ScheduleTermination() {m_bTerminating = true; m_bClosing = true;}
+
+void NWMIOBase::Terminate()
+{
+	if(m_bTerminated == true) // Don't use ::IsTerminated (virtual function)
+		return;
+	ProcessEvents();
+	m_bClosing = false;
+	m_bTerminated = true;
+	m_bTerminating = false;
+	OnTerminated();
+	if(m_closeHandle != nullptr)
+		m_closeHandle();
+}
+
+void NWMIOBase::Close(bool bForce)
+{
+	if(m_bTerminating == true || m_bClosing == true)
+		return;
+	m_bClosing = true;
+	if(ShouldTerminate())
+	{
+		if(bForce == true)
+			ScheduleTermination();
+		else
+			UpdateTermination();
+	}
+}
+
+void NWMIOBase::Close()
+{
+	if(m_bClosing == true)
+		return;
+	Close(false);
+}
+
+void NWMIOBase::Run()
+{
+	ProcessEvents();
+	if(IsClosing())
+	{
+		if(m_bTerminating == true)
+		{
+			Terminate();
+			return;
+		}
+		UpdateTermination();
+		return;
+	}
+	else if((m_bTimeoutIfConnectionActive == false || IsConnectionActive()) && m_tTimeout > 0.0 && IsReady() == true)
+	{
+		ChronoTimePoint now = std::chrono::high_resolution_clock::now();
+		double t = std::chrono::duration<double>(now -m_tLastMessage).count();
+		if(t > m_tTimeout)
+		{
+			m_bTimedOut = true;
+			Close();
+			OnTimedOut();
+		}
+	}
+}
+
+bool NWMIOBase::IsTimedOut() const {return m_bTimedOut;}
+void NWMIOBase::OnTimedOut() {}
+
+bool NWMIOBase::IsClosing() const {return m_bClosing;}
+bool NWMIOBase::IsConnectionActive() {return (!m_bTerminated && !m_bTerminating) ? true : false;}
+#ifdef NWM_DISABLE_OPTIMIZATION
+#pragma optimize("",on)
+#endif
