@@ -5,9 +5,9 @@
 #ifndef __SV_NWM_MANAGER_CREATE_HPP__
 #define __SV_NWM_MANAGER_CREATE_HPP__
 
-#include "servermanager/interface/sv_nwm_manager.hpp"
-#include "sv_nwm_udpconnection.h"
-#include "sv_nwm_tcpconnection.h"
+#include <servermanager/interface/sv_nwm_manager.hpp>
+#include <servermanager/connection/sv_nwm_udpconnection.h>
+#include <servermanager/connection/sv_nwm_tcpconnection.h>
 
 template<class T>
 	std::shared_ptr<T> nwm::Server::CreateClient()

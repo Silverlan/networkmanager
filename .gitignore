@@ -341,3 +341,4 @@ test_server/x64/Release/test_server.tlog/link.read.1.tlog
 test_client/main.cpp
 test_client/client.h
 test_client/client.cpp
+build_winx64/
