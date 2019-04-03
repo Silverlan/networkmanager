@@ -6,6 +6,7 @@
 #define __CL_NWM_MANAGER_HPP__
 
 #include <networkmanager/interface/nwm_manager.hpp>
+#include <networkmanager/wrappers/nwm_error_code.hpp>
 #include <mutex>
 #include <array>
 #include "clientmanager/cl_nwm_tcpconnection.h"
@@ -21,7 +22,7 @@ namespace nwm
 		void Disconnect();
 		uint16_t GetLatency() const;
 		const std::string &GetIP() const;
-		const boost::system::error_code &GetLastError() const;
+		const nwm::ErrorCode &GetLastError() const;
 		const NWMEndpoint &GetRemoteEndpoint() const;
 		void SetPingEnabled(bool b);
 		void SendPacket(nwm::Protocol protocol,const NetPacket &packet);
@@ -52,7 +53,7 @@ namespace nwm
 		ChronoTimePoint m_tLastPing;
 
 		NWMEndpoint m_remoteEndpoint;
-		boost::system::error_code m_lastError;
+		nwm::ErrorCode m_lastError;
 		std::array<uint16_t,5> m_latencies;
 		std::atomic<uint16_t> m_latency = {0u};
 		std::string m_ip;

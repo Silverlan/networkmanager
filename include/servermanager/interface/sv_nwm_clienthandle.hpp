@@ -5,7 +5,6 @@
 #ifndef __SV_NWM_CLIENTHANDLE_HPP__
 #define __SV_NWM_CLIENTHANDLE_HPP__
 
-#include "networkmanager/nwm_boost.h"
 #include <memory>
 #include <string>
 #include <sharedutils/def_handle.h>

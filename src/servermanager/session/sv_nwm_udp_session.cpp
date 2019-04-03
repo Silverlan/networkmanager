@@ -60,7 +60,7 @@ unsigned short NWMUDPSession::GetPort() const
 	const NWMEndpoint &ep = GetRemoteEndPoint();
 	return ep.GetPort();
 }
-boost::asio::ip::address NWMUDPSession::GetAddress() const
+nwm::IPAddress NWMUDPSession::GetAddress() const
 {
 	const NWMEndpoint &ep = GetRemoteEndPoint();
 	return ep.GetAddress();
@@ -75,7 +75,7 @@ unsigned short NWMUDPSession::GetLocalPort() const
 	const auto &ep = GetLocalEndPoint();
 	return ep.GetPort();
 }
-boost::asio::ip::address NWMUDPSession::GetLocalAddress() const
+nwm::IPAddress NWMUDPSession::GetLocalAddress() const
 {
 	const auto &ep = GetLocalEndPoint();
 	return ep.GetAddress();

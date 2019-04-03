@@ -12,6 +12,7 @@
 namespace nwm {class Server;};
 class NWMUDPSession;
 class NWMTCPSession;
+class NWMSession;
 class SVNWMConnection
 {
 public:
@@ -22,7 +23,7 @@ public:
 	struct AcceptCallbacks
 	{
 		std::function<void(void)> lock = nullptr;
-		std::function<bool(boost::asio::ip::address,uint16_t)> has_client = nullptr;
+		std::function<bool(nwm::IPAddress,uint16_t)> has_client = nullptr;
 		std::function<bool(NWMSession*)> accept_client = nullptr;
 		std::function<void(void)> unlock = nullptr;
 	};
@@ -43,7 +44,7 @@ protected:
 	double m_tSessionTimeout;
 	std::vector<NWMSessionHandle> m_sessions;
 	virtual void OnClientConnected(NWMSession *session);
-	NWMSession *GetSession(const boost::asio::ip::udp::endpoint &ep);
+	NWMSession *GetSession(const nwm::UDPEndpoint &ep);
 	virtual void Accept()=0;
 	NWMSessionHandle AddSession(const std::shared_ptr<NWMSession> &session);
 	void RemoveSession(NWMSession *session);

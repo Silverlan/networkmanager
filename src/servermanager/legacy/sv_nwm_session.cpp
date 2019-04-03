@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/legacy/sv_nwm_session.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -35,7 +36,7 @@ bool NWMSession::IsTarget(const NWMEndpoint &ep)
 	auto &epOther = GetRemoteEndPoint();
 	return (epOther == ep) ? true : false;
 }
-bool NWMSession::IsTarget(const boost::asio::ip::address &address,unsigned short port)
+bool NWMSession::IsTarget(const nwm::IPAddress &address,unsigned short port)
 {
 	auto &ep = GetRemoteEndPoint();
 	return (ep == address && ep.GetPort() == port) ? true : false;

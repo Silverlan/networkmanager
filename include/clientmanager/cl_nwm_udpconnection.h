@@ -32,7 +32,7 @@ public:
 	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) override;
 	virtual std::string GetLocalIP() const override;
 	virtual unsigned short GetLocalPort() const override;
-	virtual boost::asio::ip::address GetLocalAddress() const override;
+	virtual nwm::IPAddress GetLocalAddress() const override;
 };
 
 #endif

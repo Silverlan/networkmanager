@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/interface/sv_nwm_manager.hpp"
 #include "servermanager/interface/sv_nwm_serverclient.hpp"
 #include "servermanager/connection/sv_nwm_udpconnection.h"
@@ -134,7 +135,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp,const std::sh
 	SVNWMConnection::AcceptCallbacks acceptCallbacks {};
 	acceptCallbacks.lock = [this]() {m_clientMutex.lock();};
 	acceptCallbacks.unlock = [this]() {m_clientMutex.unlock();};
-	acceptCallbacks.has_client = [this](boost::asio::ip::address address,uint16_t port) -> bool {
+	acceptCallbacks.has_client = [this](nwm::IPAddress address,uint16_t port) -> bool {
 		return GetClient(address,port).IsValid() ? true : false;
 	};
 	acceptCallbacks.accept_client = [this](NWMSession *session) -> bool {
@@ -195,7 +196,7 @@ nwm::ServerClientHandle nwm::Server::GetClient(const std::string &ip,uint16_t po
 	auto address = boost::asio::ip::address::from_string(ip);
 	return GetClient(address,port);
 }
-nwm::ServerClientHandle nwm::Server::GetClient(const boost::asio::ip::address &address,uint16_t port)
+nwm::ServerClientHandle nwm::Server::GetClient(const nwm::IPAddress &address,uint16_t port)
 {
 	auto it = std::find_if(m_clients.begin(),m_clients.end(),[&address,port](const std::shared_ptr<nwm::ServerClient> &client) {
 		return client->IsTarget(address,port);
@@ -225,7 +226,7 @@ bool nwm::Server::IsIPBanned(const std::string &ip)
 	return IsIPBanned(address);
 }
 
-bool nwm::Server::IsIPBanned(const boost::asio::ip::address &ip)
+bool nwm::Server::IsIPBanned(const nwm::IPAddress &ip)
 {
 	std::lock_guard<std::mutex> lg(m_banListMutex);
 	auto it = std::find(m_banned.begin(),m_banned.end(),ip);

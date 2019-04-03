@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/interface/sv_nwm_serverclient.hpp"
 #include "servermanager/session/sv_nwm_udp_session.h"
 #include "servermanager/session/sv_nwm_tcp_session.h"
@@ -12,8 +13,10 @@
 nwm::ServerClient::ServerClient(Server *manager)
 	: std::enable_shared_from_this<nwm::ServerClient>(),m_manager(manager)
 {
-	NWMUDPEndpoint udpEndpoint {boost::asio::ip::basic_endpoint<boost::asio::ip::udp>{}};
-	NWMTCPEndpoint tcpEndpoint {boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>{}};
+	boost::asio::ip::udp::endpoint udpEp = boost::asio::ip::basic_endpoint<boost::asio::ip::udp>{};
+	NWMUDPEndpoint udpEndpoint {&udpEp};
+	boost::asio::ip::tcp::endpoint tcpEp = boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>{};
+	NWMTCPEndpoint tcpEndpoint {&tcpEp};
 	m_conUDP.remoteEndpoint = NWMEndpoint(udpEndpoint);
 	m_conTCP.remoteEndpoint = NWMEndpoint(tcpEndpoint);
 	m_lastUpdate = std::chrono::high_resolution_clock::now();
@@ -72,7 +75,7 @@ std::string nwm::ServerClient::GetIP() const
 	m_sessionDataMutex.unlock();
 	return ip;
 }
-void nwm::ServerClient::SetAddress(nwm::Protocol protocol,const boost::asio::ip::address &address,uint16_t port)
+void nwm::ServerClient::SetAddress(nwm::Protocol protocol,const nwm::IPAddress &address,uint16_t port)
 {
 	m_sessionDataMutex.lock();
 		switch(protocol)
@@ -88,7 +91,7 @@ void nwm::ServerClient::SetAddress(nwm::Protocol protocol,const boost::asio::ip:
 		}
 	m_sessionDataMutex.unlock();
 }
-boost::asio::ip::address nwm::ServerClient::GetAddress() const
+nwm::IPAddress nwm::ServerClient::GetAddress() const
 {
 	m_sessionDataMutex.lock();
 		auto address = m_conTCP.address;
@@ -110,7 +113,7 @@ std::string nwm::ServerClient::GetRemoteIP() const
 	m_sessionDataMutex.unlock();
 	return ip;
 }
-boost::asio::ip::address nwm::ServerClient::GetRemoteAddress() const
+nwm::IPAddress nwm::ServerClient::GetRemoteAddress() const
 {
 	m_sessionDataMutex.lock();
 		auto address = m_conTCP.remoteEndpoint.GetAddress();
@@ -133,7 +136,7 @@ bool nwm::ServerClient::IsTarget(const NWMEndpoint &ep) const
 		return true;
 	return false;
 }
-bool nwm::ServerClient::IsTarget(const boost::asio::ip::address &address,uint16_t port) const
+bool nwm::ServerClient::IsTarget(const nwm::IPAddress &address,uint16_t port) const
 {
 	std::lock_guard<std::mutex> lg(m_sessionDataMutex);
 	if(IsTCPConnected() && m_conTCP.address == address && m_conTCP.port == port)
@@ -142,7 +145,7 @@ bool nwm::ServerClient::IsTarget(const boost::asio::ip::address &address,uint16_
 		return true;
 	return false;
 }
-bool nwm::ServerClient::UsesAddress(const boost::asio::ip::address &address) const
+bool nwm::ServerClient::UsesAddress(const nwm::IPAddress &address) const
 {
 	std::lock_guard<std::mutex> lg(m_sessionDataMutex);
 	if(m_conUDP.address == address)
@@ -173,7 +176,7 @@ template<class T>
 	if(t != nullptr)
 	{
 		bTimedOut = t->IsTimedOut();
-		err = t->GetLastError();
+		err = *t->GetLastError();
 		t->Release();
 		t = nullptr;
 	}

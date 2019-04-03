@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/interface/nwm_manager.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -252,7 +253,7 @@ std::string nwm::impl::ManagerBase::GetLocalIP() const {return m_localIp;}
 uint16_t nwm::impl::ManagerBase::GetLocalPort() const {return (m_localTCPPort != 0) ? m_localTCPPort : GetLocalUDPPort();}
 uint16_t nwm::impl::ManagerBase::GetLocalUDPPort() const {return m_localUDPPort;}
 uint16_t nwm::impl::ManagerBase::GetLocalTCPPort() const {return m_localTCPPort;}
-boost::asio::ip::address nwm::impl::ManagerBase::GetLocalAddress() const {return m_localAddress;}
+nwm::IPAddress nwm::impl::ManagerBase::GetLocalAddress() const {return m_localAddress;}
 void nwm::impl::ManagerBase::SetNagleAlgorithmEnabled(bool b)
 {
 	if(HasTCPConnection() == false)

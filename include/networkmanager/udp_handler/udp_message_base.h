@@ -5,14 +5,14 @@
 #ifndef __UDP_MESSAGE_BASE_H__
 #define __UDP_MESSAGE_BASE_H__
 
-#include "networkmanager/nwm_boost.h"
+#include "networkmanager/wrappers/nwm_io_service.hpp"
 
 class UDPMessageBase
 {
 protected:
 	UDPMessageBase();
 	virtual ~UDPMessageBase();
-	boost::asio::io_service m_ioService;
+	nwm::IOService m_ioService;
 public:
 	virtual void Poll();
 };

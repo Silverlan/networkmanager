@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "networkmanager/udp_handler/udp_message_base.h"
+#include "networkmanager/nwm_boost.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
@@ -12,13 +13,13 @@ UDPMessageBase::UDPMessageBase()
 
 UDPMessageBase::~UDPMessageBase()
 {
-	m_ioService.stop();
+	m_ioService->stop();
 }
 
 void UDPMessageBase::Poll()
 {
-	m_ioService.reset();
-	m_ioService.poll();
+	m_ioService->reset();
+	m_ioService->poll();
 }
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",on)

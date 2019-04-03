@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/io/nwm_io.h"
 #include "networkmanager/nwm_defines.h"
 #include "networkmanager/interface/nwm_manager.hpp"
@@ -38,7 +39,7 @@ void NWMIO::ClearPackets()
 		m_initPackets.pop();
 }
 
-bool NWMIO::HandleError(const boost::system::error_code &error)
+bool NWMIO::HandleError(const nwm::ErrorCode &error)
 {
 	bool r = NWMErrorHandle::HandleError(error);
 	if(r == false)
@@ -70,7 +71,7 @@ bool NWMIO::IsReady() const {return m_bReady;}
 bool NWMIO::IsTCP() const {return GetProtocol() == nwm::Protocol::TCP;}
 bool NWMIO::IsUDP() const {return GetProtocol() == nwm::Protocol::UDP;}
 
-void NWMIO::OnError(const boost::system::error_code &error)
+void NWMIO::OnError(const nwm::ErrorCode &error)
 {
 	NWMIOBase::OnError(error);
 	while(!m_packets.empty())
@@ -153,12 +154,12 @@ void NWMIO::SendNextFragment(const NWMEndpoint &ep)
 	auto writeSize = umath::min(m_writeSizeLeft,static_cast<std::size_t>(NWM_MAX_PACKET_SIZE));
 	auto packetSize = m_writeItem->packet->GetSize();
 	auto szWritten = packetSize -m_writeSizeLeft;
-	std::vector<boost::asio::mutable_buffer> buffers = {
+	std::vector<nwm::MutableBuffer> buffers = {
 		boost::asio::buffer(m_writeItem->header->GetData(),m_writeItem->header->GetSize()),
 		boost::asio::buffer(m_writeItem->packet->GetData() +szWritten,writeSize)
 	};
 	auto ptr = shared_from_this();
-	AsyncWrite(m_writeItem->endPoint,buffers,[ptr,ep](const boost::system::error_code &error,std::size_t bytes) {
+	AsyncWrite(m_writeItem->endPoint,buffers,[ptr,ep](const nwm::ErrorCode &error,std::size_t bytes) {
 		static_cast<NWMIO*>(ptr.get())->HandleWriteBody(ep,error,bytes);
 	});
 }
@@ -204,7 +205,7 @@ void NWMIO::SendNextPacket()
 	SendNextFragment(m_writeItem->endPoint);
 }
 
-void NWMIO::HandleWriteBody(NWMEndpoint ep,const boost::system::error_code &error,std::size_t sz)
+void NWMIO::HandleWriteBody(NWMEndpoint ep,const nwm::ErrorCode &error,std::size_t sz)
 {
 	m_bWriting = false;
 	if(sz < NWM_PACKET_HEADER_SIZE || !IsConnectionActive() || HandleError(error) == false)
@@ -260,12 +261,12 @@ void NWMIO::AsyncReceive(uint32_t headerSize)
 		m_readSizeLeft = 0;
 #endif
 	auto ptr = shared_from_this();
-	std::vector<boost::asio::mutable_buffer> buffers;
+	std::vector<nwm::MutableBuffer> buffers;
 	buffers.reserve(2);
 	if(IsUDP())
 		buffers.push_back(boost::asio::buffer(m_header.get(),headerSize)); // We'll have to read the header again
 	buffers.push_back(boost::asio::buffer(m_readPacket->GetData() +offset,szRead));
-	AsyncRead(buffers,[ptr](const boost::system::error_code &error,std::size_t bytes) {
+	AsyncRead(buffers,[ptr](const nwm::ErrorCode &error,std::size_t bytes) {
 		static_cast<NWMIO*>(ptr.get())->HandleReadBody(error,bytes);
 	});
 }
@@ -277,7 +278,7 @@ void NWMIO::AcceptNextFragment()
 	auto ptr = shared_from_this();
 	// We must only peek when using the UDP protocol, because the body is part of the same message and would be
 	// discarded otherwise
-	AsyncRead({boost::asio::buffer(m_header.get(),NWM_PACKET_HEADER_SIZE)},[ptr](const boost::system::error_code &error,std::size_t bytes) {
+	AsyncRead({boost::asio::buffer(m_header.get(),NWM_PACKET_HEADER_SIZE)},[ptr](const nwm::ErrorCode &error,std::size_t bytes) {
 		static_cast<NWMIO*>(ptr.get())->HandleReadHeader(error,bytes);
 	},IsUDP());
 }
@@ -301,14 +302,14 @@ void NWMIO::ReadExtendedHeader()
 	if(IsUDP())
 	{
 		// Re-read entire header
-		AsyncRead({boost::asio::buffer(m_header.get(),NWM_PACKET_HEADER_EXTENDED_SIZE)},[ptr](const boost::system::error_code &error,std::size_t bytes) {
+		AsyncRead({boost::asio::buffer(m_header.get(),NWM_PACKET_HEADER_EXTENDED_SIZE)},[ptr](const nwm::ErrorCode &error,std::size_t bytes) {
 			static_cast<NWMIO*>(ptr.get())->HandleReadHeader(error,bytes);
 		},true);
 	}
 	else
 	{
 		// Only read remaining extended header
-		AsyncRead({boost::asio::buffer(m_header.get() +NWM_PACKET_HEADER_SIZE,NWM_PACKET_HEADER_EXTENDED_SIZE -NWM_PACKET_HEADER_SIZE)},[ptr](const boost::system::error_code &error,std::size_t bytes) {
+		AsyncRead({boost::asio::buffer(m_header.get() +NWM_PACKET_HEADER_SIZE,NWM_PACKET_HEADER_EXTENDED_SIZE -NWM_PACKET_HEADER_SIZE)},[ptr](const nwm::ErrorCode &error,std::size_t bytes) {
 			static_cast<NWMIO*>(ptr.get())->HandleReadHeader(error,NWM_PACKET_HEADER_SIZE +bytes);
 		});
 	}
@@ -322,10 +323,10 @@ void NWMIO::DiscardUDPData(uint32_t size,const std::function<void(void)> &f)
 		return;
 	}
 	auto data = std::make_shared<std::vector<uint8_t>>(size);
-	AsyncRead({boost::asio::buffer(data.get(),data->size())},[data,f](const boost::system::error_code &error,std::size_t bytes) {f();});
+	AsyncRead({boost::asio::buffer(data.get(),data->size())},[data,f](const nwm::ErrorCode &error,std::size_t bytes) {f();});
 }
 
-void NWMIO::HandleReadHeader(const boost::system::error_code &err,std::size_t bytes)
+void NWMIO::HandleReadHeader(const nwm::ErrorCode &err,std::size_t bytes)
 {
 	if(!IsConnectionActive() || HandleError(err) == false)
 		return;
@@ -395,7 +396,7 @@ void NWMIO::HandleReadHeader(const boost::system::error_code &err,std::size_t by
 	AsyncReceive(bytes);
 }
 
-void NWMIO::HandleReadBody(const boost::system::error_code &error,std::size_t sz)
+void NWMIO::HandleReadBody(const nwm::ErrorCode &error,std::size_t sz)
 {
 	if(m_bReading == false) // We weren't expecting a body?
 	{

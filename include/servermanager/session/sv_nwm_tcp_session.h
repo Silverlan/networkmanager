@@ -7,8 +7,6 @@
 
 #include "networkmanager/io/nwm_tcp_io.h"
 #include "servermanager/legacy/sv_nwm_session.h"
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
 
 class SVNWMTCPConnection;
 class NWMTCPSession
@@ -22,7 +20,7 @@ protected:
 	virtual void InitializeSharedPtr() override;
 	virtual void OnTerminated() override;
 public:
-	NWMTCPSession(boost::asio::io_service& ioService,SVNWMTCPConnection *con);
+	NWMTCPSession(nwm::IOService& ioService,SVNWMTCPConnection *con);
 	virtual ~NWMTCPSession() override;
 	void Start();
 	virtual bool IsConnectionActive() override;
@@ -34,7 +32,7 @@ public:
 	virtual void Run() override;
 	virtual std::string GetIP() const override;
 	virtual unsigned short GetPort() const override;
-	virtual boost::asio::ip::address GetAddress() const override;
+	virtual nwm::IPAddress GetAddress() const override;
 	virtual void SendPacket(const NetPacket &packet) override;
 	virtual void SetTimeoutDuration(double duration) override;
 	virtual void Release() override;

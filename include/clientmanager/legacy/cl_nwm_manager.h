@@ -5,9 +5,6 @@
 #ifndef __CLIENTMANAGER_H__
 #define __CLIENTMANAGER_H__
 
-#pragma warning(disable: 4307)
-#include "networkmanager/nwm_boost.h"
-#pragma warning(default: 4307)
 #include "networkmanager/legacy/nwm_manager.h"
 #include "clientmanager/cl_nwm_tcpconnection.h"
 #include "clientmanager/cl_nwm_udpconnection.h"
@@ -15,6 +12,8 @@
 #include <queue>
 #include <functional>
 #include <atomic>
+#include <array>
+#include <cinttypes>
 
 #define NWM_CLIENT_PING_INTERVAL 2
 
@@ -43,7 +42,7 @@ protected:
 	std::mutex m_lastPingMutex;
 	ChronoTimePoint m_tLastPing;
 
-	boost::system::error_code m_lastError;
+	nwm::ErrorCode m_lastError;
 	std::array<uint16_t,5> m_latencies;
 	std::atomic<uint16_t> m_latency;
 
@@ -72,7 +71,7 @@ public:
 	std::string GetIP();
 	void Disconnect();
 	unsigned short GetLatency() const;
-	const boost::system::error_code &GetLastError() const;
+	const nwm::ErrorCode &GetLastError() const;
 	void SetPingEnabled(bool b);
 };
 

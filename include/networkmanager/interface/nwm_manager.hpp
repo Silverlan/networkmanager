@@ -5,7 +5,6 @@
 #ifndef __NWM_MANAGER_HPP__
 #define __NWM_MANAGER_HPP__
 
-#include "networkmanager/nwm_boost.h"
 #include "networkmanager/nwm_defines.h"
 #include <chrono>
 #include <thread>
@@ -14,6 +13,7 @@
 #include "networkmanager/nwm_packet.h"
 #include "networkmanager/nwm_tcpconnection.h"
 #include "networkmanager/nwm_udpconnection.h"
+#include "networkmanager/wrappers/nwm_ip_address.hpp"
 
 //#define NETWORK_ERROR_UNHANDLED_PACKET 10
 using ChronoTimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
@@ -82,7 +82,7 @@ namespace nwm
 			uint16_t GetLocalPort() const;
 			uint16_t GetLocalUDPPort() const;
 			uint16_t GetLocalTCPPort() const;
-			boost::asio::ip::address GetLocalAddress() const;
+			nwm::IPAddress GetLocalAddress() const;
 			void SetNagleAlgorithmEnabled(bool b);
 		protected:
 			ManagerBase(const std::shared_ptr<NWMUDPConnection> &udp,const std::shared_ptr<NWMTCPConnection> &tcp);
@@ -111,7 +111,7 @@ namespace nwm
 			std::string m_localIp;
 			uint16_t m_localUDPPort = 0;
 			uint16_t m_localTCPPort = 0;
-			boost::asio::ip::address m_localAddress = {};
+			nwm::IPAddress m_localAddress = {};
 			std::function<void(const Error&)> m_cbError;
 			std::unique_ptr<std::thread> m_thread = nullptr;
 			std::atomic<bool> m_bActive = {false};

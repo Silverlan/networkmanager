@@ -2,13 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/session/sv_nwm_tcp_session.h"
 #include "servermanager/connection/sv_nwm_tcpconnection.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
 #endif
-NWMTCPSession::NWMTCPSession(boost::asio::io_service& ioService,SVNWMTCPConnection *con)
+NWMTCPSession::NWMTCPSession(nwm::IOService& ioService,SVNWMTCPConnection *con)
 	: NWMSession(),NWMTCPIO(ioService),m_connection(con)
 {}
 
@@ -30,7 +31,7 @@ void NWMTCPSession::Release()
 
 bool NWMTCPSession::IsConnectionActive()
 {
-	if(!socket->is_open())
+	if(!nwm::cast_socket(*socket)->is_open())
 		return false;
 	return NWMTCPIO::IsConnectionActive();
 }
@@ -38,7 +39,7 @@ bool NWMTCPSession::IsConnectionActive()
 bool NWMTCPSession::IsUDP() const {return false;}
 std::string NWMTCPSession::GetIP() const {return NWMTCPIO::GetIP();}
 unsigned short NWMTCPSession::GetPort() const {return NWMTCPIO::GetPort();}
-boost::asio::ip::address NWMTCPSession::GetAddress() const {return NWMTCPIO::GetAddress();}
+nwm::IPAddress NWMTCPSession::GetAddress() const {return NWMTCPIO::GetAddress();}
 
 void NWMTCPSession::OnTerminated()
 {
@@ -58,8 +59,8 @@ void NWMTCPSession::SetCloseHandle(const std::function<void(void)> &cbClose) {NW
 
 void NWMTCPSession::Start()
 {
-	auto ep = socket->remote_endpoint();
-	m_remoteEndpoint = NWMEndpoint::CreateTCP(ep);
+	boost::asio::ip::tcp::endpoint ep = nwm::cast_socket(*socket)->remote_endpoint();
+	m_remoteEndpoint = NWMEndpoint::CreateTCP(nwm::TCPEndpoint{&ep});
 	AcceptNextFragment();
 }
 

@@ -7,8 +7,6 @@
 
 #include "networkmanager/io/nwm_udp_io.h"
 #include "servermanager/legacy/sv_nwm_session.h"
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
 
 class SVNWMUDPConnection;
 class NWMUDPSession
@@ -32,10 +30,10 @@ public:
 	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) override;
 	virtual std::string GetIP() const override;
 	virtual unsigned short GetPort() const override;
-	virtual boost::asio::ip::address GetAddress() const override;
+	virtual nwm::IPAddress GetAddress() const override;
 	virtual std::string GetLocalIP() const override;
 	virtual unsigned short GetLocalPort() const override;
-	virtual boost::asio::ip::address GetLocalAddress() const override;
+	virtual nwm::IPAddress GetLocalAddress() const override;
 	virtual void Run() override;
 	virtual void SendPacket(const NetPacket &packet) override;
 	virtual bool IsTerminated() const override;

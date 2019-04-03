@@ -2,7 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/udp_handler/udp_message_dispatcher.h"
+#include "networkmanager/wrappers/nwm_impl_boost.hpp"
 #include <boost/bind.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -12,7 +14,7 @@ UDPMessageDispatcher::UDPMessageDispatcher()
 	: UDPMessageBase(),m_resolver(m_ioService),m_active(0),
 	m_deadline(m_ioService),m_timeout(0)
 {
-	m_deadline.expires_at(boost::posix_time::pos_infin);
+	cast_deadline_timer(m_deadline)->expires_at(boost::posix_time::pos_infin);
 	CheckDeadline();
 }
 
@@ -31,12 +33,12 @@ std::unique_ptr<UDPMessageDispatcher> UDPMessageDispatcher::Create(unsigned int 
 
 void UDPMessageDispatcher::CheckDeadline()
 {
-	if(m_deadline.expires_at() <= boost::asio::deadline_timer::traits_type::now())
+	if(cast_deadline_timer(m_deadline)->expires_at() <= boost::asio::deadline_timer::traits_type::now())
 	{
 		Cancel();
-		m_deadline.expires_at(boost::posix_time::pos_infin);
+		cast_deadline_timer(m_deadline)->expires_at(boost::posix_time::pos_infin);
 	}
-	m_deadline.async_wait(boost::bind(&UDPMessageDispatcher::CheckDeadline,this));
+	cast_deadline_timer(m_deadline)->async_wait(boost::bind(&UDPMessageDispatcher::CheckDeadline,this));
 }
 
 void UDPMessageDispatcher::Cancel()
@@ -94,13 +96,13 @@ void UDPMessageDispatcher::ResetTimeout()
 {
 	if(m_timeout == 0)
 	{
-		m_deadline.expires_at(boost::posix_time::pos_infin);
+		cast_deadline_timer(m_deadline)->expires_at(boost::posix_time::pos_infin);
 		return;
 	}
-	m_deadline.expires_from_now(boost::posix_time::seconds(m_timeout));
+	cast_deadline_timer(m_deadline)->expires_from_now(boost::posix_time::seconds(m_timeout));
 }
 
-void UDPMessageDispatcher::ScheduleMessage(DispatchInfo &info,const udp::endpoint &ep)
+void UDPMessageDispatcher::ScheduleMessage(DispatchInfo &info,const nwm::UDPEndpoint &ep)
 {
 	m_messageMutex.lock();
 		m_active++;
@@ -121,9 +123,9 @@ void UDPMessageDispatcher::ResolveNext(bool lockMutex)
 	auto &msg = m_dispatchQueue.front();
 	if(msg.valid_endpoint == false)
 	{
-		m_resolverQuery = std::make_unique<udp::resolver::query>(msg.ip,std::to_string(msg.port));
-		m_resolver.async_resolve(
-			*m_resolverQuery.get(),
+		m_resolverQuery = std::make_unique<nwm::UDPResolverQuery>(msg.ip,std::to_string(msg.port));
+		nwm::cast_resolver(m_resolver)->async_resolve(
+			*cast_resolver_query(*m_resolverQuery),
 			[this](const boost::system::error_code &err,udp::resolver::iterator it) {
 				m_dispatchQueueMutex.lock();
 					auto &info = m_dispatchQueue.front();
@@ -138,7 +140,11 @@ void UDPMessageDispatcher::ResolveNext(bool lockMutex)
 						m_eventMutex.unlock();
 					}
 					else
-						ScheduleMessage(info,*it);
+					{
+						boost::asio::ip::udp::endpoint ep = *it;
+						ScheduleMessage(info,nwm::UDPEndpoint{&ep});
+					}
+					auto &x = *it;
 					m_active--;
 					m_dispatchQueue.pop();
 				if(m_dispatchQueue.empty())
@@ -174,15 +180,15 @@ void UDPMessageDispatcher::Dispatch(const DispatchInfo &info)
 	if(bFirst == true)
 		ResolveNext();
 }
-void UDPMessageDispatcher::Dispatch(DataStream &data,const std::string &ip,unsigned short port,std::function<void(boost::system::error_code,Message*)> callback)
+void UDPMessageDispatcher::Dispatch(DataStream &data,const std::string &ip,unsigned short port,std::function<void(nwm::ErrorCode,Message*)> callback)
 {
 	Dispatch(DispatchInfo(data,ip,port,callback));
 }
-void UDPMessageDispatcher::Dispatch(DataStream &data,const udp::endpoint &ep,std::function<void(boost::system::error_code,Message*)> callback)
+void UDPMessageDispatcher::Dispatch(DataStream &data,const nwm::UDPEndpoint &ep,std::function<void(nwm::ErrorCode,Message*)> callback)
 {
 	Dispatch(DispatchInfo(data,ep,callback));
 }
-void UDPMessageDispatcher::Dispatch(DataStream &data,const udp::endpoint &ep,udp::socket &socket,std::function<void(boost::system::error_code,Message*)> callback)
+void UDPMessageDispatcher::Dispatch(DataStream &data,const nwm::UDPEndpoint &ep,nwm::UDPSocket &socket,std::function<void(nwm::ErrorCode,Message*)> callback)
 {
 	Dispatch(DispatchInfo(data,ep,socket,callback));
 }

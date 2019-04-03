@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/io/nwm_io_base.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -23,8 +24,8 @@ void NWMIOBase::SetTimeoutDuration(double duration,bool bIfConnectionActive)
 	m_tLastMessage = std::chrono::high_resolution_clock::now(); // Make sure we're not causing a timeout right after this function has been called
 }
 
-const boost::system::error_code &NWMIOBase::GetLastError() const {return m_lastError;}
-void NWMIOBase::OnError(const boost::system::error_code &error) {m_lastError = error;}
+const nwm::ErrorCode &NWMIOBase::GetLastError() const {return m_lastError;}
+void NWMIOBase::OnError(const nwm::ErrorCode &error) {m_lastError = error;}
 
 const NWMEndpoint &NWMIOBase::GetRemoteEndPoint() const {return m_remoteEndpoint;}
 const NWMEndpoint &NWMIOBase::GetLocalEndPoint() const {return m_localEndpoint;}

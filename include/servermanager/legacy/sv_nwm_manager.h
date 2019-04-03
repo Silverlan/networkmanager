@@ -5,7 +5,6 @@
 #ifndef __SERVERMANAGER_H__
 #define __SERVERMANAGER_H__
 
-#include "networkmanager/nwm_boost.h"
 #include "networkmanager/nwm_packet.h"
 #include "networkmanager/legacy/nwm_manager.h"
 #include "servermanager/legacy/sv_nwm_serverclient.h"

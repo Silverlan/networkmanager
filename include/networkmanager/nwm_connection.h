@@ -7,14 +7,12 @@
 
 #include <exception>
 #include <string>
-#include "nwm_boost.h"
 #include <queue>
 #include "nwm_packet.h"
 #include <functional>
 #include "nwm_endpoint.h"
-
-using boost::asio::ip::tcp;
-using boost::asio::ip::udp;
+#include "wrappers/nwm_io_service.hpp"
+#include "wrappers/nwm_ip_address.hpp"
 
 class NWMConnection
 {
@@ -27,7 +25,7 @@ protected:
 	virtual void CloseSocket()=0;
 	virtual void Terminate();
 public:
-	std::unique_ptr<boost::asio::io_service> ioService;
+	std::unique_ptr<nwm::IOService> ioService;
 	virtual void Run();
 	virtual void Close()=0;
 	virtual bool IsUDP() const;
@@ -37,7 +35,7 @@ public:
 	virtual bool IsClosing() const=0;
 	virtual std::string GetLocalIP() const=0;
 	virtual unsigned short GetLocalPort() const=0;
-	virtual boost::asio::ip::address GetLocalAddress() const=0;
+	virtual nwm::IPAddress GetLocalAddress() const=0;
 	void Poll();
 	bool IsActive() const;
 	virtual void SetTimeoutDuration(double duration)=0;
