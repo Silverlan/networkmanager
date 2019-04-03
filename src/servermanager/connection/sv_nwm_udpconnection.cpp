@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/connection/sv_nwm_udpconnection.h"
 #include "servermanager/legacy/sv_nwm_manager.h"
 #include <sharedutils/scope_guard.h>
@@ -58,8 +59,7 @@ void SVNWMUDPConnection::Run()
 
 void SVNWMUDPConnection::Accept()
 {
-	auto ep = udp::endpoint();
-	m_remoteEndpoint = NWMEndpoint::CreateUDP(ep);
+	m_remoteEndpoint = NWMEndpoint::CreateUDP(nwm::UDPEndpoint{});
 	AcceptNextFragment();
 }
 
@@ -78,21 +78,21 @@ std::shared_ptr<NWMUDPSession> SVNWMUDPConnection::FindSession(const NWMUDPEndpo
 
 void SVNWMUDPConnection::SendPacket(const NetPacket &packet,const NWMEndpoint &ep,bool bOwn) {NWMUDPIO::SendPacket(packet,ep,bOwn);}
 
-bool SVNWMUDPConnection::HandleError(const boost::system::error_code &error)
+bool SVNWMUDPConnection::HandleError(const nwm::ErrorCode &error)
 {
 	if(
-		error == boost::asio::error::connection_refused ||
-		error == boost::asio::error::connection_reset
+		*error == boost::asio::error::connection_refused ||
+		*error == boost::asio::error::connection_reset
 	) // Client has become unreachable (Crashed?), in which case he will timeout anyway. No reason to close the socket.
 		return true;
 	return NWMUDPIO::HandleError(error);
 }
 
-void SVNWMUDPConnection::HandleReadHeader(const boost::system::error_code &err,std::size_t bytes)
+void SVNWMUDPConnection::HandleReadHeader(const nwm::ErrorCode &err,std::size_t bytes)
 {
 	if(
-		err == boost::asio::error::connection_refused ||
-		err == boost::asio::error::connection_reset
+		*err == boost::asio::error::connection_refused ||
+		*err == boost::asio::error::connection_reset
 	)
 	{
 		std::shared_ptr<NWMUDPSession> session = FindSession(static_cast<const NWMUDPEndpoint&>(*GetRemoteEndPoint()));
@@ -117,7 +117,7 @@ void SVNWMUDPConnection::SetPacketHandle(const std::function<void(const NWMEndpo
 
 std::string SVNWMUDPConnection::GetLocalIP() const {return NWMUDPIO::GetLocalIP();}
 unsigned short SVNWMUDPConnection::GetLocalPort() const {return NWMUDPIO::GetLocalPort();}
-boost::asio::ip::address SVNWMUDPConnection::GetLocalAddress() const {return NWMUDPIO::GetLocalAddress();}
+nwm::IPAddress SVNWMUDPConnection::GetLocalAddress() const {return NWMUDPIO::GetLocalAddress();}
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",on)
 #endif

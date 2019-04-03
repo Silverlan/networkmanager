@@ -7,12 +7,16 @@
 
 #include "nwm_io.h"
 #include "nwm_io_header.h"
+#include "networkmanager/wrappers/nwm_mutable_buffer.hpp"
+#include "networkmanager/wrappers/nwm_error_code.hpp"
+#include "networkmanager/wrappers/nwm_udp_socket.hpp"
+#include "networkmanager/wrappers/nwm_tcp_socket.hpp"
 
 class NWMUDPIOBase
 {
 protected:
-	virtual void AsyncWrite(udp::socket *socket,const std::vector<boost::asio::mutable_buffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const boost::system::error_code&,std::size_t)> &f);
-	virtual void AsyncRead(udp::socket *socket,const std::vector<boost::asio::mutable_buffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const boost::system::error_code&,std::size_t)> &f,bool bPeek=false);
+	virtual void AsyncWrite(nwm::UDPSocket *socket,const std::vector<nwm::MutableBuffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f);
+	virtual void AsyncRead(nwm::UDPSocket *socket,const std::vector<nwm::MutableBuffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f,bool bPeek=false);
 public:
 	NWMUDPIOBase();
 	virtual ~NWMUDPIOBase();

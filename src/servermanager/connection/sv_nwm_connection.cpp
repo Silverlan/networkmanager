@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/connection/sv_nwm_connection.h"
 #include "networkmanager/io/nwm_io_base.h"
 
@@ -18,12 +19,12 @@ void SVNWMConnection::OnClientConnected(NWMSession *session)
 		m_clientHandle(session);
 }
 
-NWMSession *SVNWMConnection::GetSession(const boost::asio::ip::udp::endpoint &ep)
+NWMSession *SVNWMConnection::GetSession(const nwm::UDPEndpoint &ep)
 {
 	for(auto it=m_sessions.begin();it!=m_sessions.end();it++)
 	{
 		NWMSession *session = it->get();
-		if(session->IsTarget(ep.address(),ep.port()))
+		if(session->IsTarget(cast_endpoint(ep)->address(),cast_endpoint(ep)->port()))
 			return session;
 	}
 	return nullptr;

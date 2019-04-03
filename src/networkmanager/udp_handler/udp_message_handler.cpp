@@ -27,7 +27,7 @@ void UDPMessageHandler::Poll()
 	UDPMessageReceiver::Poll();
 }
 
-void UDPMessageHandler::DispatchResponse(DataStream &data,udp::endpoint &ep,std::function<void(boost::system::error_code,Message*)> callback)
+void UDPMessageHandler::DispatchResponse(DataStream &data,nwm::UDPEndpoint &ep,std::function<void(nwm::ErrorCode,Message*)> callback)
 {
 	UDPMessageDispatcher::Dispatch(data,ep,m_socket,callback);
 }

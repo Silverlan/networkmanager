@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "networkmanager/nwm_error_handle.h"
+#include "networkmanager/nwm_boost.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
@@ -100,12 +101,12 @@ NWMErrorHandle::NWMErrorHandle()
 	: m_errorHandle()
 {}
 
-bool NWMErrorHandle::HandleError(const boost::system::error_code &error)
+bool NWMErrorHandle::HandleError(const nwm::ErrorCode &error)
 {
 	if(
-		!error
+		!*error
 #ifdef _WIN32
-		|| error.value() == ERROR_MORE_DATA // More data available (We didn't read enough? Probably an invalid packet)
+		|| error->value() == ERROR_MORE_DATA // More data available (We didn't read enough? Probably an invalid packet)
 #endif
 	)
 		return true;
@@ -114,7 +115,7 @@ bool NWMErrorHandle::HandleError(const boost::system::error_code &error)
 	return false;
 }
 
-void NWMErrorHandle::SetErrorHandle(const std::function<void(const boost::system::error_code&)> &cbError) {m_errorHandle = cbError;}
+void NWMErrorHandle::SetErrorHandle(const std::function<void(const nwm::ErrorCode&)> &cbError) {m_errorHandle = cbError;}
 
 std::string NWMErrorHandle::GetErrorName(int id) {return nwm::get_error_name(id);}
 #ifdef NWM_DISABLE_OPTIMIZATION

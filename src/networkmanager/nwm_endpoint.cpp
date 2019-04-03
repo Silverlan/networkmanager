@@ -3,6 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "networkmanager/nwm_endpoint.h"
+#include "networkmanager/wrappers/nwm_ip_address.hpp"
+#include "networkmanager/wrappers/nwm_impl_boost.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
@@ -21,9 +23,12 @@ std::string nwm::to_string(const std::string &ip,unsigned short port,bool bV6)
 	address += std::string(":") +std::to_string(port);
 	return address;
 }
+std::string nwm::to_string(const nwm::IPAddress &address,unsigned short port) {return nwm::to_string(address->to_string(),port,address->is_v6());}
 std::string nwm::to_string(const boost::asio::ip::address &address,unsigned short port) {return nwm::to_string(address.to_string(),port,address.is_v6());}
 std::string nwm::to_string(const boost::asio::ip::udp::endpoint &ep) {return endPointToString(ep,boost::asio::ip::udp::v6());}
 std::string nwm::to_string(const boost::asio::ip::tcp::endpoint &ep) {return endPointToString(ep,boost::asio::ip::tcp::v6());}
+std::string nwm::to_string(const nwm::UDPEndpoint &ep) {return to_string(*cast_endpoint(ep));}
+std::string nwm::to_string(const nwm::TCPEndpoint &ep) {return to_string(*cast_endpoint(ep));}
 std::string nwm::invalid_address() {return "[::]:0";}
 
 ////////////////////////
@@ -53,41 +58,41 @@ NWMEndpoint NWMEndpoint::Copy() const
 	return NWMEndpoint(*static_cast<NWMUDPEndpoint*>(ep));
 }
 
-NWMEndpoint NWMEndpoint::CreateTCP(tcp::endpoint &ep)
+NWMEndpoint NWMEndpoint::CreateTCP(const nwm::TCPEndpoint &ep)
 {
 	return NWMEndpoint(new NWMTCPEndpoint(ep));
 }
-NWMEndpoint NWMEndpoint::CreateUDP(udp::endpoint &ep)
+NWMEndpoint NWMEndpoint::CreateUDP(const nwm::UDPEndpoint &ep)
 {
 	return NWMEndpoint(new NWMUDPEndpoint(ep));
 }
 
-NWMEndpoint NWMEndpoint::CreateTCP(const boost::asio::ip::tcp &ip,unsigned short port)
+NWMEndpoint NWMEndpoint::CreateTCP(const nwm::TCP &ip,unsigned short port)
 {
 	return NWMEndpoint(new NWMTCPEndpoint(ip,port));
 }
 
-NWMEndpoint NWMEndpoint::CreateUDP(const boost::asio::ip::udp &ip,unsigned short port)
+NWMEndpoint NWMEndpoint::CreateUDP(const nwm::UDP &ip,unsigned short port)
 {
 	return NWMEndpoint(new NWMUDPEndpoint(ip,port));
 }
 
-boost::asio::ip::address NWMEndpoint::GetAddress() const
+nwm::IPAddress NWMEndpoint::GetAddress() const
 {
 	NWMBaseEndpoint *ep = get();
 	if(ep == nullptr)
-		return boost::asio::ip::address();
+		return nwm::IPAddress{};
 	if(ep->IsTCP())
 	{
-		boost::asio::ip::tcp::endpoint *epTCP = static_cast<NWMTCPEndpoint*>(ep)->get();
+		auto *epTCP = static_cast<NWMTCPEndpoint*>(ep)->get();
 		if(epTCP == nullptr)
-			return boost::asio::ip::address();
-		return epTCP->address();
+			return nwm::IPAddress{};
+		return nwm::cast_endpoint(*epTCP)->address();
 	}
-	boost::asio::ip::udp::endpoint *epUDP = static_cast<NWMUDPEndpoint*>(ep)->get();
+	auto *epUDP = static_cast<NWMUDPEndpoint*>(ep)->get();
 	if(epUDP == nullptr)
-		return boost::asio::ip::address();
-	return epUDP->address();
+		return nwm::IPAddress{};
+	return nwm::cast_endpoint(*epUDP)->address();
 }
 
 unsigned short NWMEndpoint::GetPort() const
@@ -97,15 +102,15 @@ unsigned short NWMEndpoint::GetPort() const
 		return 0;
 	if(ep->IsTCP())
 	{
-		boost::asio::ip::tcp::endpoint *epTCP = static_cast<NWMTCPEndpoint*>(ep)->get();
+		auto *epTCP = static_cast<NWMTCPEndpoint*>(ep)->get();
 		if(epTCP == nullptr)
 			return 0;
-		return epTCP->port();
+		return nwm::cast_endpoint(*epTCP)->port();
 	}
-	boost::asio::ip::udp::endpoint *epUDP = static_cast<NWMUDPEndpoint*>(ep)->get();
+	auto *epUDP = static_cast<NWMUDPEndpoint*>(ep)->get();
 	if(epUDP == nullptr)
 		return 0;
-	return epUDP->port();
+	return nwm::cast_endpoint(*epUDP)->port();
 }
 
 std::string NWMEndpoint::GetIP() const {return nwm::to_string(GetAddress(),GetPort());}
@@ -130,7 +135,7 @@ bool NWMEndpoint::operator==(const NWMEndpoint &other) const
 		auto *tcpEpOther = static_cast<NWMTCPEndpoint*>(epOther)->get();
 		if(tcpEpThis == tcpEpOther)
 			return true;
-		return (tcpEpThis->address() == tcpEpOther->address() && tcpEpThis->port() == tcpEpOther->port()) ? true : false;
+		return (nwm::cast_endpoint(*tcpEpThis)->address() == nwm::cast_endpoint(*tcpEpOther)->address() && nwm::cast_endpoint(*tcpEpThis)->port() == nwm::cast_endpoint(*tcpEpOther)->port()) ? true : false;
 	}
 	if(!epOther->IsUDP())
 		return false;
@@ -138,23 +143,23 @@ bool NWMEndpoint::operator==(const NWMEndpoint &other) const
 	auto *udpEpOther = static_cast<NWMUDPEndpoint*>(epOther)->get();
 	if(udpEpThis == udpEpOther)
 		return true;
-	return (udpEpThis->address() == udpEpOther->address() && udpEpThis->port() == udpEpOther->port()) ? true : false;
+	return (nwm::cast_endpoint(*udpEpThis)->address() == nwm::cast_endpoint(*udpEpOther)->address() && nwm::cast_endpoint(*udpEpThis)->port() == nwm::cast_endpoint(*udpEpOther)->port()) ? true : false;
 }
 bool NWMEndpoint::operator!=(const NWMEndpoint &other) const
 {
 	return (*this == other) ? false : true;
 }
 
-bool NWMEndpoint::operator==(const boost::asio::ip::address &address) const
+bool NWMEndpoint::operator==(const nwm::IPAddress &address) const
 {
 	NWMBaseEndpoint *epThis = get();
 	if(epThis == nullptr)
 		return false;
 	if(epThis->IsTCP())
-		return (static_cast<NWMTCPEndpoint*>(epThis)->get()->address() == address) ? true : false;
-	return (static_cast<NWMUDPEndpoint*>(epThis)->get()->address() == address) ? true : false;
+		return (nwm::cast_endpoint(*static_cast<NWMTCPEndpoint*>(epThis)->get())->address() == *address) ? true : false;
+	return (nwm::cast_endpoint(*static_cast<NWMUDPEndpoint*>(epThis)->get())->address() == *address) ? true : false;
 }
-bool NWMEndpoint::operator!=(const boost::asio::ip::address &address) const
+bool NWMEndpoint::operator!=(const nwm::IPAddress &address) const
 {
 	return (*this == address) ? false : true;
 }
@@ -169,12 +174,12 @@ bool NWMBaseEndpoint::IsTCP() {return false;}
 
 ////////////////////////
 
-NWMUDPEndpoint::NWMUDPEndpoint(const udp::endpoint &ep)
+NWMUDPEndpoint::NWMUDPEndpoint(const nwm::UDPEndpoint &ep)
 	: m_endPoint(ep)
 {}
 
-NWMUDPEndpoint::NWMUDPEndpoint(const boost::asio::ip::udp &ip,unsigned short port)
-	: NWMUDPEndpoint(udp::endpoint(ip,port))
+NWMUDPEndpoint::NWMUDPEndpoint(const nwm::UDP &ip,unsigned short port)
+	: NWMUDPEndpoint(&boost::asio::ip::udp::endpoint{*ip,port})
 {}
 
 NWMUDPEndpoint::NWMUDPEndpoint(NWMUDPEndpoint &ep)
@@ -185,18 +190,18 @@ NWMUDPEndpoint::NWMUDPEndpoint(std::nullptr_t)
 	: m_endPoint()
 {}
 
-udp::endpoint *NWMUDPEndpoint::get() {return &m_endPoint;}
-udp::endpoint *NWMUDPEndpoint::operator->() {return &m_endPoint;}
+nwm::UDPEndpoint *NWMUDPEndpoint::get() {return &m_endPoint;}
+nwm::UDPEndpoint *NWMUDPEndpoint::operator->() {return &m_endPoint;}
 bool NWMUDPEndpoint::IsUDP() {return true;}
 
 ////////////////////////
 
-NWMTCPEndpoint::NWMTCPEndpoint(const tcp::endpoint &ep)
+NWMTCPEndpoint::NWMTCPEndpoint(const nwm::TCPEndpoint &ep)
 	: m_endPoint(ep)
 {}
 
-NWMTCPEndpoint::NWMTCPEndpoint(const boost::asio::ip::tcp &ip,unsigned short port)
-	: NWMTCPEndpoint(tcp::endpoint(ip,port))
+NWMTCPEndpoint::NWMTCPEndpoint(const nwm::TCP &ip,unsigned short port)
+	: NWMTCPEndpoint(&boost::asio::ip::tcp::endpoint{*ip,port})
 {}
 
 NWMTCPEndpoint::NWMTCPEndpoint(NWMTCPEndpoint &ep)
@@ -207,8 +212,8 @@ NWMTCPEndpoint::NWMTCPEndpoint(std::nullptr_t)
 	: m_endPoint()
 {}
 
-tcp::endpoint *NWMTCPEndpoint::get() {return &m_endPoint;}
-tcp::endpoint *NWMTCPEndpoint::operator->() {return &m_endPoint;}
+nwm::TCPEndpoint *NWMTCPEndpoint::get() {return &m_endPoint;}
+nwm::TCPEndpoint *NWMTCPEndpoint::operator->() {return &m_endPoint;}
 bool NWMTCPEndpoint::IsTCP() {return true;}
 
 #ifdef NWM_DISABLE_OPTIMIZATION

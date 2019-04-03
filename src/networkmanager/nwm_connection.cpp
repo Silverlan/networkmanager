@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/nwm_connection.h"
 #include "networkmanager/nwm_error_handle.h"
 
@@ -13,7 +14,7 @@ NWMConnection::NWMConnection()
 {
 	try
 	{
-		ioService = std::make_unique<boost::asio::io_service>();
+		ioService = std::make_unique<nwm::IOService>();
 	}
 	catch(std::exception e)
 	{
@@ -34,7 +35,7 @@ void NWMConnection::Run()
 }
 void NWMConnection::Poll()
 {
-	ioService->poll();
+	(*ioService)->poll();
 }
 bool NWMConnection::IsActive() const {return (ioService != nullptr) ? true : false;}
 bool NWMConnection::IsUDP() const {return false;}
@@ -44,7 +45,7 @@ void NWMConnection::Terminate()
 	if(ioService == nullptr)
 		return;
 	CloseSocket();
-	ioService->stop();
+	(*ioService)->stop();
 	m_bClosing = false;
 }
 void NWMConnection::SendPacket(const NetPacket&,const NWMEndpoint&,bool) {}

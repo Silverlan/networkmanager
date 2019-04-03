@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "clientmanager/legacy/cl_nwm_manager.h"
 #include <mathutil/umath.h>
 #include "networkmanager/nwm_packet.h"
@@ -47,7 +48,7 @@ void NWMClient::Initialize(const std::string &serverIp,unsigned short serverPort
 		});
 		udp->SetCloseHandle([this]() {
 			auto err = static_cast<CLNWMUDPConnection*>(this->m_conUDP.get())->GetLastError();
-			if(err)
+			if(*err)
 				m_lastError = err;
 			auto conUdp = this->m_conUDP;
 			auto conTcp = this->m_conTCP;
@@ -74,7 +75,7 @@ void NWMClient::Initialize(const std::string &serverIp,unsigned short serverPort
 		});
 		tcp->SetCloseHandle([this]() {
 			auto err = static_cast<CLNWMTCPConnection*>(this->m_conTCP.get())->GetLastError();
-			if(err)
+			if(*err)
 				m_lastError = err;
 			auto conUdp = this->m_conUDP;
 			auto conTcp = this->m_conTCP;
@@ -93,7 +94,7 @@ void NWMClient::Initialize(const std::string &serverIp,unsigned short serverPort
 }
 
 unsigned short NWMClient::GetLatency() const {return m_latency;}
-const boost::system::error_code &NWMClient::GetLastError() const {return m_lastError;}
+const nwm::ErrorCode &NWMClient::GetLastError() const {return m_lastError;}
 
 std::string NWMClient::GetIP()
 {

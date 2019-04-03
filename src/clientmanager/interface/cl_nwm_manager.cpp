@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "clientmanager/interface/cl_nwm_manager.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -63,7 +64,7 @@ void nwm::Client::Initialize(const std::string &serverIp,uint16_t serverPort)
 #endif
 			auto *udp = GetUDPConnection();
 			auto err = udp->GetLastError();
-			if(err)
+			if(*err)
 				m_lastError = err;
 			if(GetTCPConnection() == nullptr)
 			{
@@ -76,8 +77,8 @@ void nwm::Client::Initialize(const std::string &serverIp,uint16_t serverPort)
 				CloseTCPConnection();
 			CloseUDPConnection();
 		});
-		udp->SetErrorHandle([this](const boost::system::error_code &errCode) {
-			HandleError(nwm::Error(errCode.value(),errCode.message()));
+		udp->SetErrorHandle([this](const nwm::ErrorCode &errCode) {
+			HandleError(nwm::Error(errCode->value(),errCode->message()));
 		});
 		udp->Connect(serverIp,serverPort);
 	}
@@ -111,7 +112,7 @@ void nwm::Client::Initialize(const std::string &serverIp,uint16_t serverPort)
 #endif
 			auto *tcp = GetTCPConnection();
 			auto err = tcp->GetLastError();
-			if(err)
+			if(*err)
 				m_lastError = err;
 			if(GetUDPConnection() == nullptr)
 			{
@@ -128,8 +129,8 @@ void nwm::Client::Initialize(const std::string &serverIp,uint16_t serverPort)
 			auto *tcp = GetTCPConnection();
 			m_ip = tcp->GetIP();
 		});
-		tcp->SetErrorHandle([this](const boost::system::error_code &errCode) {
-			HandleError(nwm::Error(errCode.value(),errCode.message()));
+		tcp->SetErrorHandle([this](const nwm::ErrorCode &errCode) {
+			HandleError(nwm::Error(errCode->value(),errCode->message()));
 		});
 		tcp->Connect(serverIp,serverPort);
 	}
@@ -255,7 +256,7 @@ void nwm::Client::Disconnect()
 }
 uint16_t nwm::Client::GetLatency() const {return m_latency;}
 const std::string &nwm::Client::GetIP() const {return m_ip;}
-const boost::system::error_code &nwm::Client::GetLastError() const {return m_lastError;}
+const nwm::ErrorCode &nwm::Client::GetLastError() const {return m_lastError;}
 const NWMEndpoint &nwm::Client::GetRemoteEndpoint() const {return m_remoteEndpoint;}
 void nwm::Client::SetPingEnabled(bool b) {m_bPingEnabled = b;}
 #ifdef NWM_DISABLE_OPTIMIZATION

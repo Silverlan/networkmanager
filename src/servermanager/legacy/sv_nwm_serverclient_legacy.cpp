@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/legacy/sv_nwm_serverclient.h"
 #include "servermanager/legacy/sv_nwm_manager.h"
 #include "servermanager/legacy/sv_nwm_sessionhandle.h"
@@ -13,7 +14,7 @@ extern NWMServer *server;
 NWMServerClient::NWMServerClient(NWMServer *manager)
 	: std::enable_shared_from_this<NWMServerClient>(),m_index(0),m_manager(manager),m_udpSession(nullptr),m_tcpSession(nullptr),
 	m_bClosing(false),m_handle(),m_bClosed(false),m_latency(0),m_ip(nwm::invalid_address()),
-	m_port(0),m_address(),m_bReady(false),m_bTCPInitialized(false),m_bUDPInitialized(false),
+	m_port(0),m_address{},m_bReady(false),m_bTCPInitialized(false),m_bUDPInitialized(false),
 	m_bDropped(false)
 {
 	m_lastUpdate = std::chrono::high_resolution_clock::now();
@@ -75,7 +76,7 @@ void NWMServerClient::InitializeSessionData(NWMSession *session)
 	if(m_udpSession != nullptr || m_tcpSession != nullptr)
 		return;
 	m_ip = session->GetIP();
-	m_address = session->GetAddress();
+	m_address = *session->GetAddress();
 	m_port = session->GetPort();
 	auto &ep = session->GetRemoteEndPoint();
 	m_remoteEndPoint = ep.Copy();
@@ -89,7 +90,7 @@ template<class T>
 	if(t != nullptr)
 	{
 		bTimedOut = t->IsTimedOut();
-		err = t->GetLastError();
+		err = *t->GetLastError();
 		t->Release();
 		t = nullptr;
 	}
@@ -212,11 +213,11 @@ void NWMServerClient::SetEndPoint(const NWMEndpoint&)
 	m_tcpSession = new NWMTCPSession(*con->ioService,ep);*/
 }
 std::string NWMServerClient::GetIP() const {return m_ip;}
-boost::asio::ip::address NWMServerClient::GetAddress() const {return m_address;}
+nwm::IPAddress NWMServerClient::GetAddress() const {return m_address;}
 unsigned short NWMServerClient::GetPort() const {return m_port;}
 const NWMEndpoint &NWMServerClient::GetRemoteEndpoint() const {return m_remoteEndPoint;}
 std::string NWMServerClient::GetRemoteIP() const {return m_remoteEndPoint.GetIP();}
-boost::asio::ip::address NWMServerClient::GetRemoteAddress() const {return m_remoteEndPoint.GetAddress();}
+nwm::IPAddress NWMServerClient::GetRemoteAddress() const {return *m_remoteEndPoint.GetAddress();}
 unsigned short NWMServerClient::GetRemotePort() const {return m_remoteEndPoint.GetPort();}
 bool NWMServerClient::IsTarget(const NWMEndpoint &ep)
 {
@@ -230,7 +231,7 @@ bool NWMServerClient::IsTarget(const NWMEndpoint &ep)
 		return false;
 	return (m_tcpSession->GetRemoteEndPoint() == ep) ? true : false;
 }
-bool NWMServerClient::IsTarget(const boost::asio::ip::address &address,unsigned short port)
+bool NWMServerClient::IsTarget(const nwm::IPAddress &address,unsigned short port)
 {
 	if(m_tcpSession != nullptr)
 		return (m_tcpSession->GetAddress() == address && m_tcpSession->GetPort() == port) ? true : false;

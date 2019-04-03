@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "clientmanager/cl_nwm_udpconnection.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -16,16 +17,16 @@ CLNWMUDPConnection::~CLNWMUDPConnection()
 
 std::string CLNWMUDPConnection::GetLocalIP() const {return NWMUDPIO::GetLocalIP();}
 unsigned short CLNWMUDPConnection::GetLocalPort() const {return NWMUDPIO::GetLocalPort();}
-boost::asio::ip::address CLNWMUDPConnection::GetLocalAddress() const {return NWMUDPIO::GetLocalAddress();}
+nwm::IPAddress CLNWMUDPConnection::GetLocalAddress() const {return NWMUDPIO::GetLocalAddress();}
 void CLNWMUDPConnection::SetTimeoutDuration(double duration) {NWMUDPIO::SetTimeoutDuration(duration,false);}
 bool CLNWMUDPConnection::IsClosing() const {return NWMIOBase::IsClosing();}
 
 void CLNWMUDPConnection::Connect(std::string serverIp,unsigned int serverPort)
 {
-	udp::resolver resolver(*ioService);
+	udp::resolver resolver(**ioService);
 	udp::resolver::query query(serverIp,std::to_string(serverPort));
 	udp::endpoint ep = *resolver.resolve(query);
-	m_remoteEndpoint = NWMEndpoint::CreateUDP(ep);
+	m_remoteEndpoint = NWMEndpoint::CreateUDP(nwm::UDPEndpoint{&ep});
 	SetReady();
 	NetPacket out(NWM_MESSAGE_OUT_REGISTER_UDP);
 	SendPacket(out);

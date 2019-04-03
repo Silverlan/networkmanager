@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <string>
-#include "networkmanager/nwm_boost.h"
 #include <sharedutils/def_handle.h>
 
 class NWMServerClient;

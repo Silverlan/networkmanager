@@ -37,9 +37,9 @@ public:
 	virtual void SendPacket(const NetPacket &packet)=0;
 	virtual std::string GetIP() const=0;
 	virtual unsigned short GetPort() const=0;
-	virtual boost::asio::ip::address GetAddress() const=0;
+	virtual nwm::IPAddress GetAddress() const=0;
 	bool IsTarget(const NWMEndpoint &ep);
-	bool IsTarget(const boost::asio::ip::address &address,unsigned short port);
+	bool IsTarget(const nwm::IPAddress &address,unsigned short port);
 	virtual void SetTimeoutDuration(double duration)=0;
 	virtual void SetCloseHandle(const std::function<void(void)> &cbClose)=0;
 	NWMSessionHandle GetHandle();

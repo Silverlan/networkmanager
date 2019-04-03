@@ -313,12 +313,12 @@ unsigned short NWManagerBase::GetLocalTCPPort() const
 		return 0;
 	return m_conTCP->GetLocalPort();
 }
-boost::asio::ip::address NWManagerBase::GetLocalAddress() const
+nwm::IPAddress NWManagerBase::GetLocalAddress() const
 {
 	if(m_conTCP == nullptr)
 	{
 		if(m_conUDP == nullptr)
-			return boost::asio::ip::address();
+			return nwm::IPAddress{};
 		return m_conUDP->GetLocalAddress();
 	}
 	return m_conTCP->GetLocalAddress();

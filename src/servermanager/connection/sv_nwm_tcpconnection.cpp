@@ -2,8 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/connection/sv_nwm_tcpconnection.h"
 #include "servermanager/interface/sv_nwm_manager.hpp"
+#include "servermanager/wrappers/sv_nwm_impl_boost.hpp"
 #include <sharedutils/scope_guard.h>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -25,8 +27,8 @@ SVNWMTCPConnection::SVNWMTCPConnection(unsigned short minPort,unsigned short max
 #else
 			endPoint = NWMEndpoint::CreateTCP(tcp::v6(),port);
 #endif
-			tcp::endpoint &ep = *static_cast<NWMTCPEndpoint*>(endPoint.get())->get();
-			m_acceptor = std::make_unique<tcp::acceptor>(*ioService,ep);
+			auto &ep = *static_cast<NWMTCPEndpoint*>(endPoint.get())->get();
+			m_acceptor = std::make_unique<nwm::TCPAcceptor>(*ioService,ep);
 		}
 		catch(std::exception e)
 		{
@@ -47,7 +49,7 @@ SVNWMTCPConnection::SVNWMTCPConnection(unsigned short minPort,unsigned short max
 		throw NWMException(err);
 	}
 	else
-		m_acceptor->set_option(tcp::no_delay(m_bNagleEnabled));
+		nwm::cast_acceptor(*m_acceptor)->set_option(tcp::no_delay(m_bNagleEnabled));
 }
 
 SVNWMTCPConnection::SVNWMTCPConnection(unsigned short port)
@@ -58,8 +60,8 @@ SVNWMTCPConnection::~SVNWMTCPConnection()
 {
 	if(m_acceptor != nullptr)
 	{
-		if(m_acceptor->is_open())
-			m_acceptor->close();
+		if(nwm::cast_acceptor(*m_acceptor)->is_open())
+			nwm::cast_acceptor(*m_acceptor)->close();
 		m_acceptor = nullptr;
 	}
 }
@@ -68,7 +70,7 @@ void SVNWMTCPConnection::SetNagleAlgorithmEnabled(bool b)
 {
 	m_bNagleEnabled = b;
 	if(m_acceptor != nullptr)
-		m_acceptor->set_option(tcp::no_delay(m_bNagleEnabled));
+		nwm::cast_acceptor(*m_acceptor)->set_option(tcp::no_delay(m_bNagleEnabled));
 	/*for(auto it=m_sessions.begin();it!=m_sessions.end();++it)
 	{
 		if(it->IsValid())
@@ -100,7 +102,7 @@ void SVNWMTCPConnection::SetPacketHandle(const std::function<void(const NWMEndpo
 		(*it)->SetPacketHandle(cbPacket);
 }
 
-void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const boost::system::error_code &err)
+void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const nwm::ErrorCode &err)
 {
 	if(!hSession.IsValid() || HandleError(err) == false)
 		return;
@@ -136,8 +138,8 @@ void SVNWMTCPConnection::ScheduleTermination() {m_bTerminating = true; m_bClosin
 
 void SVNWMTCPConnection::Terminate()
 {
-	if(m_acceptor != nullptr && m_acceptor->is_open())
-		m_acceptor->close();
+	if(m_acceptor != nullptr && nwm::cast_acceptor(*m_acceptor)->is_open())
+		nwm::cast_acceptor(*m_acceptor)->close();
 	NWMTCPConnection::Terminate();
 	if(m_closeHandle != nullptr)
 		m_closeHandle();
@@ -152,9 +154,11 @@ void SVNWMTCPConnection::Accept()
 	session->Initialize();
 	auto ptrSession = std::static_pointer_cast<NWMTCPSession>(session->shared_from_this());
 	auto hSession = AddSession(ptrSession);
-	m_acceptor->async_accept(
-		*session->socket,
-		boost::bind(&SVNWMTCPConnection::HandleAccept,shared_from_this(),hSession,boost::asio::placeholders::error)
+	nwm::cast_acceptor(*m_acceptor)->async_accept(
+		*nwm::cast_socket(*session->socket),
+		[this,hSession](const boost::system::error_code &err) {
+			HandleAccept(hSession,err);
+		}
 	);
 }
 
@@ -190,20 +194,20 @@ std::string SVNWMTCPConnection::GetLocalIP() const
 {
 	if(!IsActive())
 		return nwm::invalid_address();
-	return nwm::to_string(m_acceptor->local_endpoint());
+	return nwm::to_string(nwm::cast_acceptor(*m_acceptor)->local_endpoint());
 }
 unsigned short SVNWMTCPConnection::GetLocalPort() const
 {
 	if(!IsActive())
 		return 0;
-	auto endPoint = m_acceptor->local_endpoint();
+	auto endPoint = nwm::cast_acceptor(*m_acceptor)->local_endpoint();
 	return endPoint.port();
 }
-boost::asio::ip::address SVNWMTCPConnection::GetLocalAddress() const
+nwm::IPAddress SVNWMTCPConnection::GetLocalAddress() const
 {
 	if(!IsActive())
 		return boost::asio::ip::address();
-	auto endPoint = m_acceptor->local_endpoint();
+	auto endPoint = nwm::cast_acceptor(*m_acceptor)->local_endpoint();
 	return endPoint.address();
 }
 #ifdef NWM_DISABLE_OPTIMIZATION

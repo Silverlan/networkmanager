@@ -2,7 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/io/nwm_udp_io_base.h"
+#include "networkmanager/wrappers/nwm_impl_boost.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
@@ -22,40 +24,50 @@ bool NWMUDPIOBase::IsTerminated() const
 		return true;
 	return false;
 }
-void NWMUDPIOBase::AsyncWrite(udp::socket *socket,const std::vector<boost::asio::mutable_buffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const boost::system::error_code&,std::size_t)> &f)
+void NWMUDPIOBase::AsyncWrite(nwm::UDPSocket *socket,const std::vector<nwm::MutableBuffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f)
 {
 	if(IsTerminated())
 		return;
 	NWMUDPEndpoint *ep = static_cast<NWMUDPEndpoint*>(endPoint.get());
 	if(ep == nullptr)
 		return;
-	boost::asio::ip::udp::endpoint *epUDP = ep->get();
+	auto *epUDP = ep->get();
 	if(epUDP == nullptr)
 		return;
-	socket->async_send_to(
-		buffers,
-		*epUDP,
+	std::vector<boost::asio::mutable_buffer> boostBuffers {};
+	boostBuffers.reserve(buffers.size());
+	for(auto &buf : buffers)
+		boostBuffers.push_back(*buf);
+	cast_socket(*socket)->async_send_to(
+		boostBuffers,
+		*cast_endpoint(*epUDP),
 		f
 	);
 }
 
-void NWMUDPIOBase::AsyncRead(udp::socket *socket,const std::vector<boost::asio::mutable_buffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const boost::system::error_code&,std::size_t)> &f,bool bPeek)
+void NWMUDPIOBase::AsyncRead(nwm::UDPSocket *socket,const std::vector<nwm::MutableBuffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f,bool bPeek)
 {
 	if(IsTerminated())
 		return;
 	NWMUDPEndpoint *ep = static_cast<NWMUDPEndpoint*>(endPoint.get());
 	if(ep == nullptr)
 		return;
-	boost::asio::ip::udp::endpoint *epUDP = ep->get();
+	auto *epUDP = ep->get();
 	if(epUDP == nullptr)
 		return;
 	int32_t flags = 0;
 	if(bPeek == true)
 		flags |= boost::asio::socket_base::message_peek;
-	socket->async_receive_from(
-		buffers,
-		*epUDP,flags,
-		f
+	std::vector<boost::asio::mutable_buffer> boostBuffers {};
+	boostBuffers.reserve(buffers.size());
+	for(auto &buf : buffers)
+		boostBuffers.push_back(*buf);
+	cast_socket(*socket)->async_receive_from(
+		boostBuffers,
+		*cast_endpoint(*epUDP),flags,
+		[f](const boost::system::error_code &errCode,std::size_t n) {
+			f(errCode,n);
+		}
 	);
 }
 #ifdef NWM_DISABLE_OPTIMIZATION

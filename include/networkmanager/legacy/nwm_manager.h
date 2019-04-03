@@ -5,7 +5,6 @@
 #ifndef __NETWORKMANAGER_H__
 #define __NETWORKMANAGER_H__
 
-#include "networkmanager/nwm_boost.h"
 #include <queue>
 #include <chrono>
 #include <mutex>
@@ -115,7 +114,7 @@ public:
 	unsigned short GetLocalPort() const;
 	unsigned short GetLocalUDPPort() const;
 	unsigned short GetLocalTCPPort() const;
-	boost::asio::ip::address GetLocalAddress() const;
+	nwm::IPAddress GetLocalAddress() const;
 	void SetNagleAlgorithmEnabled(bool b);
 };
 

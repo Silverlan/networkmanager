@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/legacy/sv_nwm_manager.h"
 #include "networkmanager/nwm_packet.h"
 #include <mathutil/umath.h>
@@ -120,7 +121,7 @@ int NWMServer::GetClientCount() const {return static_cast<int>(m_clients.size())
 
 bool NWMServer::AcceptClient(NWMSession *session)
 {
-	boost::asio::ip::address address = session->GetAddress();
+	boost::asio::ip::address address = *session->GetAddress();
 	auto maxClients = GetMaxClients();
 	if(IsIPBanned(address) || (maxClients != -1 && GetClientCount() >= maxClients))
 	{

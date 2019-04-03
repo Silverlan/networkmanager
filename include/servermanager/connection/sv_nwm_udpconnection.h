@@ -21,13 +21,13 @@ public:
 	friend NWMUDPSession;
 protected:
 	std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> m_packetSessionHandle;
-	void HandleAccept(std::shared_ptr<NWMUDPSession> session,const boost::system::error_code &err);
+	void HandleAccept(std::shared_ptr<NWMUDPSession> session,const nwm::ErrorCode &err);
 	virtual void SendPacket(const NetPacket &packet,const NWMEndpoint &ep,bool bOwn=false) override;
 	virtual void Accept() override;
 	virtual void CloseSocket() override;
 	virtual void ScheduleTermination() override;
-	virtual bool HandleError(const boost::system::error_code &error) override;
-	virtual void HandleReadHeader(const boost::system::error_code &err,std::size_t bytes) override;
+	virtual bool HandleError(const nwm::ErrorCode &error) override;
+	virtual void HandleReadHeader(const nwm::ErrorCode &err,std::size_t bytes) override;
 	std::shared_ptr<NWMUDPSession> FindSession(const NWMUDPEndpoint &ep);
 public:
 	SVNWMUDPConnection(unsigned short localPort);
@@ -43,7 +43,7 @@ public:
 	virtual void SetTimeoutDuration(double duration) override;
 	virtual std::string GetLocalIP() const override;
 	virtual unsigned short GetLocalPort() const override;
-	virtual boost::asio::ip::address GetLocalAddress() const override;
+	virtual nwm::IPAddress GetLocalAddress() const override;
 };
 
 #endif

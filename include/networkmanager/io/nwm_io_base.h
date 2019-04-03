@@ -9,6 +9,8 @@
 #include "networkmanager/nwm_error_handle.h"
 #include "networkmanager/nwm_event_base.h"
 #include "networkmanager/nwm_packet.h"
+#include "networkmanager/wrappers/nwm_error_code.hpp"
+#include "networkmanager/wrappers/nwm_ip_address.hpp"
 #include <chrono>
 
 #define NWM_USE_IPV6 0
@@ -24,7 +26,7 @@ protected:
 	std::function<void(void)> m_closeHandle;
 	ChronoTimePoint m_tSent;
 	ChronoTimePoint m_tLastMessage;
-	boost::system::error_code m_lastError;
+	nwm::ErrorCode m_lastError;
 	double m_tTimeout;
 	bool m_bTimeoutIfConnectionActive = true;
 	bool m_bTimedOut;
@@ -44,7 +46,7 @@ protected:
 	template<class S,class T>
 		T *GetRemoteEndPoint();
 	virtual void OnTerminated();
-	virtual void OnError(const boost::system::error_code &err);
+	virtual void OnError(const nwm::ErrorCode &err);
 public:
 	NWMIOBase();
 	virtual ~NWMIOBase();
@@ -57,16 +59,16 @@ public:
 	virtual bool IsTerminated() const;
 	virtual std::string GetIP() const=0;
 	virtual unsigned short GetPort() const=0;
-	virtual boost::asio::ip::address GetAddress() const=0;
+	virtual nwm::IPAddress GetAddress() const=0;
 	virtual std::string GetLocalIP() const=0;
 	virtual unsigned short GetLocalPort() const=0;
-	virtual boost::asio::ip::address GetLocalAddress() const=0;
+	virtual nwm::IPAddress GetLocalAddress() const=0;
 	virtual const NWMEndpoint &GetRemoteEndPoint() const;
 	virtual const NWMEndpoint &GetLocalEndPoint() const;
 	virtual void Run();
 	void SetTimeoutDuration(double duration,bool bIfConnectionActive);
 	bool IsTimedOut() const;
-	const boost::system::error_code &GetLastError() const;
+	const nwm::ErrorCode &GetLastError() const;
 };
 
 template<class T>

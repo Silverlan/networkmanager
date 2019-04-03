@@ -6,6 +6,7 @@
 #define __SV_NWM_SERVERCLIENT_HPP__
 
 #include <memory>
+#include <networkmanager/wrappers/nwm_ip_address.hpp>
 #include "servermanager/interface/sv_nwm_manager.hpp"
 #include "servermanager/interface/sv_nwm_clienthandle.hpp"
 
@@ -24,21 +25,21 @@ namespace nwm
 		ServerClientHandle GetHandle() const;
 
 		bool IsTarget(const NWMEndpoint &ep) const;
-		bool IsTarget(const boost::asio::ip::address &address,uint16_t port) const;
-		bool UsesAddress(const boost::asio::ip::address &address) const;
+		bool IsTarget(const nwm::IPAddress &address,uint16_t port) const;
+		bool UsesAddress(const nwm::IPAddress &address) const;
 		bool UsesPort(uint16_t port) const;
-		void SetAddress(nwm::Protocol protocol,const boost::asio::ip::address &address,uint16_t port);
+		void SetAddress(nwm::Protocol protocol,const nwm::IPAddress &address,uint16_t port);
 
 		bool IsClosed() const;
 		bool IsClosing() const;
 		uint16_t GetLatency() const;
 		void SetLatency(uint16_t latency);
 		std::string GetIP() const;
-		boost::asio::ip::address GetAddress() const;
+		nwm::IPAddress GetAddress() const;
 		uint16_t GetPort() const;
 		NWMEndpoint GetRemoteEndpoint() const;
 		std::string GetRemoteIP() const;
-		boost::asio::ip::address GetRemoteAddress() const;
+		nwm::IPAddress GetRemoteAddress() const;
 		uint16_t GetRemotePort() const;
 		ChronoDuration TimeSinceLastActivity() const;
 		Server *GetManager() const;
@@ -73,7 +74,7 @@ namespace nwm
 			// NOT thread-safe
 			NWMEndpoint remoteEndpoint;
 			std::atomic<uint16_t> port = {0u};
-			boost::asio::ip::address address;
+			nwm::IPAddress address;
 			std::string ip = nwm::invalid_address();
 		};
 

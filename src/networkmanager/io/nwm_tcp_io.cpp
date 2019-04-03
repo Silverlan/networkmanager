@@ -2,16 +2,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/nwm_boost.h"
 #include "networkmanager/io/nwm_tcp_io.h"
 #include "networkmanager/interface/nwm_manager.hpp"
+#include "networkmanager/wrappers/nwm_impl_boost.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
 #endif
-NWMTCPIO::NWMTCPIO(boost::asio::io_service &ioService)
+
+NWMTCPIO::NWMTCPIO(nwm::IOService &ioService)
 	: NWMIO(),m_bNagleEnabled(false),m_bSocketInitialized(false)
 {
-	socket = std::make_unique<tcp::socket>(ioService);//,tcp::v6()); // Not needed?
+	socket = std::make_unique<nwm::TCPSocket>(ioService);//,tcp::v6()); // Not needed?
 }
 
 NWMTCPIO::~NWMTCPIO()
@@ -32,18 +35,18 @@ void NWMTCPIO::SetNagleAlgorithmEnabled(bool b)
 	if(m_bSocketInitialized == false)
 		return;
 	if(socket != nullptr)
-		socket->set_option(tcp::no_delay(!m_bNagleEnabled));
+		cast_socket(*socket)->set_option(tcp::no_delay(!m_bNagleEnabled));
 }
 
 void NWMTCPIO::Terminate()
 {
 	if(IsTerminated())
 		return;
-	if(socket->is_open())
+	if(cast_socket(*socket)->is_open())
 	{
 		boost::system::error_code ec;
-		socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
-		socket->close();
+		cast_socket(*socket)->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
+		cast_socket(*socket)->close();
 	}
 	NWMIO::Terminate();
 }
@@ -57,14 +60,14 @@ std::string NWMTCPIO::GetIP() const
 {
 	if(IsTerminated())
 		return nwm::invalid_address();
-	return nwm::to_string(socket->remote_endpoint());
+	return nwm::to_string(cast_socket(*socket)->remote_endpoint());
 }
 
-boost::asio::ip::address NWMTCPIO::GetAddress() const
+nwm::IPAddress NWMTCPIO::GetAddress() const
 {
 	if(IsTerminated())
-		return boost::asio::ip::address();
-	auto endPoint = socket->remote_endpoint();
+		return nwm::IPAddress{};
+	auto endPoint = cast_socket(*socket)->remote_endpoint();
 	return endPoint.address();
 }
 
@@ -72,7 +75,7 @@ unsigned short NWMTCPIO::GetPort() const
 {
 	if(IsTerminated())
 		return 0;
-	auto endPoint = socket->remote_endpoint();
+	auto endPoint = cast_socket(*socket)->remote_endpoint();
 	return endPoint.port();
 }
 
@@ -80,43 +83,51 @@ std::string NWMTCPIO::GetLocalIP() const
 {
 	if(IsTerminated())
 		return nwm::invalid_address();
-	return nwm::to_string(socket->local_endpoint());
+	return nwm::to_string(cast_socket(*socket)->local_endpoint());
 }
 unsigned short NWMTCPIO::GetLocalPort() const
 {
 	if(IsTerminated())
 		return 0;
-	auto endPoint = socket->local_endpoint();
+	auto endPoint = cast_socket(*socket)->local_endpoint();
 	return endPoint.port();
 }
-boost::asio::ip::address NWMTCPIO::GetLocalAddress() const
+nwm::IPAddress NWMTCPIO::GetLocalAddress() const
 {
 	if(IsTerminated())
 		return boost::asio::ip::address();
-	auto endPoint = socket->local_endpoint();
+	auto endPoint = cast_socket(*socket)->local_endpoint();
 	return endPoint.address();
 }
 
-void NWMTCPIO::AsyncWrite(const NWMEndpoint&,const std::vector<boost::asio::mutable_buffer> &buffers,const std::function<void(const boost::system::error_code&,std::size_t)> &f)
+void NWMTCPIO::AsyncWrite(const NWMEndpoint&,const std::vector<nwm::MutableBuffer> &buffers,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f)
 {
 	if(IsTerminated())
 		return;
-	boost::asio::async_write(*socket,
-		buffers,
+	std::vector<boost::asio::mutable_buffer> boostBuffers {};
+	boostBuffers.reserve(buffers.size());
+	for(auto &buf : buffers)
+		boostBuffers.push_back(buf.GetBoostObject());
+	boost::asio::async_write(*cast_socket(*socket),
+		boostBuffers,
 		f
 	);
 }
 
-void NWMTCPIO::AsyncRead(const std::vector<boost::asio::mutable_buffer> &buffers,const std::function<void(const boost::system::error_code&,std::size_t)> &f,bool bPeek)
+void NWMTCPIO::AsyncRead(const std::vector<nwm::MutableBuffer> &buffers,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f,bool bPeek)
 {
 	assert(bPeek == false);
 	if(bPeek == true)
 		throw std::logic_error("Peeking not supported for TCP protocol!");
 	if(IsTerminated())
 		return;
+	std::vector<boost::asio::mutable_buffer> boostBuffers {};
+	boostBuffers.reserve(buffers.size());
+	for(auto &buf : buffers)
+		boostBuffers.push_back(buf.GetBoostObject());
 	boost::asio::async_read(
-		*socket,
-		buffers,
+		*cast_socket(*socket),
+		boostBuffers,
 		f
 	);
 }

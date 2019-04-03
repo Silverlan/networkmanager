@@ -69,7 +69,7 @@ namespace nwm
 		void BanIP(const std::string &ip);
 		void BanIPs(const std::vector<std::string> &ips);
 		bool IsIPBanned(const std::string &ip);
-		bool IsIPBanned(const boost::asio::ip::address &ip);
+		bool IsIPBanned(const nwm::IPAddress &ip);
 
 		int32_t GetMaxClients() const;
 		void SetMaxClients(int32_t numClients);
@@ -97,7 +97,7 @@ namespace nwm
 		Server(const std::shared_ptr<SVNWMUDPConnection> &udp,const std::shared_ptr<SVNWMTCPConnection> &tcp);
 
 		ServerClientHandle GetClient(const std::string &ip,uint16_t port);
-		ServerClientHandle GetClient(const boost::asio::ip::address &address,uint16_t port);
+		ServerClientHandle GetClient(const nwm::IPAddress &address,uint16_t port);
 		std::vector<ServerClient*> GetFilterTargets(const RecipientFilter &filter);
 		void OnClientPacketSent(ServerClient *cl,const NetPacket &packet);
 
@@ -124,7 +124,7 @@ namespace nwm
 		void RemoveClient(std::vector<std::shared_ptr<ServerClient>> &clients,ServerClient *cl);
 
 		std::atomic<int32_t> m_maxClients = {-1};
-		std::vector<boost::asio::ip::address> m_banned;
+		std::vector<nwm::IPAddress> m_banned;
 		mutable std::mutex m_banListMutex;
 		mutable std::mutex m_clientMutex; // Not required for actual clients; Only required for 'm_clients' and 'm_clientsConnecting' containers!
 

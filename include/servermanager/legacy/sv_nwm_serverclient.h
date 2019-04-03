@@ -14,9 +14,6 @@
 #include <memory>
 #include <atomic>
 
-using boost::asio::ip::tcp;
-using boost::asio::ip::udp;
-
 using ChronoTimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
 using ChronoDuration = std::chrono::duration<std::chrono::high_resolution_clock::rep,std::chrono::high_resolution_clock::period>;
 
@@ -42,7 +39,7 @@ protected:
 	bool m_bReady;
 	std::string m_ip;
 	unsigned short m_port;
-	boost::asio::ip::address m_address;
+	nwm::IPAddress m_address;
 	NWMEndpoint m_remoteEndPoint;
 	std::shared_ptr<NWMUDPSession> m_udpSession;
 	std::shared_ptr<NWMTCPSession> m_tcpSession;
@@ -66,17 +63,17 @@ public:
 	SessionHandle GetHandle();
 	//SessionHandle *CreateHandle();
 	bool IsTarget(const NWMEndpoint &ep);
-	bool IsTarget(const boost::asio::ip::address &address,unsigned short port);
+	bool IsTarget(const nwm::IPAddress &address,unsigned short port);
 	bool IsClosed() const;
 	bool IsClosing() const;
 	unsigned short GetLatency() const;
 	void SetLatency(unsigned short latency);
 	std::string GetIP() const;
-	boost::asio::ip::address GetAddress() const;
+	nwm::IPAddress GetAddress() const;
 	unsigned short GetPort() const;
 	const NWMEndpoint &GetRemoteEndpoint() const;
 	std::string GetRemoteIP() const;
-	boost::asio::ip::address GetRemoteAddress() const;
+	nwm::IPAddress GetRemoteAddress() const;
 	unsigned short GetRemotePort() const;
 	virtual void SendPacket(const NetPacket &p,bool bPreferUDP=false);
 	void SendPacketTCP(const NetPacket &p);

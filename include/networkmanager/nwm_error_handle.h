@@ -7,7 +7,7 @@
 
 #include <functional>
 #include <string>
-#include "nwm_boost.h"
+#include "networkmanager/wrappers/nwm_error_code.hpp"
 
 namespace nwm
 {
@@ -25,11 +25,11 @@ class NWMErrorHandle
 {
 protected:
 	NWMErrorHandle();
-	std::function<void(const boost::system::error_code&)> m_errorHandle;
-	virtual bool HandleError(const boost::system::error_code &error);
+	std::function<void(const nwm::ErrorCode&)> m_errorHandle;
+	virtual bool HandleError(const nwm::ErrorCode &error);
 public:
 	static std::string GetErrorName(int id);
-	void SetErrorHandle(const std::function<void(const boost::system::error_code&)> &cbError);
+	void SetErrorHandle(const std::function<void(const nwm::ErrorCode&)> &cbError);
 };
 
 #endif

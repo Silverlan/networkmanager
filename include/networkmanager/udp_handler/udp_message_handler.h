@@ -18,7 +18,7 @@ public:
 	virtual ~UDPMessageHandler();
 	virtual void Poll() override;
 	// Send a response to a message we've received from a client
-	void DispatchResponse(DataStream &data,udp::endpoint &ep,std::function<void(boost::system::error_code,Message*)> callback=nullptr);
+	void DispatchResponse(DataStream &data,nwm::UDPEndpoint &ep,std::function<void(nwm::ErrorCode,Message*)> callback=nullptr);
 	static std::unique_ptr<UDPMessageHandler> Create(unsigned short port,unsigned int timeout=0);
 };
 

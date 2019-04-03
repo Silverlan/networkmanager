@@ -5,18 +5,22 @@
 #ifndef __NWM_ENDPOINT_H__
 #define __NWM_ENDPOINT_H__
 
-#include "nwm_boost.h"
 #include <memory>
+#include <string>
+#include "wrappers/nwm_ip_address.hpp"
+#include "wrappers/nwm_tcp.hpp"
+#include "wrappers/nwm_tcp_endpoint.hpp"
+#include "wrappers/nwm_udp.hpp"
+#include "wrappers/nwm_udp_endpoint.hpp"
 
-using boost::asio::ip::tcp;
-using boost::asio::ip::udp;
-
+namespace boost{namespace asio{namespace ip{class address;};};};
 namespace nwm
 {
 	std::string to_string(const std::string &ip,unsigned short port,bool bV6=false);
+	std::string to_string(const nwm::IPAddress &address,unsigned short port);
 	std::string to_string(const boost::asio::ip::address &address,unsigned short port);
-	std::string to_string(const boost::asio::ip::udp::endpoint &ep);
-	std::string to_string(const boost::asio::ip::tcp::endpoint &ep);
+	std::string to_string(const nwm::UDPEndpoint &ep);
+	std::string to_string(const nwm::TCPEndpoint &ep);
 	std::string invalid_address();
 };
 
@@ -33,16 +37,16 @@ public:
 	NWMEndpoint(NWMTCPEndpoint &ep);
 	NWMEndpoint(NWMUDPEndpoint &ep);
 	NWMEndpoint Copy() const;
-	static NWMEndpoint CreateTCP(tcp::endpoint &ep);
-	static NWMEndpoint CreateUDP(udp::endpoint &ep);
-	static NWMEndpoint CreateTCP(const boost::asio::ip::tcp &ip,unsigned short port);
-	static NWMEndpoint CreateUDP(const boost::asio::ip::udp &ip,unsigned short port);
+	static NWMEndpoint CreateTCP(const nwm::TCPEndpoint &ep);
+	static NWMEndpoint CreateUDP(const nwm::UDPEndpoint &ep);
+	static NWMEndpoint CreateTCP(const nwm::TCP &ip,unsigned short port);
+	static NWMEndpoint CreateUDP(const nwm::UDP &ip,unsigned short port);
 	NWMBaseEndpoint *operator->() const;
 	bool operator==(const NWMEndpoint &other) const;
 	bool operator!=(const NWMEndpoint &other) const;
-	bool operator==(const boost::asio::ip::address &address) const;
-	bool operator!=(const boost::asio::ip::address &address) const;
-	boost::asio::ip::address GetAddress() const;
+	bool operator==(const nwm::IPAddress &address) const;
+	bool operator!=(const nwm::IPAddress &address) const;
+	nwm::IPAddress GetAddress() const;
 	unsigned short GetPort() const;
 	std::string GetIP() const;
 };
@@ -60,14 +64,14 @@ class NWMUDPEndpoint
 	: public NWMBaseEndpoint
 {
 protected:
-	udp::endpoint m_endPoint;
+	nwm::UDPEndpoint m_endPoint;
 public:
-	NWMUDPEndpoint(const boost::asio::ip::udp &ip,unsigned short port);
-	NWMUDPEndpoint(const udp::endpoint &ep);
+	NWMUDPEndpoint(const nwm::UDP &ip,unsigned short port);
+	NWMUDPEndpoint(const nwm::UDPEndpoint &ep);
 	NWMUDPEndpoint(NWMUDPEndpoint &ep);
         NWMUDPEndpoint(std::nullptr_t np);
-	udp::endpoint *operator->();
-	udp::endpoint *get();
+	nwm::UDPEndpoint *operator->();
+	nwm::UDPEndpoint *get();
 	virtual bool IsUDP() override;
 };
 
@@ -75,14 +79,14 @@ class NWMTCPEndpoint
 	: public NWMBaseEndpoint
 {
 protected:
-	tcp::endpoint m_endPoint;
+	nwm::TCPEndpoint m_endPoint;
 public:
-	NWMTCPEndpoint(const boost::asio::ip::tcp &ip,unsigned short port);
-	NWMTCPEndpoint(const tcp::endpoint &ep);
+	NWMTCPEndpoint(const nwm::TCP &ip,unsigned short port);
+	NWMTCPEndpoint(const nwm::TCPEndpoint &ep);
 	NWMTCPEndpoint(NWMTCPEndpoint &ep);
         NWMTCPEndpoint(std::nullptr_t np);
-	tcp::endpoint *operator->();
-	tcp::endpoint *get();
+	nwm::TCPEndpoint *operator->();
+	nwm::TCPEndpoint *get();
 	virtual bool IsTCP() override;
 };
 
