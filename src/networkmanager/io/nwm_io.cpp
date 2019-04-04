@@ -6,6 +6,7 @@
 #include "networkmanager/io/nwm_io.h"
 #include "networkmanager/nwm_defines.h"
 #include "networkmanager/interface/nwm_manager.hpp"
+#include "networkmanager/wrappers/nwm_boost_wrapper_impl.hpp"
 #include <sharedutils/util.h>
 
 #define NWM_SEGMENT_LARGE_PACKAGES

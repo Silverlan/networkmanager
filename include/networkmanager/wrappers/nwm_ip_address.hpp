@@ -2,6 +2,7 @@
 #define __NWM_IP_ADDRESS_HPP__
 
 #include "networkmanager/wrappers/nwm_boost_wrapper.hpp"
+#include <string>
 
 namespace boost{namespace asio{namespace ip{class address;};};};
 namespace nwm
@@ -13,6 +14,7 @@ namespace nwm
 		using TBoostWrapperCopyable<boost::asio::ip::address>::TBoostWrapperCopyable;
 		bool operator==(const IPAddress &other) const;
 		bool operator!=(const IPAddress &other) const;
+		std::string ToString() const;
 	};
 };
 

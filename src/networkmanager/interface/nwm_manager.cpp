@@ -4,6 +4,7 @@
 
 #include "networkmanager/nwm_boost.h"
 #include "networkmanager/interface/nwm_manager.hpp"
+#include "networkmanager/wrappers/nwm_boost_wrapper_impl.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)

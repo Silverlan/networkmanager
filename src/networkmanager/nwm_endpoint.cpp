@@ -2,9 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "networkmanager/wrappers/nwm_impl_boost.hpp"
 #include "networkmanager/nwm_endpoint.h"
 #include "networkmanager/wrappers/nwm_ip_address.hpp"
-#include "networkmanager/wrappers/nwm_impl_boost.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
