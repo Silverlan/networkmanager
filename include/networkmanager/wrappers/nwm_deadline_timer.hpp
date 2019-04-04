@@ -14,9 +14,10 @@ namespace nwm
 		
 		const void *operator*() const;
 		void *operator*();
+		const void *GetBoostObject() const;
 		void *GetBoostObject();
 	private:
-		impl::unique_void_ptr m_resolver;
+		impl::unique_void_ptr m_deadlineTimer;
 	};
 };
 

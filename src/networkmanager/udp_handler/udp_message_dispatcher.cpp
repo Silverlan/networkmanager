@@ -5,6 +5,7 @@
 #include "networkmanager/nwm_boost.h"
 #include "networkmanager/udp_handler/udp_message_dispatcher.h"
 #include "networkmanager/wrappers/nwm_impl_boost.hpp"
+#include "networkmanager/wrappers/nwm_boost_wrapper_impl.hpp"
 #include <boost/bind.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION

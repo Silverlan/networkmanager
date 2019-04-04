@@ -7,6 +7,7 @@
 #include "servermanager/interface/sv_nwm_serverclient.hpp"
 #include "servermanager/connection/sv_nwm_udpconnection.h"
 #include "servermanager/connection/sv_nwm_tcpconnection.h"
+#include <networkmanager/wrappers/nwm_boost_wrapper_impl.hpp>
 #include <networkmanager/nwm_error_handle.h>
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)

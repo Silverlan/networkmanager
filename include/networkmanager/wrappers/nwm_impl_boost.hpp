@@ -12,37 +12,58 @@
 
 namespace nwm
 {
-	inline const boost::asio::ip::tcp::socket *cast_socket(const nwm::TCPSocket &socket) {return cast_socket(const_cast<nwm::TCPSocket&>(socket));}
+	inline const boost::asio::ip::tcp::socket *cast_socket(const nwm::TCPSocket &socket)
+	{
+		return static_cast<const boost::asio::ip::tcp::socket*>(*socket);
+	}
 	inline boost::asio::ip::tcp::socket *cast_socket(nwm::TCPSocket &socket)
 	{
 		return static_cast<boost::asio::ip::tcp::socket*>(*socket);
 	}
-	inline const boost::asio::ip::udp::socket *cast_socket(const nwm::UDPSocket &socket) {return cast_socket(const_cast<nwm::UDPSocket&>(socket));}
+	inline const boost::asio::ip::udp::socket *cast_socket(const nwm::UDPSocket &socket)
+	{
+		return static_cast<const boost::asio::ip::udp::socket*>(*socket);
+	}
 	inline boost::asio::ip::udp::socket *cast_socket(nwm::UDPSocket &socket)
 	{
 		return static_cast<boost::asio::ip::udp::socket*>(*socket);
 	}
-	inline const boost::asio::ip::tcp::endpoint *cast_endpoint(const nwm::TCPEndpoint &endpoint) {return cast_endpoint(const_cast<nwm::TCPEndpoint&>(endpoint));}
+	inline const boost::asio::ip::tcp::endpoint *cast_endpoint(const nwm::TCPEndpoint &endpoint)
+	{
+		return static_cast<const boost::asio::ip::tcp::endpoint*>(*endpoint);
+	}
 	inline boost::asio::ip::tcp::endpoint *cast_endpoint(nwm::TCPEndpoint &endpoint)
 	{
 		return static_cast<boost::asio::ip::tcp::endpoint*>(*endpoint);
 	}
-	inline const boost::asio::ip::udp::endpoint *cast_endpoint(const nwm::UDPEndpoint &endpoint) {return cast_endpoint(const_cast<nwm::UDPEndpoint&>(endpoint));}
+	inline const boost::asio::ip::udp::endpoint *cast_endpoint(const nwm::UDPEndpoint &endpoint)
+	{
+		return static_cast<const boost::asio::ip::udp::endpoint*>(*endpoint);
+	}
 	inline boost::asio::ip::udp::endpoint *cast_endpoint(nwm::UDPEndpoint &endpoint)
 	{
 		return static_cast<boost::asio::ip::udp::endpoint*>(*endpoint);
 	}
-	inline const boost::asio::ip::udp::resolver *cast_resolver(const nwm::UDPResolver &resolver) {return cast_resolver(const_cast<nwm::UDPResolver&>(resolver));}
+	inline const boost::asio::ip::udp::resolver *cast_resolver(const nwm::UDPResolver &resolver)
+	{
+		return static_cast<const boost::asio::ip::udp::resolver*>(*resolver);
+	}
 	inline boost::asio::ip::udp::resolver *cast_resolver(nwm::UDPResolver &resolver)
 	{
 		return static_cast<boost::asio::ip::udp::resolver*>(*resolver);
 	}
-	inline const boost::asio::ip::udp::resolver::query *cast_resolver_query(const nwm::UDPResolverQuery &resolver_query) {return cast_resolver_query(const_cast<nwm::UDPResolverQuery&>(resolver_query));}
+	inline const boost::asio::ip::udp::resolver::query *cast_resolver_query(const nwm::UDPResolverQuery &resolver_query)
+	{
+		return static_cast<const boost::asio::ip::udp::resolver::query*>(*resolver_query);
+	}
 	inline boost::asio::ip::udp::resolver::query *cast_resolver_query(nwm::UDPResolverQuery &resolver_query)
 	{
 		return static_cast<boost::asio::ip::udp::resolver::query*>(*resolver_query);
 	}
-	inline const boost::asio::deadline_timer *cast_deadline_timer(const nwm::DeadlineTimer &deadline_timer) {return cast_deadline_timer(const_cast<nwm::DeadlineTimer&>(deadline_timer));}
+	inline const boost::asio::deadline_timer *cast_deadline_timer(const nwm::DeadlineTimer &deadline_timer)
+	{
+		return static_cast<const boost::asio::deadline_timer*>(*deadline_timer);
+	}
 	inline boost::asio::deadline_timer *cast_deadline_timer(nwm::DeadlineTimer &deadline_timer)
 	{
 		return static_cast<boost::asio::deadline_timer*>(*deadline_timer);

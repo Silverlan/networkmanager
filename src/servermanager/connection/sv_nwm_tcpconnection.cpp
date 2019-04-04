@@ -6,6 +6,7 @@
 #include "servermanager/connection/sv_nwm_tcpconnection.h"
 #include "servermanager/interface/sv_nwm_manager.hpp"
 #include "servermanager/wrappers/sv_nwm_impl_boost.hpp"
+#include <networkmanager/wrappers/nwm_boost_wrapper_impl.hpp>
 #include <sharedutils/scope_guard.h>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
