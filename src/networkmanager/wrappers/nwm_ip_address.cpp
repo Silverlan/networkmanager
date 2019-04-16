@@ -4,6 +4,10 @@
 bool nwm::IPAddress::operator==(const IPAddress &other) const {return **this == *other;}
 bool nwm::IPAddress::operator!=(const IPAddress &other) const {return !operator==(other);}
 
+nwm::IPAddress::IPAddress()
+	: TBoostWrapperCopyable<boost::asio::ip::address>{boost::asio::ip::address{}}
+{}
+
 std::string nwm::IPAddress::ToString() const
 {
 	return GetBoostObject().to_string();

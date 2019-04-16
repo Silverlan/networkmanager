@@ -11,6 +11,7 @@ namespace nwm
 		: public TBoostWrapperCopyable<boost::asio::ip::address>
 	{
 	public:
+		IPAddress();
 		using TBoostWrapperCopyable<boost::asio::ip::address>::TBoostWrapperCopyable;
 		bool operator==(const IPAddress &other) const;
 		bool operator!=(const IPAddress &other) const;
