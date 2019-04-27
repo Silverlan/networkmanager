@@ -174,12 +174,19 @@ bool NWMBaseEndpoint::IsTCP() {return false;}
 
 ////////////////////////
 
+static boost::asio::ip::udp::endpoint tmpUDPEndpoint {};
+static boost::asio::ip::udp::endpoint *create_boost_udp_endpoint(const nwm::UDP &ip,unsigned short port)
+{
+	tmpUDPEndpoint = boost::asio::ip::udp::endpoint{*ip,port};
+	return &tmpUDPEndpoint;
+}
+
 NWMUDPEndpoint::NWMUDPEndpoint(const nwm::UDPEndpoint &ep)
 	: m_endPoint(ep)
 {}
 
 NWMUDPEndpoint::NWMUDPEndpoint(const nwm::UDP &ip,unsigned short port)
-	: NWMUDPEndpoint(&boost::asio::ip::udp::endpoint{*ip,port})
+	: NWMUDPEndpoint(create_boost_udp_endpoint(*ip,port))
 {}
 
 NWMUDPEndpoint::NWMUDPEndpoint(NWMUDPEndpoint &ep)
@@ -196,12 +203,19 @@ bool NWMUDPEndpoint::IsUDP() {return true;}
 
 ////////////////////////
 
+static boost::asio::ip::tcp::endpoint tmpTCPEndpoint {};
+static boost::asio::ip::tcp::endpoint *create_boost_tcp_endpoint(const nwm::TCP &ip,unsigned short port)
+{
+	tmpTCPEndpoint = boost::asio::ip::tcp::endpoint{*ip,port};
+	return &tmpTCPEndpoint;
+}
+
 NWMTCPEndpoint::NWMTCPEndpoint(const nwm::TCPEndpoint &ep)
 	: m_endPoint(ep)
 {}
 
 NWMTCPEndpoint::NWMTCPEndpoint(const nwm::TCP &ip,unsigned short port)
-	: NWMTCPEndpoint(&boost::asio::ip::tcp::endpoint{*ip,port})
+	: NWMTCPEndpoint(create_boost_tcp_endpoint(*ip,port))
 {}
 
 NWMTCPEndpoint::NWMTCPEndpoint(NWMTCPEndpoint &ep)

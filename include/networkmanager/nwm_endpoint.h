@@ -69,7 +69,7 @@ public:
 	NWMUDPEndpoint(const nwm::UDP &ip,unsigned short port);
 	NWMUDPEndpoint(const nwm::UDPEndpoint &ep);
 	NWMUDPEndpoint(NWMUDPEndpoint &ep);
-        NWMUDPEndpoint(std::nullptr_t np);
+    NWMUDPEndpoint(std::nullptr_t np);
 	nwm::UDPEndpoint *operator->();
 	nwm::UDPEndpoint *get();
 	virtual bool IsUDP() override;

@@ -17,6 +17,7 @@
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <functional>
 
 class UDPMessageDispatcher
 	: virtual public UDPMessageBase

@@ -16,6 +16,11 @@ namespace nwm
 		operator bool() const;
 		bool operator!() const;
 		std::string Message() const;
+
+		// This is required to shut gcc up about some
+		// weird linking issues
+		ErrorCode &operator=(const ErrorCode &other);
+		ErrorCode &operator=(const boost::system::error_code &o);
 	};
 };
 

@@ -10,12 +10,19 @@
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
 #endif
+
+static udp::endpoint tmpUDPRecEndpoint {};
+static udp::endpoint *create_boost_udp_endpoint(unsigned short port)
+{
+	tmpUDPRecEndpoint = udp::endpoint{udp::v4(),port};
+	return &tmpUDPRecEndpoint;
+}
 UDPMessageReceiver::UDPMessageReceiver(nwm::UDPEndpoint &ep)
 	: UDPMessageBase(),m_socket(m_ioService,ep)
 {}
 
 UDPMessageReceiver::UDPMessageReceiver(unsigned short port)
-	: UDPMessageBase(),m_socket(m_ioService,nwm::UDPEndpoint{&udp::endpoint(udp::v4(),port)})
+	: UDPMessageBase(),m_socket(m_ioService,nwm::UDPEndpoint{create_boost_udp_endpoint(port)})
 {}
 
 UDPMessageReceiver::~UDPMessageReceiver()
