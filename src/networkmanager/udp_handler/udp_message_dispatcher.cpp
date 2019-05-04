@@ -153,7 +153,7 @@ void UDPMessageDispatcher::ResolveNext(bool lockMutex)
 					m_dispatchQueueMutex.unlock();
 					return;
 				}
-				//m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
+				// m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
 				ResolveNext(false);
 			}
 		);

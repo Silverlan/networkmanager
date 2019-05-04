@@ -38,4 +38,3 @@ bool NWMServer::HandlePacket(NWMSession *session,NWMServerClient *cl,unsigned in
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",on)
 #endif
-
