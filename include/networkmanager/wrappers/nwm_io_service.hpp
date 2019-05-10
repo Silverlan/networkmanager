@@ -10,7 +10,7 @@ namespace nwm
 		: public TBoostWrapper<boost::asio::io_context>
 	{
 	public:
-		using TBoostWrapper<boost::asio::io_context>::TBoostWrapper;
+		IOService();
 	};
 };
 
