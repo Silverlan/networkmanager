@@ -9,6 +9,7 @@
 #pragma optimize("",off)
 #endif
 UDPMessageBase::UDPMessageBase()
+	: m_ioService{}
 {}
 
 UDPMessageBase::~UDPMessageBase()
