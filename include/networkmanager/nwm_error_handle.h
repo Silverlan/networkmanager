@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <string>
+#include <stdexcept>
 #include "networkmanager/wrappers/nwm_error_code.hpp"
 
 namespace nwm
