@@ -5,7 +5,7 @@
 #ifndef __SERVERMANAGER_H__
 #define __SERVERMANAGER_H__
 
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include "networkmanager/legacy/nwm_manager.h"
 #include "servermanager/legacy/sv_nwm_serverclient.h"
 #include "servermanager/connection/sv_nwm_tcpconnection.h"

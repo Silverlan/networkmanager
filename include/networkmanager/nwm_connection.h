@@ -8,7 +8,7 @@
 #include <exception>
 #include <string>
 #include <queue>
-#include "nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include <functional>
 #include "nwm_endpoint.h"
 #include "wrappers/nwm_io_service.hpp"

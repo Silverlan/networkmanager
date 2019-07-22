@@ -8,7 +8,7 @@
 #include "networkmanager/nwm_endpoint.h"
 #include "networkmanager/nwm_error_handle.h"
 #include "networkmanager/nwm_event_base.h"
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include "networkmanager/wrappers/nwm_error_code.hpp"
 #include "networkmanager/wrappers/nwm_ip_address.hpp"
 #include <chrono>
