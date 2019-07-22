@@ -10,7 +10,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include "networkmanager/nwm_tcpconnection.h"
 #include "networkmanager/nwm_udpconnection.h"
 

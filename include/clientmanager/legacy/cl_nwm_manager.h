@@ -8,7 +8,7 @@
 #include "networkmanager/legacy/nwm_manager.h"
 #include "clientmanager/cl_nwm_tcpconnection.h"
 #include "clientmanager/cl_nwm_udpconnection.h"
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include <queue>
 #include <functional>
 #include <atomic>

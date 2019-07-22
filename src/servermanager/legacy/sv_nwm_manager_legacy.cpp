@@ -4,7 +4,7 @@
 
 #include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "servermanager/legacy/sv_nwm_manager.h"
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include <mathutil/umath.h>
 
 /*NWMServer *NWMServer::Create(unsigned int masterServerPort,unsigned char conType)

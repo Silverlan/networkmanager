@@ -178,7 +178,9 @@ template<class T>
 	if(t != nullptr)
 	{
 		bTimedOut = t->IsTimedOut();
-		err = *t->GetLastError();
+		auto pErr = t->GetLastError();
+		if(pErr)
+			err = *pErr;
 		t->Release();
 		t = nullptr;
 	}

@@ -5,7 +5,7 @@
 #include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include "clientmanager/legacy/cl_nwm_manager.h"
 #include <mathutil/umath.h>
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include <functional>
 
 #pragma comment(lib,"networkmanager.lib")

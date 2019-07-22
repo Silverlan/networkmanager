@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "networkmanager/io/nwm_io_header.h"
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)

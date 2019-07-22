@@ -7,7 +7,7 @@
 
 #include "servermanager/session/sv_nwm_udp_session.h"
 #include "servermanager/session/sv_nwm_tcp_session.h"
-#include "networkmanager/nwm_packet.h"
+#include <sharedutils/netpacket.hpp>
 #include "sv_nwm_sessionhandle.h"
 #include <chrono>
 #include <atomic>
