@@ -26,7 +26,7 @@ void NWMUDPSession::InitializeSharedPtr()
 
 void NWMUDPSession::OnPacketReceived()
 {
-	m_tLastMessage = std::chrono::high_resolution_clock::now();
+	m_tLastMessage = util::Clock::now();
 }
 
 void NWMUDPSession::Release()

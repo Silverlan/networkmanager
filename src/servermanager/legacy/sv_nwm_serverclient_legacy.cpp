@@ -17,7 +17,7 @@ NWMServerClient::NWMServerClient(NWMServer *manager)
 	m_port(0),m_address{},m_bReady(false),m_bTCPInitialized(false),m_bUDPInitialized(false),
 	m_bDropped(false)
 {
-	m_lastUpdate = std::chrono::high_resolution_clock::now();
+	m_lastUpdate = util::Clock::now();
 	m_handle = SessionHandle(this);
 }
 
@@ -61,13 +61,13 @@ ChronoDuration NWMServerClient::TimeSinceLastActivity() const
 	m_lastUpdateMutex.lock();
 		auto lastUpdate = m_lastUpdate;
 	m_lastUpdateMutex.unlock();
-	return std::chrono::duration_cast<ChronoDuration>(std::chrono::high_resolution_clock::now() -lastUpdate);
+	return std::chrono::duration_cast<ChronoDuration>(util::Clock::now() -lastUpdate);
 }
 
 void NWMServerClient::ResetLastUpdate()
 {
 	m_lastUpdateMutex.lock();
-		m_lastUpdate = std::chrono::high_resolution_clock::now();
+		m_lastUpdate = util::Clock::now();
 	m_lastUpdateMutex.unlock();
 }
 

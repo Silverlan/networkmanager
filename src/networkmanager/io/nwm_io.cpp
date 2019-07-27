@@ -58,7 +58,7 @@ void NWMIO::SetReady()
 {
 	if(m_bReady == true)
 		return;
-	m_tLastMessage = std::chrono::high_resolution_clock::now();
+	m_tLastMessage = util::Clock::now();
 	m_bReady = true;
 	while(!m_initPackets.empty())
 	{
@@ -193,7 +193,7 @@ void NWMIO::SendNextPacket()
 	}
 
 	m_writeItem = std::make_unique<PacketQueueItem>(item);
-	m_writeItem->packet.SetTimeActivated(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+	m_writeItem->packet.SetTimeActivated(util::clock::to_int(util::clock::get_duration_since_start()));
 #ifdef NWM_VERBOSE
 	//std::cout<<"Sending message to "<<ep.GetIP()<<std::endl;
 #endif
@@ -331,7 +331,7 @@ void NWMIO::HandleReadHeader(const nwm::ErrorCode &err,std::size_t bytes)
 {
 	if(!IsConnectionActive() || HandleError(err) == false)
 		return;
-	m_tLastMessage = std::chrono::high_resolution_clock::now();
+	m_tLastMessage = util::Clock::now();
 	auto bExtended = (bytes == NWM_PACKET_HEADER_EXTENDED_SIZE) ? true : false;
 	if(bytes != NWM_PACKET_HEADER_SIZE && bExtended == false)
 	{
@@ -377,7 +377,7 @@ void NWMIO::HandleReadHeader(const nwm::ErrorCode &err,std::size_t bytes)
 	{
 		m_readPacket = NetPacket(id,szBody);
 		m_readSizeLeft = szBody;
-		m_readPacket.SetTimeActivated(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+		m_readPacket.SetTimeActivated(util::clock::to_int(util::clock::get_duration_since_start()));
 	}
 	else if(szBody != m_readSizeLeft) // Size has to be the same as what we're expecting, otherwise a packet was most likely lost
 	{
@@ -407,7 +407,7 @@ void NWMIO::HandleReadBody(const nwm::ErrorCode &error,std::size_t sz)
 	m_bReading = false;
 	if(!IsConnectionActive() || HandleError(error) == false)
 		return;
-	m_tLastMessage = std::chrono::high_resolution_clock::now();
+	m_tLastMessage = util::Clock::now();
 	unsigned int id = m_readPacket.GetMessageID();
 #if NWM_VERBOSE >= 2
 	std::cout<<"[NWM] HandleReadBody: "<<id<<" ("<<util::get_pretty_bytes(sz)<<" / "<<util::get_pretty_bytes(m_readPacket->GetSize())<<") ("<<error.message()<<")"<<std::endl;

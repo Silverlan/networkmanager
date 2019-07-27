@@ -9,14 +9,15 @@
 #include "networkmanager/nwm_error_handle.h"
 #include "networkmanager/nwm_event_base.h"
 #include <sharedutils/netpacket.hpp>
+#include <sharedutils/util_clock.hpp>
 #include "networkmanager/wrappers/nwm_error_code.hpp"
 #include "networkmanager/wrappers/nwm_ip_address.hpp"
 #include <chrono>
 
 #define NWM_USE_IPV6 0
 
-using ChronoTimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
-using ChronoDuration = std::chrono::duration<std::chrono::high_resolution_clock::rep,std::chrono::high_resolution_clock::period>;
+using ChronoTimePoint = util::Clock::time_point;
+using ChronoDuration = util::Clock::duration;
 
 class NWMIOBase
 	: public std::enable_shared_from_this<NWMIOBase>,

@@ -11,6 +11,7 @@
 #include <thread>
 #include <atomic>
 #include <sharedutils/netpacket.hpp>
+#include <sharedutils/util_clock.hpp>
 #include "networkmanager/nwm_tcpconnection.h"
 #include "networkmanager/nwm_udpconnection.h"
 
@@ -44,8 +45,8 @@ enum class CLIENT_DROPPED
 };
 std::string GetClientDroppedReasonString(CLIENT_DROPPED reason);
 
-using ChronoTimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
-using ChronoDuration = std::chrono::duration<std::chrono::high_resolution_clock::rep,std::chrono::high_resolution_clock::period>;
+using ChronoTimePoint = util::Clock::time_point;
+using ChronoDuration = util::Clock::duration;
 
 class NWManagerBase
 {

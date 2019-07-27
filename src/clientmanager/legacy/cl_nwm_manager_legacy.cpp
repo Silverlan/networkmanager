@@ -6,6 +6,7 @@
 #include "clientmanager/legacy/cl_nwm_manager.h"
 #include <mathutil/umath.h>
 #include <sharedutils/netpacket.hpp>
+#include <sharedutils/util_clock.hpp>
 #include <functional>
 
 #pragma comment(lib,"networkmanager.lib")
@@ -112,9 +113,9 @@ void NWMClient::Run()
 		return;
 	if(m_bPingEnabled == false)
 		return;
-	ChronoTimePoint now = std::chrono::high_resolution_clock::now();
+	auto now = util::Clock::now();
 	m_lastPingMutex.lock();
-		ChronoTimePoint lastPing = m_tLastPing;
+		auto lastPing = m_tLastPing;
 	m_lastPingMutex.unlock();
 	if(std::chrono::duration_cast<std::chrono::seconds>(now -lastPing).count() < NWM_CLIENT_PING_INTERVAL)
 		return;
@@ -124,7 +125,7 @@ void NWMClient::Run()
 void NWMClient::Ping()
 {
 	m_lastPingMutex.lock();
-		m_tLastPing = std::chrono::high_resolution_clock::now();
+		m_tLastPing = util::Clock::now();
 	m_lastPingMutex.unlock();
 	NetPacket p(NWM_MESSAGE_OUT_PING);
 	p->Write<unsigned short>(m_latency);
@@ -142,7 +143,7 @@ void NWMClient::Pong()
 	m_latencies[4] = static_cast<unsigned short>(
 		round(
 			std::chrono::duration_cast<std::chrono::milliseconds>(
-				std::chrono::high_resolution_clock::now() -lastPing
+				util::Clock::now() -lastPing
 			).count() *ratio +m_latency *(1.0 -ratio)
 		)
 	);

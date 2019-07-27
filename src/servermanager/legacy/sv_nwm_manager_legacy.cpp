@@ -333,7 +333,7 @@ void NWMServer::Run()
 	}
 	/*if(IsClosing())
 		return;
-	ChronoTimePoint now = std::chrono::high_resolution_clock::now();
+	ChronoTimePoint now = util::Clock::now();
 	if(std::chrono::duration_cast<std::chrono::seconds>(now -m_lastCheck).count() < NWM_SERVER_INACTIVITY_CHECK_INTERVAL)
 		return;
 	m_lastCheck = now;

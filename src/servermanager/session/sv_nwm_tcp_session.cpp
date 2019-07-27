@@ -18,7 +18,7 @@ NWMTCPSession::~NWMTCPSession()
 
 void NWMTCPSession::OnPacketReceived()
 {
-	m_tLastMessage = std::chrono::high_resolution_clock::now();
+	m_tLastMessage = util::Clock::now();
 }
 
 void NWMTCPSession::Release()

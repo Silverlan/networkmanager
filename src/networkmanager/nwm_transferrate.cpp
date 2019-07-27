@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "networkmanager/nwm_transferrate.h"
+#include <sharedutils/util_clock.hpp>
 
 #define TRANSFER_RATE_INTERVAL_MS 500
 
@@ -16,7 +17,7 @@ nwm::TransferRate::TransferRate()
 void nwm::TransferRate::AddSample(unsigned long long s)
 {
 	sampleSize += s *(1000 /TRANSFER_RATE_INTERVAL_MS);
-	ChronoTimePoint p = std::chrono::high_resolution_clock::now();
+	ChronoTimePoint p = util::Clock::now();
 	auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(p -lastUpdate);
 	if(delta.count() >= TRANSFER_RATE_INTERVAL_MS)
 	{

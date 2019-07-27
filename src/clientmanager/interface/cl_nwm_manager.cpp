@@ -196,7 +196,7 @@ void nwm::Client::SendPacket(nwm::Protocol protocol,const NetPacket &packet,bool
 void nwm::Client::Ping()
 {
 	m_lastPingMutex.lock();
-		m_tLastPing = std::chrono::high_resolution_clock::now();
+		m_tLastPing = util::Clock::now();
 	m_lastPingMutex.unlock();
 	NetPacket p(NWM_MESSAGE_OUT_PING);
 	p->Write<uint16_t>(m_latency);
@@ -214,7 +214,7 @@ void nwm::Client::Pong()
 	m_latencies.back() = static_cast<uint16_t>(
 		round(
 			std::chrono::duration_cast<std::chrono::milliseconds>(
-				std::chrono::high_resolution_clock::now() -lastPing
+				util::Clock::now() -lastPing
 			).count() *ratio +m_latency *(1.0 -ratio)
 		)
 	);
@@ -229,7 +229,7 @@ void nwm::Client::Run()
 		return;
 	if(m_bPingEnabled == false)
 		return;
-	auto now = std::chrono::high_resolution_clock::now();
+	auto now = util::Clock::now();
 	m_lastPingMutex.lock();
 		auto lastPing = m_tLastPing;
 	m_lastPingMutex.unlock();
