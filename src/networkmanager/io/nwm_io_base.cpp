@@ -5,6 +5,7 @@
 #include "networkmanager/nwm_boost.h"
 #include "networkmanager/io/nwm_io_base.h"
 #include "networkmanager/wrappers/nwm_boost_wrapper_impl.hpp"
+#include <sharedutils/util_clock.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("",off)
@@ -13,7 +14,7 @@ NWMIOBase::NWMIOBase()
 	: std::enable_shared_from_this<NWMIOBase>(),NWMEventBase(),m_bClosing(false),m_bTerminated(false),m_bTerminating(false),
 	m_remoteEndpoint(),m_localEndpoint(),m_tTimeout(0.0),m_bTimedOut(false),m_closeHandle(),m_lastError{}
 {
-	m_tLastMessage = std::chrono::high_resolution_clock::now();
+	m_tLastMessage = util::Clock::now();
 }
 
 NWMIOBase::~NWMIOBase()
@@ -22,7 +23,7 @@ NWMIOBase::~NWMIOBase()
 void NWMIOBase::SetTimeoutDuration(double duration,bool bIfConnectionActive)
 {
 	m_tTimeout = duration;
-	m_tLastMessage = std::chrono::high_resolution_clock::now(); // Make sure we're not causing a timeout right after this function has been called
+	m_tLastMessage = util::Clock::now(); // Make sure we're not causing a timeout right after this function has been called
 }
 
 const nwm::ErrorCode &NWMIOBase::GetLastError() const {return m_lastError;}
@@ -97,7 +98,7 @@ void NWMIOBase::Run()
 	}
 	else if((m_bTimeoutIfConnectionActive == false || IsConnectionActive()) && m_tTimeout > 0.0 && IsReady() == true)
 	{
-		ChronoTimePoint now = std::chrono::high_resolution_clock::now();
+		auto now = util::Clock::now();
 		double t = std::chrono::duration<double>(now -m_tLastMessage).count();
 		if(t > m_tTimeout)
 		{

@@ -14,8 +14,8 @@
 #include <memory>
 #include <atomic>
 
-using ChronoTimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
-using ChronoDuration = std::chrono::duration<std::chrono::high_resolution_clock::rep,std::chrono::high_resolution_clock::period>;
+using ChronoTimePoint = util::Clock::time_point;
+using ChronoDuration = util::Clock::duration;
 
 class NWMServer;
 class NWMServerClient

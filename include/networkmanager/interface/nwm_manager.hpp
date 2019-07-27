@@ -11,13 +11,14 @@
 #include <atomic>
 #include <mutex>
 #include <sharedutils/netpacket.hpp>
+#include <sharedutils/util_clock.hpp>
 #include "networkmanager/nwm_tcpconnection.h"
 #include "networkmanager/nwm_udpconnection.h"
 #include "networkmanager/wrappers/nwm_ip_address.hpp"
 
 //#define NETWORK_ERROR_UNHANDLED_PACKET 10
-using ChronoTimePoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
-using ChronoDuration = std::chrono::duration<std::chrono::high_resolution_clock::rep,std::chrono::high_resolution_clock::period>;
+using ChronoTimePoint = util::Clock::time_point;
+using ChronoDuration = util::Clock::duration;
 namespace nwm
 {
 	enum class ConnectionType : uint32_t
