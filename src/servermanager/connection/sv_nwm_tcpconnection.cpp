@@ -114,7 +114,7 @@ void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const nwm::Error
 	ScheduleEvent([this,session]() {
 		if(m_acceptCallbacks.lock != nullptr)
 			m_acceptCallbacks.lock();
-		ScopeGuard sg([this]() {
+		util::ScopeGuard sg([this]() {
 			if(m_acceptCallbacks.unlock != nullptr)
 				m_acceptCallbacks.unlock();
 		});

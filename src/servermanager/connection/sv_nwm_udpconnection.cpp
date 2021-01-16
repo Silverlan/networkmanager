@@ -22,7 +22,7 @@ SVNWMUDPConnection::SVNWMUDPConnection(unsigned short localPort)
 			auto ptrSession = std::static_pointer_cast<NWMUDPSession>(session->shared_from_this());
 			if(m_acceptCallbacks.lock != nullptr)
 				m_acceptCallbacks.lock();
-			ScopeGuard sg([this]() {
+			util::ScopeGuard sg([this]() {
 				if(m_acceptCallbacks.unlock != nullptr)
 					m_acceptCallbacks.unlock();
 			});
