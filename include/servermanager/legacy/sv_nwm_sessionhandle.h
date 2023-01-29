@@ -10,21 +10,19 @@
 #include <sharedutils/def_handle.h>
 
 class NWMServerClient;
-DECLARE_BASE_HANDLE(,NWMServerClient,NWMServerClient);
+DECLARE_BASE_HANDLE(, NWMServerClient, NWMServerClient);
 
 class NWMServer;
 enum class CLIENT_DROPPED;
-class SessionHandle
-	: public NWMServerClientHandle
-{
-public:
+class SessionHandle : public NWMServerClientHandle {
+  public:
 	friend NWMServerClient;
 	friend NWMServer;
-private:
+  private:
 	NWMServer *m_manager;
-protected:
+  protected:
 	void Initialize();
-public:
+  public:
 	SessionHandle();
 	SessionHandle(PtrNWMServerClient *t);
 	SessionHandle(NWMServerClient *cl);

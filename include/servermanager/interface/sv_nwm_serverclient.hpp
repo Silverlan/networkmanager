@@ -13,22 +13,19 @@
 class NWMSession;
 class NWMUDPSession;
 class NWMTCPSession;
-namespace nwm
-{
+namespace nwm {
 	enum class ClientDropped : int8_t;
 
-	class ServerClient
-		: public std::enable_shared_from_this<ServerClient>
-	{
-	public:
+	class ServerClient : public std::enable_shared_from_this<ServerClient> {
+	  public:
 		virtual ~ServerClient();
 		ServerClientHandle GetHandle() const;
 
 		bool IsTarget(const NWMEndpoint &ep) const;
-		bool IsTarget(const nwm::IPAddress &address,uint16_t port) const;
+		bool IsTarget(const nwm::IPAddress &address, uint16_t port) const;
 		bool UsesAddress(const nwm::IPAddress &address) const;
 		bool UsesPort(uint16_t port) const;
-		void SetAddress(nwm::Protocol protocol,const nwm::IPAddress &address,uint16_t port);
+		void SetAddress(nwm::Protocol protocol, const nwm::IPAddress &address, uint16_t port);
 
 		bool IsClosed() const;
 		bool IsClosing() const;
@@ -49,25 +46,24 @@ namespace nwm
 		bool IsReady() const;
 		void Close();
 		void Drop(ClientDropped e);
-	protected:
+	  protected:
 		ServerClient(Server *manager);
 
 		void SetIndex(size_t idx);
 		size_t GetIndex() const;
-		virtual void OnClosed()=0;
+		virtual void OnClosed() = 0;
 		virtual void Release();
 		void InitializeSessionData(NWMSession *session);
 		void ResetLastUpdate();
 		template<class T>
-			void SessionCloseHandle(std::shared_ptr<T> &t);
+		void SessionCloseHandle(std::shared_ptr<T> &t);
 
 		std::atomic<bool> m_bDropped = {false};
 		std::atomic<uint16_t> m_latency = {0u};
 		std::atomic<size_t> m_index = {0ull};
 		Server *m_manager;
 
-		struct Connection
-		{
+		struct Connection {
 			std::atomic<bool> connected = {false};
 			std::atomic<bool> initialized = {false};
 
@@ -88,7 +84,7 @@ namespace nwm
 
 		// These are NOT thread-safe!
 		// The 'protocol'-parameter is merely a preference and not a guarantee the specified protocol will be used!
-		virtual void SendPacket(const NetPacket &p,nwm::Protocol protocol=nwm::Protocol::TCP);
+		virtual void SendPacket(const NetPacket &p, nwm::Protocol protocol = nwm::Protocol::TCP);
 		virtual void Run();
 		void Terminate();
 		void UpdateReadyState();
@@ -96,7 +92,7 @@ namespace nwm
 		std::shared_ptr<NWMTCPSession> m_tcpSession = nullptr;
 		mutable std::mutex m_sessionDataMutex;
 		ServerClientHandle m_handle = {};
-	private:
+	  private:
 		std::atomic<bool> m_bClosing = {false};
 		friend Server;
 

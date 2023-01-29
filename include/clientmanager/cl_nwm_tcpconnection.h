@@ -10,23 +10,20 @@
 #include "networkmanager/io/nwm_tcp_io.h"
 #include "networkmanager/wrappers/nwm_error_code.hpp"
 
-class CLNWMTCPConnection
-	: public NWMTCPConnection,public CLNWMConnection,
-	public NWMTCPIO
-{
-protected:
+class CLNWMTCPConnection : public NWMTCPConnection, public CLNWMConnection, public NWMTCPIO {
+  protected:
 	std::function<void(void)> m_connectCallback;
 	void OnConnect(const nwm::ErrorCode &err);
 	virtual void CloseSocket() override;
-	virtual void SendPacket(const NetPacket &packet,const NWMEndpoint &ep,bool bOwn=false) override;
+	virtual void SendPacket(const NetPacket &packet, const NWMEndpoint &ep, bool bOwn = false) override;
 	virtual void OnTimedOut() override;
 	void HandleOnConnect(const nwm::ErrorCode &err);
-public:
+  public:
 	CLNWMTCPConnection();
 	virtual ~CLNWMTCPConnection() override;
 	NWMTCPEndpoint *GetRemoteEndPoint();
-	virtual void SendPacket(const NetPacket &packet,bool bOwn=false) override;
-	void Connect(std::string serverIp,unsigned short serverPort);
+	virtual void SendPacket(const NetPacket &packet, bool bOwn = false) override;
+	void Connect(std::string serverIp, unsigned short serverPort);
 	virtual void Close() override;
 	virtual bool IsClosing() const override;
 	virtual void Run() override;

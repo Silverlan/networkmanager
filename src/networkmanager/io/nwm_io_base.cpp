@@ -8,32 +8,29 @@
 #include <sharedutils/util_clock.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMIOBase::NWMIOBase()
-	: std::enable_shared_from_this<NWMIOBase>(),NWMEventBase(),m_bClosing(false),m_bTerminated(false),m_bTerminating(false),
-	m_remoteEndpoint(),m_localEndpoint(),m_tTimeout(0.0),m_bTimedOut(false),m_closeHandle(),m_lastError{}
+NWMIOBase::NWMIOBase() : std::enable_shared_from_this<NWMIOBase>(), NWMEventBase(), m_bClosing(false), m_bTerminated(false), m_bTerminating(false), m_remoteEndpoint(), m_localEndpoint(), m_tTimeout(0.0), m_bTimedOut(false), m_closeHandle(), m_lastError {}
 {
 	m_tLastMessage = util::Clock::now();
 }
 
-NWMIOBase::~NWMIOBase()
-{}
+NWMIOBase::~NWMIOBase() {}
 
-void NWMIOBase::SetTimeoutDuration(double duration,bool bIfConnectionActive)
+void NWMIOBase::SetTimeoutDuration(double duration, bool bIfConnectionActive)
 {
 	m_tTimeout = duration;
 	m_tLastMessage = util::Clock::now(); // Make sure we're not causing a timeout right after this function has been called
 }
 
-const nwm::ErrorCode &NWMIOBase::GetLastError() const {return m_lastError;}
-void NWMIOBase::OnError(const nwm::ErrorCode &error) {m_lastError = error;}
+const nwm::ErrorCode &NWMIOBase::GetLastError() const { return m_lastError; }
+void NWMIOBase::OnError(const nwm::ErrorCode &error) { m_lastError = error; }
 
-const NWMEndpoint &NWMIOBase::GetRemoteEndPoint() const {return m_remoteEndpoint;}
-const NWMEndpoint &NWMIOBase::GetLocalEndPoint() const {return m_localEndpoint;}
-bool NWMIOBase::IsTerminated() const {return m_bTerminated;}
+const NWMEndpoint &NWMIOBase::GetRemoteEndPoint() const { return m_remoteEndpoint; }
+const NWMEndpoint &NWMIOBase::GetLocalEndPoint() const { return m_localEndpoint; }
+bool NWMIOBase::IsTerminated() const { return m_bTerminated; }
 
-bool NWMIOBase::ShouldTerminate() {return (m_bClosing == false || m_bTerminating == true || m_bTerminated == true) ? false : true;}
+bool NWMIOBase::ShouldTerminate() { return (m_bClosing == false || m_bTerminating == true || m_bTerminated == true) ? false : true; }
 
 bool NWMIOBase::UpdateTermination()
 {
@@ -45,9 +42,13 @@ bool NWMIOBase::UpdateTermination()
 
 void NWMIOBase::OnTerminated() {}
 
-void NWMIOBase::SetCloseHandle(const std::function<void(void)> &cbClose) {m_closeHandle = cbClose;}
+void NWMIOBase::SetCloseHandle(const std::function<void(void)> &cbClose) { m_closeHandle = cbClose; }
 
-void NWMIOBase::ScheduleTermination() {m_bTerminating = true; m_bClosing = true;}
+void NWMIOBase::ScheduleTermination()
+{
+	m_bTerminating = true;
+	m_bClosing = true;
+}
 
 void NWMIOBase::Terminate()
 {
@@ -67,8 +68,7 @@ void NWMIOBase::Close(bool bForce)
 	if(m_bTerminating == true || m_bClosing == true)
 		return;
 	m_bClosing = true;
-	if(ShouldTerminate())
-	{
+	if(ShouldTerminate()) {
 		if(bForce == true)
 			ScheduleTermination();
 		else
@@ -86,22 +86,18 @@ void NWMIOBase::Close()
 void NWMIOBase::Run()
 {
 	ProcessEvents();
-	if(IsClosing())
-	{
-		if(m_bTerminating == true)
-		{
+	if(IsClosing()) {
+		if(m_bTerminating == true) {
 			Terminate();
 			return;
 		}
 		UpdateTermination();
 		return;
 	}
-	else if((m_bTimeoutIfConnectionActive == false || IsConnectionActive()) && m_tTimeout > 0.0 && IsReady() == true)
-	{
+	else if((m_bTimeoutIfConnectionActive == false || IsConnectionActive()) && m_tTimeout > 0.0 && IsReady() == true) {
 		auto now = util::Clock::now();
-		double t = std::chrono::duration<double>(now -m_tLastMessage).count();
-		if(t > m_tTimeout)
-		{
+		double t = std::chrono::duration<double>(now - m_tLastMessage).count();
+		if(t > m_tTimeout) {
 			m_bTimedOut = true;
 			Close();
 			OnTimedOut();
@@ -109,11 +105,11 @@ void NWMIOBase::Run()
 	}
 }
 
-bool NWMIOBase::IsTimedOut() const {return m_bTimedOut;}
+bool NWMIOBase::IsTimedOut() const { return m_bTimedOut; }
 void NWMIOBase::OnTimedOut() {}
 
-bool NWMIOBase::IsClosing() const {return m_bClosing;}
-bool NWMIOBase::IsConnectionActive() {return (!m_bTerminated && !m_bTerminating) ? true : false;}
+bool NWMIOBase::IsClosing() const { return m_bClosing; }
+bool NWMIOBase::IsConnectionActive() { return (!m_bTerminated && !m_bTerminating) ? true : false; }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

@@ -17,10 +17,11 @@
 #define NWM_MESSAGE_IN_REGISTER_CONFIRMATION 52
 #define NWM_MESSAGE_IN_DROPPED 53
 
-namespace nwm {enum class ClientDropped : int8_t;};
-class CLNWMConnection
-{
-protected:
+namespace nwm {
+	enum class ClientDropped : int8_t;
+};
+class CLNWMConnection {
+  protected:
 	CLNWMConnection(NWMConnection *con);
 	NWMConnection *m_connection;
 	bool m_bRegistered;
@@ -28,16 +29,16 @@ protected:
 	std::function<void(void)> m_connectionHandle;
 	std::function<void(nwm::ClientDropped)> m_disconnectedHandle;
 	void OnConnected();
-	virtual void Close()=0;
+	virtual void Close() = 0;
 	virtual void OnDisconnected(nwm::ClientDropped reason);
 	virtual void OnTimedOut();
-public:
+  public:
 	void Disconnect();
 	void SetConnectionHandle(const std::function<void(void)> cbConnection);
 	void SetDisconnectionHandle(const std::function<void(nwm::ClientDropped)> cbDisconnected);
-	virtual bool IsClosing() const=0;
-	virtual void SendPacket(const NetPacket &packet,bool bOwn=false)=0;
-	virtual void Run()=0;
+	virtual bool IsClosing() const = 0;
+	virtual void SendPacket(const NetPacket &packet, bool bOwn = false) = 0;
+	virtual void Run() = 0;
 };
 
 #endif

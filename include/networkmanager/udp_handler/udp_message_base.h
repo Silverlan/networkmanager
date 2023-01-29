@@ -7,13 +7,12 @@
 
 #include "networkmanager/wrappers/nwm_io_service.hpp"
 
-class UDPMessageBase
-{
-protected:
+class UDPMessageBase {
+  protected:
 	UDPMessageBase();
 	virtual ~UDPMessageBase();
 	nwm::IOService m_ioService;
-public:
+  public:
 	virtual void Poll();
 };
 

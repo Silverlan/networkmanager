@@ -9,21 +9,19 @@
 #include "networkmanager/wrappers/nwm_impl_boost.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMUDPIO::NWMUDPIO(nwm::IOService &ioService,unsigned short localPort)
-	: NWMIO(),NWMUDPIOBase()
+NWMUDPIO::NWMUDPIO(nwm::IOService &ioService, unsigned short localPort) : NWMIO(), NWMUDPIOBase()
 {
-	try
-	{
+	try {
 		udp::resolver resolver(*ioService);
 #if NWM_USE_IPV6 == 0
-		udp::resolver::query query(udp::v4(),std::to_string(localPort));
+		udp::resolver::query query(udp::v4(), std::to_string(localPort));
 #else
-		udp::resolver::query query("::1",std::to_string(localPort));
+		udp::resolver::query query("::1", std::to_string(localPort));
 #endif
 		udp::endpoint localEndpoint = *resolver.resolve(query);
-		m_localEndpoint = NWMEndpoint::CreateUDP(nwm::UDPEndpoint{&localEndpoint});
+		m_localEndpoint = NWMEndpoint::CreateUDP(nwm::UDPEndpoint {&localEndpoint});
 		m_socket = std::make_unique<nwm::UDPSocket>(ioService);
 #if NWM_USE_IPV6 == 0
 		cast_socket(*m_socket)->open(udp::v4());
@@ -32,8 +30,7 @@ NWMUDPIO::NWMUDPIO(nwm::IOService &ioService,unsigned short localPort)
 #endif
 		cast_socket(*m_socket)->bind(localEndpoint);
 	}
-	catch(std::exception &e)
-	{
+	catch(std::exception &e) {
 		m_socket = nullptr;
 		throw NWMException(e.what());
 	}
@@ -45,17 +42,16 @@ NWMUDPIO::~NWMUDPIO()
 	Terminate();
 }
 
-nwm::Protocol NWMUDPIO::GetProtocol() const {return nwm::Protocol::UDP;}
-bool NWMUDPIO::IsTerminated() const {return NWMIO::IsTerminated() || NWMUDPIOBase::IsTerminated() || m_socket == nullptr || !cast_socket(*m_socket)->is_open();}
+nwm::Protocol NWMUDPIO::GetProtocol() const { return nwm::Protocol::UDP; }
+bool NWMUDPIO::IsTerminated() const { return NWMIO::IsTerminated() || NWMUDPIOBase::IsTerminated() || m_socket == nullptr || !cast_socket(*m_socket)->is_open(); }
 
-NWMEndpoint &NWMUDPIO::GetLocalEndPoint() {return m_localEndpoint;}
+NWMEndpoint &NWMUDPIO::GetLocalEndPoint() { return m_localEndpoint; }
 
 void NWMUDPIO::CloseSocket()
 {
 	if(m_socket == nullptr)
 		return;
-	if(cast_socket(*m_socket)->is_open())
-	{
+	if(cast_socket(*m_socket)->is_open()) {
 		//m_socket->shutdown(boost::asio::socket_base::shutdown_type::shutdown_both); // Not required for UDP sockets
 		cast_socket(*m_socket)->close();
 	}
@@ -113,10 +109,8 @@ unsigned short NWMUDPIO::GetLocalPort() const
 	return endPoint.port();
 }
 
-void NWMUDPIO::AsyncWrite(const NWMEndpoint &ep,const std::vector<nwm::MutableBuffer> &buffers,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f)
-{NWMUDPIOBase::AsyncWrite(m_socket.get(),buffers,ep,f);}
-void NWMUDPIO::AsyncRead(const std::vector<nwm::MutableBuffer> &buffers,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f,bool bPeek)
-{NWMUDPIOBase::AsyncRead(m_socket.get(),buffers,m_remoteEndpoint,f,bPeek);}
+void NWMUDPIO::AsyncWrite(const NWMEndpoint &ep, const std::vector<nwm::MutableBuffer> &buffers, const std::function<void(const nwm::ErrorCode &, std::size_t)> &f) { NWMUDPIOBase::AsyncWrite(m_socket.get(), buffers, ep, f); }
+void NWMUDPIO::AsyncRead(const std::vector<nwm::MutableBuffer> &buffers, const std::function<void(const nwm::ErrorCode &, std::size_t)> &f, bool bPeek) { NWMUDPIOBase::AsyncRead(m_socket.get(), buffers, m_remoteEndpoint, f, bPeek); }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

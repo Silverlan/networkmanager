@@ -10,38 +10,34 @@
 #include <functional>
 
 class NWMSession;
-DECLARE_BASE_HANDLE_EXT(,NWMSession,NWMSession,
-public:
-	std::shared_ptr<NWMSession> ptr;
-);
+DECLARE_BASE_HANDLE_EXT(, NWMSession, NWMSession, public : std::shared_ptr<NWMSession> ptr;);
 
 class NetPacket;
 class NWMIOBase;
-class NWMSession
-{
-protected:
+class NWMSession {
+  protected:
 	NWMSession();
 	NWMSessionHandle m_handle;
-	virtual void OnPacketReceived()=0;
-	virtual void InitializeSharedPtr()=0;
-public:
+	virtual void OnPacketReceived() = 0;
+	virtual void InitializeSharedPtr() = 0;
+  public:
 	virtual ~NWMSession();
 	void Initialize();
-	virtual bool IsUDP() const=0;
+	virtual bool IsUDP() const = 0;
 	bool IsTCP() const;
 	virtual void Release();
-	virtual const NWMEndpoint &GetRemoteEndPoint() const=0;
-	virtual void SetPacketHandle(const std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> &cbPacket)=0;
-	virtual void Close()=0;
-	virtual void Run()=0;
-	virtual void SendPacket(const NetPacket &packet)=0;
-	virtual std::string GetIP() const=0;
-	virtual unsigned short GetPort() const=0;
-	virtual nwm::IPAddress GetAddress() const=0;
+	virtual const NWMEndpoint &GetRemoteEndPoint() const = 0;
+	virtual void SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket) = 0;
+	virtual void Close() = 0;
+	virtual void Run() = 0;
+	virtual void SendPacket(const NetPacket &packet) = 0;
+	virtual std::string GetIP() const = 0;
+	virtual unsigned short GetPort() const = 0;
+	virtual nwm::IPAddress GetAddress() const = 0;
 	bool IsTarget(const NWMEndpoint &ep);
-	bool IsTarget(const nwm::IPAddress &address,unsigned short port);
-	virtual void SetTimeoutDuration(double duration)=0;
-	virtual void SetCloseHandle(const std::function<void(void)> &cbClose)=0;
+	bool IsTarget(const nwm::IPAddress &address, unsigned short port);
+	virtual void SetTimeoutDuration(double duration) = 0;
+	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) = 0;
 	NWMSessionHandle GetHandle();
 };
 

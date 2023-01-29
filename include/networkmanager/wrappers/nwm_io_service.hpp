@@ -3,13 +3,14 @@
 
 #include "networkmanager/wrappers/nwm_boost_wrapper.hpp"
 
-namespace boost{namespace asio{class io_context;};};
-namespace nwm
-{
-	class IOService
-		: public TBoostWrapper<boost::asio::io_context>
-	{
-	public:
+namespace boost {
+	namespace asio {
+		class io_context;
+	};
+};
+namespace nwm {
+	class IOService : public TBoostWrapper<boost::asio::io_context> {
+	  public:
 		IOService();
 	};
 };

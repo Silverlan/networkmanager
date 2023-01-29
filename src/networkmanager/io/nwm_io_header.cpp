@@ -6,17 +6,11 @@
 #include <sharedutils/netpacket.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMIOHeader::NWMIOHeader()
-{
-	m_header = std::unique_ptr<uint8_t[]>(new uint8_t[NWM_PACKET_HEADER_EXTENDED_SIZE]);
-}
+NWMIOHeader::NWMIOHeader() { m_header = std::unique_ptr<uint8_t[]>(new uint8_t[NWM_PACKET_HEADER_EXTENDED_SIZE]); }
 
-NWMIOHeader::~NWMIOHeader()
-{
-	m_header = nullptr;
-}
+NWMIOHeader::~NWMIOHeader() { m_header = nullptr; }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

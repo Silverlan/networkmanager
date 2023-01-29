@@ -10,27 +10,23 @@
 #include <stdexcept>
 #include "networkmanager/wrappers/nwm_error_code.hpp"
 
-namespace nwm
-{
+namespace nwm {
 	std::string get_error_name(int id);
 };
 
-class NWMException
-	: public std::runtime_error
-{
-public:
+class NWMException : public std::runtime_error {
+  public:
 	NWMException(const std::string &err);
 };
 
-class NWMErrorHandle
-{
-protected:
+class NWMErrorHandle {
+  protected:
 	NWMErrorHandle();
-	std::function<void(const nwm::ErrorCode&)> m_errorHandle;
+	std::function<void(const nwm::ErrorCode &)> m_errorHandle;
 	virtual bool HandleError(const nwm::ErrorCode &error);
-public:
+  public:
 	static std::string GetErrorName(int id);
-	void SetErrorHandle(const std::function<void(const nwm::ErrorCode&)> &cbError);
+	void SetErrorHandle(const std::function<void(const nwm::ErrorCode &)> &cbError);
 };
 
 #endif

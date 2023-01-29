@@ -5,20 +5,16 @@
 #include "networkmanager/nwm_udpconnection.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMUDPConnection::NWMUDPConnection()
-	: NWMConnection()
-{
-}
-NWMUDPConnection::~NWMUDPConnection()
-{}
+NWMUDPConnection::NWMUDPConnection() : NWMConnection() {}
+NWMUDPConnection::~NWMUDPConnection() {}
 
 void NWMUDPConnection::CloseSocket() {}
 
 void NWMUDPConnection::Close() {}
 
-void NWMUDPConnection::Terminate() {NWMConnection::Terminate();}
+void NWMUDPConnection::Terminate() { NWMConnection::Terminate(); }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

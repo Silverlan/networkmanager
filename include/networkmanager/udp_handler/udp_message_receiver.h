@@ -13,19 +13,17 @@
 #include <memory>
 #include <functional>
 
-class UDPMessageReceiver
-	: virtual public UDPMessageBase
-{
-private:
+class UDPMessageReceiver : virtual public UDPMessageBase {
+  private:
 	DataStream m_data;
 	nwm::UDPEndpoint m_epOrigin;
-protected:
+  protected:
 	UDPMessageReceiver(nwm::UDPEndpoint &ep);
 	UDPMessageReceiver(unsigned short port);
 	nwm::UDPSocket m_socket;
-public:
+  public:
 	virtual ~UDPMessageReceiver();
-	void Receive(unsigned int size,const std::function<void(nwm::UDPEndpoint&,nwm::ErrorCode,DataStream)> &callback);
+	void Receive(unsigned int size, const std::function<void(nwm::UDPEndpoint &, nwm::ErrorCode, DataStream)> &callback);
 	static std::unique_ptr<UDPMessageReceiver> Create(unsigned short port);
 };
 

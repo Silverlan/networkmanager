@@ -9,17 +9,14 @@
 #include <string>
 #include <sharedutils/def_handle.h>
 
-namespace nwm
-{
+namespace nwm {
 	class ServerClient;
-	DECLARE_BASE_HANDLE(,ServerClient,ServerClientBase);
+	DECLARE_BASE_HANDLE(, ServerClient, ServerClientBase);
 
 	class Server;
 	enum class ClientDropped : int8_t;
-	class ServerClientHandle
-		: public nwm::ServerClientBaseHandle
-	{
-	public:
+	class ServerClientHandle : public nwm::ServerClientBaseHandle {
+	  public:
 		ServerClientHandle();
 		ServerClientHandle(ServerClient *cl);
 		ServerClientHandle(const ServerClientHandle &hSession);
@@ -30,10 +27,10 @@ namespace nwm
 		void Drop(ClientDropped e);
 		void Invalidate();
 		bool IsValid() const;
-	protected:
+	  protected:
 		void Initialize();
 		friend ServerClient;
-	private:
+	  private:
 		mutable Server *m_manager = nullptr;
 	};
 };

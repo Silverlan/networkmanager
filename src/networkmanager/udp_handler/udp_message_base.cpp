@@ -6,16 +6,11 @@
 #include "networkmanager/nwm_boost.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-UDPMessageBase::UDPMessageBase()
-	: m_ioService{}
-{}
+UDPMessageBase::UDPMessageBase() : m_ioService {} {}
 
-UDPMessageBase::~UDPMessageBase()
-{
-	m_ioService->stop();
-}
+UDPMessageBase::~UDPMessageBase() { m_ioService->stop(); }
 
 void UDPMessageBase::Poll()
 {
@@ -23,5 +18,5 @@ void UDPMessageBase::Poll()
 	m_ioService->poll();
 }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

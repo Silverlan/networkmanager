@@ -5,21 +5,18 @@
 #include "networkmanager/legacy/nwm_manager.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMError::NWMError(int err,const std::string &msg)
-	: m_value(err),m_message(msg)
-{}
-const char *NWMError::name() const {return "nwm";}
-std::string NWMError::message() const {return m_message;}
-int NWMError::value() const {return m_value;}
+NWMError::NWMError(int err, const std::string &msg) : m_value(err), m_message(msg) {}
+const char *NWMError::name() const { return "nwm"; }
+std::string NWMError::message() const { return m_message; }
+int NWMError::value() const { return m_value; }
 
 //////////////////////////////////////////
 
 std::string GetClientDroppedReasonString(CLIENT_DROPPED reason)
 {
-	switch(reason)
-	{
+	switch(reason) {
 	case CLIENT_DROPPED::DISCONNECTED:
 		return "disconnected";
 	case CLIENT_DROPPED::TIMEOUT:
@@ -36,56 +33,44 @@ std::string GetClientDroppedReasonString(CLIENT_DROPPED reason)
 
 //////////////////////////////////////////
 
-NWManagerBase::NWManagerBase(const std::shared_ptr<NWMUDPConnection> &udp,const std::shared_ptr<NWMTCPConnection> &tcp)
-	: m_conUDP(udp),m_conTCP(tcp),m_thread(nullptr),m_bClosing(false)
+NWManagerBase::NWManagerBase(const std::shared_ptr<NWMUDPConnection> &udp, const std::shared_ptr<NWMTCPConnection> &tcp) : m_conUDP(udp), m_conTCP(tcp), m_thread(nullptr), m_bClosing(false)
 {
-	if(udp != nullptr)
-	{
-		udp->SetCloseHandle([this]() {
-			m_conUDP = nullptr;
-		});
+	if(udp != nullptr) {
+		udp->SetCloseHandle([this]() { m_conUDP = nullptr; });
 	}
-	if(tcp != nullptr)
-	{
-		tcp->SetCloseHandle([this]() {
-			m_conTCP = nullptr;
-		});
+	if(tcp != nullptr) {
+		tcp->SetCloseHandle([this]() { m_conTCP = nullptr; });
 	}
 }
 
-NWManagerBase::~NWManagerBase()
-{
-	m_thread = nullptr;
-}
+NWManagerBase::~NWManagerBase() { m_thread = nullptr; }
 
 void NWManagerBase::QueueEvent(const std::function<void(void)> &f)
 {
 	m_pollQueueMutex.lock();
-		m_pollQueue.push(f);
+	m_pollQueue.push(f);
 	m_pollQueueMutex.unlock();
 }
 
 void NWManagerBase::QueueAsyncEvent(const std::function<void(void)> &f)
 {
-	if(IsAsync() == false)
-	{
+	if(IsAsync() == false) {
 		f();
 		return;
 	}
 	m_asyncPollQueueMutex.lock();
-		m_asyncPollQueue.push(f);
+	m_asyncPollQueue.push(f);
 	m_asyncPollQueueMutex.unlock();
 }
 
 void NWManagerBase::PollAsyncEvents()
 {
 	m_asyncPollQueueMutex.lock();
-		while(m_asyncPollQueue.empty() == false)
-		{
-			auto &f = m_asyncPollQueue.front();
-			f();
-			m_asyncPollQueue.pop();
-		}
+	while(m_asyncPollQueue.empty() == false) {
+		auto &f = m_asyncPollQueue.front();
+		f();
+		m_asyncPollQueue.pop();
+	}
 	m_asyncPollQueueMutex.unlock();
 }
 
@@ -108,8 +93,7 @@ void NWManagerBase::SetNagleAlgorithmEnabled(bool b)
 
 void NWManagerBase::SetTimeoutDuration(double duration)
 {
-	if(m_conUDP != nullptr)
-	{
+	if(m_conUDP != nullptr) {
 		m_conUDP->SetTimeoutDuration(duration);
 		if(m_conTCP != nullptr)
 			m_conTCP->SetTimeoutDuration(0.0);
@@ -119,8 +103,8 @@ void NWManagerBase::SetTimeoutDuration(double duration)
 		m_conTCP->SetTimeoutDuration(duration);
 }
 
-NWMUDPConnection *NWManagerBase::GetUDPConnection() const {return m_conUDP.get();}
-NWMTCPConnection *NWManagerBase::GetTCPConnection() const {return m_conTCP.get();}
+NWMUDPConnection *NWManagerBase::GetUDPConnection() const { return m_conUDP.get(); }
+NWMTCPConnection *NWManagerBase::GetTCPConnection() const { return m_conTCP.get(); }
 
 void NWManagerBase::CloseConnections()
 {
@@ -153,19 +137,17 @@ void NWManagerBase::Poll()
 void NWManagerBase::PollEvents()
 {
 	m_pollQueueMutex.lock();
-		while(m_pollQueue.empty() == false)
-		{
-			auto &f = m_pollQueue.front();
-			f();
-			m_pollQueue.pop();
-		}
+	while(m_pollQueue.empty() == false) {
+		auto &f = m_pollQueue.front();
+		f();
+		m_pollQueue.pop();
+	}
 	m_pollQueueMutex.unlock();
 }
 
 bool NWManagerBase::IsActive() const
 {
-	if(m_conTCP == nullptr)
-	{
+	if(m_conTCP == nullptr) {
 		if(m_conUDP == nullptr)
 			return false;
 		return m_conUDP->IsActive();
@@ -177,23 +159,18 @@ bool NWManagerBase::IsClosing() const
 {
 	if(m_bClosing == true)
 		return m_bClosing;
-	if(m_conTCP != nullptr)
-	{
+	if(m_conTCP != nullptr) {
 		if(m_conTCP->IsClosing())
 			return true;
 	}
-	if(m_conUDP != nullptr)
-	{
+	if(m_conUDP != nullptr) {
 		if(m_conUDP->IsClosing())
 			return true;
 	}
 	return false;
 }
 
-void NWManagerBase::Close()
-{
-	m_bClosing = true;
-}
+void NWManagerBase::Close() { m_bClosing = true; }
 
 void NWManagerBase::HandleError(const NWMError &err)
 {
@@ -201,69 +178,65 @@ void NWManagerBase::HandleError(const NWMError &err)
 		m_cbError(err);
 }
 
-bool NWManagerBase::HasUDPConnection() const {return (m_conUDP != nullptr) ? true : false;}
-bool NWManagerBase::HasTCPConnection() const {return (m_conTCP != nullptr) ? true : false;}
-void NWManagerBase::SetErrorHandle(const std::function<void(const NWMError&)> &cbError) {m_cbError = cbError;}
+bool NWManagerBase::HasUDPConnection() const { return (m_conUDP != nullptr) ? true : false; }
+bool NWManagerBase::HasTCPConnection() const { return (m_conTCP != nullptr) ? true : false; }
+void NWManagerBase::SetErrorHandle(const std::function<void(const NWMError &)> &cbError) { m_cbError = cbError; }
 
-void NWManagerBase::OnPacketSent(const NWMEndpoint &ep,const NetPacket &packet) {}
+void NWManagerBase::OnPacketSent(const NWMEndpoint &ep, const NetPacket &packet) {}
 
 void NWManagerBase::SendPacket(SendPacketQueue &item)
 {
-	OnPacketSent(item.ep,item.packet);
-	if(item.tcp == true)
-	{
+	OnPacketSent(item.ep, item.packet);
+	if(item.tcp == true) {
 		if(m_conTCP == nullptr)
 			return;
-		m_conTCP->SendPacket(item.packet,item.ep,item.own);
+		m_conTCP->SendPacket(item.packet, item.ep, item.own);
 		return;
 	}
 	if(m_conUDP == nullptr)
 		return;
-	m_conUDP->SendPacket(item.packet,item.ep,item.own);
+	m_conUDP->SendPacket(item.packet, item.ep, item.own);
 }
 
 void NWManagerBase::SendPackets()
 {
 	m_sendPacketMutex.lock();
-		while(!m_sendPacketQueue.empty())
-		{
-			SendPacketQueue &item = m_sendPacketQueue.front();
-			SendPacket(item);
-			m_sendPacketQueue.pop();
-		}
+	while(!m_sendPacketQueue.empty()) {
+		SendPacketQueue &item = m_sendPacketQueue.front();
+		SendPacket(item);
+		m_sendPacketQueue.pop();
+	}
 	m_sendPacketMutex.unlock();
 }
 
-void NWManagerBase::SendPacketTCP(const NetPacket &packet,NWMTCPEndpoint &ep,bool bOwn)
+void NWManagerBase::SendPacketTCP(const NetPacket &packet, NWMTCPEndpoint &ep, bool bOwn)
 {
-	SendPacketQueue item(packet,ep,bOwn,true);
+	SendPacketQueue item(packet, ep, bOwn, true);
 	m_sendPacketMutex.lock();
-		m_sendPacketQueue.push(item);
+	m_sendPacketQueue.push(item);
 	m_sendPacketMutex.unlock();
 }
-void NWManagerBase::SendPacketUDP(const NetPacket &packet,NWMUDPEndpoint &ep,bool bOwn)
+void NWManagerBase::SendPacketUDP(const NetPacket &packet, NWMUDPEndpoint &ep, bool bOwn)
 {
-	SendPacketQueue item(packet,ep,bOwn,false);
+	SendPacketQueue item(packet, ep, bOwn, false);
 	m_sendPacketMutex.lock();
-		m_sendPacketQueue.push(item);
+	m_sendPacketQueue.push(item);
 	m_sendPacketMutex.unlock();
 }
 
-void NWManagerBase::SendPacket(const NetPacket &packet,NWMEndpoint &ep,bool bPreferUDP)
+void NWManagerBase::SendPacket(const NetPacket &packet, NWMEndpoint &ep, bool bPreferUDP)
 {
-	if(bPreferUDP == true && m_conUDP != nullptr)
-	{
-		SendPacketUDP(packet,*static_cast<NWMUDPEndpoint*>(ep.get()));
+	if(bPreferUDP == true && m_conUDP != nullptr) {
+		SendPacketUDP(packet, *static_cast<NWMUDPEndpoint *>(ep.get()));
 		return;
 	}
-	if(m_conTCP != nullptr)
-	{
-		SendPacketTCP(packet,*static_cast<NWMTCPEndpoint*>(ep.get()));
+	if(m_conTCP != nullptr) {
+		SendPacketTCP(packet, *static_cast<NWMTCPEndpoint *>(ep.get()));
 		return;
 	}
 	if(m_conUDP == nullptr)
 		return;
-	SendPacketUDP(packet,*static_cast<NWMUDPEndpoint*>(ep.get()));
+	SendPacketUDP(packet, *static_cast<NWMUDPEndpoint *>(ep.get()));
 }
 
 void NWManagerBase::Start()
@@ -276,15 +249,14 @@ void NWManagerBase::StartAsync()
 {
 	if(m_thread != nullptr)
 		return;
-	m_thread = std::make_unique<std::thread>(std::bind(&NWManagerBase::Start,this));
+	m_thread = std::make_unique<std::thread>(std::bind(&NWManagerBase::Start, this));
 }
 
-bool NWManagerBase::IsAsync() const {return (m_thread != nullptr) ? true : false;}
+bool NWManagerBase::IsAsync() const { return (m_thread != nullptr) ? true : false; }
 
 std::string NWManagerBase::GetLocalIP() const
 {
-	if(m_conTCP == nullptr)
-	{
+	if(m_conTCP == nullptr) {
 		if(m_conUDP == nullptr)
 			return nwm::invalid_address();
 		return m_conUDP->GetLocalIP();
@@ -293,8 +265,7 @@ std::string NWManagerBase::GetLocalIP() const
 }
 unsigned short NWManagerBase::GetLocalPort() const
 {
-	if(m_conTCP == nullptr)
-	{
+	if(m_conTCP == nullptr) {
 		if(m_conUDP == nullptr)
 			return 0;
 		return m_conUDP->GetLocalPort();
@@ -315,15 +286,14 @@ unsigned short NWManagerBase::GetLocalTCPPort() const
 }
 nwm::IPAddress NWManagerBase::GetLocalAddress() const
 {
-	if(m_conTCP == nullptr)
-	{
+	if(m_conTCP == nullptr) {
 		if(m_conUDP == nullptr)
-			return nwm::IPAddress{};
+			return nwm::IPAddress {};
 		return m_conUDP->GetLocalAddress();
 	}
 	return m_conTCP->GetLocalAddress();
 }
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

@@ -8,17 +8,15 @@
 #include <vector>
 #include "nwm_connection.h"
 
-class NWMTCPConnection
-	: public NWMConnection
-{
-protected:
+class NWMTCPConnection : public NWMConnection {
+  protected:
 	virtual void CloseSocket() override;
-public:
+  public:
 	NWMTCPConnection();
 	virtual ~NWMTCPConnection() override;
 	virtual void Close() override;
 	virtual void Terminate() override;
-	virtual void SetNagleAlgorithmEnabled(bool b)=0;
+	virtual void SetNagleAlgorithmEnabled(bool b) = 0;
 };
 
 #endif

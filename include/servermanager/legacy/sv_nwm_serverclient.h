@@ -18,16 +18,14 @@ using ChronoTimePoint = util::Clock::time_point;
 using ChronoDuration = util::Clock::duration;
 
 class NWMServer;
-class NWMServerClient
-	: public std::enable_shared_from_this<NWMServerClient>
-{
-public:
+class NWMServerClient : public std::enable_shared_from_this<NWMServerClient> {
+  public:
 	friend NWMServer;
-protected:
+  protected:
 	NWMServerClient(NWMServer *manager);
-private:
+  private:
 	std::atomic<bool> m_bClosing;
-protected:
+  protected:
 	bool m_bDropped;
 	std::atomic<uint16_t> m_latency;
 	SessionHandle m_handle;
@@ -51,19 +49,19 @@ protected:
 	void SetEndPoint(const NWMEndpoint &ep);
 	void SetIndex(size_t idx);
 	size_t GetIndex() const;
-	virtual void OnClosed()=0;
+	virtual void OnClosed() = 0;
 	void Terminate();
 	void InitializeSessionData(NWMSession *session);
 	void ResetLastUpdate();
 	template<class T>
-		void SessionCloseHandle(std::shared_ptr<T> &t,bool bLock=true);
-public:
+	void SessionCloseHandle(std::shared_ptr<T> &t, bool bLock = true);
+  public:
 	virtual ~NWMServerClient();
 	virtual void Remove();
 	SessionHandle GetHandle();
 	//SessionHandle *CreateHandle();
 	bool IsTarget(const NWMEndpoint &ep);
-	bool IsTarget(const nwm::IPAddress &address,unsigned short port);
+	bool IsTarget(const nwm::IPAddress &address, unsigned short port);
 	bool IsClosed() const;
 	bool IsClosing() const;
 	unsigned short GetLatency() const;
@@ -75,7 +73,7 @@ public:
 	std::string GetRemoteIP() const;
 	nwm::IPAddress GetRemoteAddress() const;
 	unsigned short GetRemotePort() const;
-	virtual void SendPacket(const NetPacket &p,bool bPreferUDP=false);
+	virtual void SendPacket(const NetPacket &p, bool bPreferUDP = false);
 	void SendPacketTCP(const NetPacket &p);
 	void SendPacketUDP(const NetPacket &p);
 	void SetSession(NWMUDPSession *session);

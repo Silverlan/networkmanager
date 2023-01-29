@@ -21,13 +21,12 @@
 
 #define NETWORK_ERROR_UNHANDLED_PACKET 10
 
-class NWMError
-{
-private:
+class NWMError {
+  private:
 	std::string m_message;
 	int m_value;
-public:
-	NWMError(int err,const std::string &msg);
+  public:
+	NWMError(int err, const std::string &msg);
 	virtual const char *name() const;
 	virtual std::string message() const;
 	int value() const;
@@ -35,41 +34,30 @@ public:
 
 #undef ERROR
 
-enum class CLIENT_DROPPED
-{
-	DISCONNECTED,
-	TIMEOUT,
-	KICKED,
-	SHUTDOWN,
-	ERROR
-};
+enum class CLIENT_DROPPED { DISCONNECTED, TIMEOUT, KICKED, SHUTDOWN, ERROR };
 std::string GetClientDroppedReasonString(CLIENT_DROPPED reason);
 
 using ChronoTimePoint = util::Clock::time_point;
 using ChronoDuration = util::Clock::duration;
 
-class NWManagerBase
-{
-protected:
-	struct SendPacketQueue
-	{
-		SendPacketQueue(const NetPacket &p,NWMEndpoint endPoint,bool bOwn,bool bTCP)
-			: packet(p),ep(endPoint),own(bOwn),tcp(bTCP)
-		{}
+class NWManagerBase {
+  protected:
+	struct SendPacketQueue {
+		SendPacketQueue(const NetPacket &p, NWMEndpoint endPoint, bool bOwn, bool bTCP) : packet(p), ep(endPoint), own(bOwn), tcp(bTCP) {}
 		NetPacket packet;
 		NWMEndpoint ep;
 		bool own;
 		bool tcp;
 	};
-private:
+  private:
 	void SendPackets();
-protected:
-	NWManagerBase(const std::shared_ptr<NWMUDPConnection> &udp,const std::shared_ptr<NWMTCPConnection> &tcp);
+  protected:
+	NWManagerBase(const std::shared_ptr<NWMUDPConnection> &udp, const std::shared_ptr<NWMTCPConnection> &tcp);
 	virtual ~NWManagerBase();
 	void Poll();
 	std::shared_ptr<NWMUDPConnection> m_conUDP;
 	std::shared_ptr<NWMTCPConnection> m_conTCP;
-	std::function<void(const NWMError&)> m_cbError;
+	std::function<void(const NWMError &)> m_cbError;
 	std::atomic<bool> m_bClosing;
 	std::unique_ptr<std::thread> m_thread;
 
@@ -85,17 +73,17 @@ protected:
 	void QueueAsyncEvent(const std::function<void(void)> &f);
 	void QueueEvent(const std::function<void(void)> &f);
 	void PollAsyncEvents();
-	void ReceivePacket(unsigned int id,const NetPacket &packet);
-	void SendPacketTCP(const NetPacket &packet,NWMTCPEndpoint &ep,bool bOwn=false);
-	void SendPacketUDP(const NetPacket &packet,NWMUDPEndpoint &ep,bool bOwn=false);
+	void ReceivePacket(unsigned int id, const NetPacket &packet);
+	void SendPacketTCP(const NetPacket &packet, NWMTCPEndpoint &ep, bool bOwn = false);
+	void SendPacketUDP(const NetPacket &packet, NWMUDPEndpoint &ep, bool bOwn = false);
 	void SendPacket(SendPacketQueue &item);
 	void HandleError(const NWMError &err);
-	virtual void OnClosed()=0;
-	virtual void SendPacket(const NetPacket &packet,NWMEndpoint &ep,bool bPreferUDP=false);
+	virtual void OnClosed() = 0;
+	virtual void SendPacket(const NetPacket &packet, NWMEndpoint &ep, bool bPreferUDP = false);
 	virtual void CloseConnections();
 
-	virtual void OnPacketSent(const NWMEndpoint &ep,const NetPacket &packet);
-public:
+	virtual void OnPacketSent(const NWMEndpoint &ep, const NetPacket &packet);
+  public:
 	NWMUDPConnection *GetUDPConnection() const;
 	NWMTCPConnection *GetTCPConnection() const;
 	virtual void Run();
@@ -108,7 +96,7 @@ public:
 	virtual void Close();
 	bool HasUDPConnection() const;
 	bool HasTCPConnection() const;
-	void SetErrorHandle(const std::function<void(const NWMError&)> &cbError);
+	void SetErrorHandle(const std::function<void(const NWMError &)> &cbError);
 	virtual void SetTimeoutDuration(double duration);
 	void Release();
 	std::string GetLocalIP() const;

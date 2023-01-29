@@ -8,18 +8,15 @@
 #include "udp_message_dispatcher.h"
 #include "udp_message_receiver.h"
 
-class UDPMessageHandler
-	: public UDPMessageDispatcher,
-	public UDPMessageReceiver
-{
-protected:
+class UDPMessageHandler : public UDPMessageDispatcher, public UDPMessageReceiver {
+  protected:
 	UDPMessageHandler(unsigned short port);
-public:
+  public:
 	virtual ~UDPMessageHandler();
 	virtual void Poll() override;
 	// Send a response to a message we've received from a client
-	void DispatchResponse(DataStream &data,nwm::UDPEndpoint &ep,std::function<void(nwm::ErrorCode,Message*)> callback=nullptr);
-	static std::unique_ptr<UDPMessageHandler> Create(unsigned short port,unsigned int timeout=0);
+	void DispatchResponse(DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+	static std::unique_ptr<UDPMessageHandler> Create(unsigned short port, unsigned int timeout = 0);
 };
 
 #endif

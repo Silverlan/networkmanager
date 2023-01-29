@@ -6,12 +6,11 @@
 #include "networkmanager/nwm_boost.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
 std::string nwm::get_error_name(int id)
 {
-	switch(id)
-	{
+	switch(id) {
 	case boost::asio::error::access_denied:
 		return "Access denied";
 	case boost::asio::error::address_family_not_supported:
@@ -91,22 +90,17 @@ std::string nwm::get_error_name(int id)
 
 ///////////////////////////////
 
-NWMException::NWMException(const std::string &err)
-	: std::runtime_error(err)
-{}
+NWMException::NWMException(const std::string &err) : std::runtime_error(err) {}
 
 ///////////////////////////////
 
-NWMErrorHandle::NWMErrorHandle()
-	: m_errorHandle()
-{}
+NWMErrorHandle::NWMErrorHandle() : m_errorHandle() {}
 
 bool NWMErrorHandle::HandleError(const nwm::ErrorCode &error)
 {
-	if(
-		!*error
+	if(!*error
 #ifdef _WIN32
-		|| error->value() == ERROR_MORE_DATA // More data available (We didn't read enough? Probably an invalid packet)
+	  || error->value() == ERROR_MORE_DATA // More data available (We didn't read enough? Probably an invalid packet)
 #endif
 	)
 		return true;
@@ -115,9 +109,9 @@ bool NWMErrorHandle::HandleError(const nwm::ErrorCode &error)
 	return false;
 }
 
-void NWMErrorHandle::SetErrorHandle(const std::function<void(const nwm::ErrorCode&)> &cbError) {m_errorHandle = cbError;}
+void NWMErrorHandle::SetErrorHandle(const std::function<void(const nwm::ErrorCode &)> &cbError) { m_errorHandle = cbError; }
 
-std::string NWMErrorHandle::GetErrorName(int id) {return nwm::get_error_name(id);}
+std::string NWMErrorHandle::GetErrorName(int id) { return nwm::get_error_name(id); }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

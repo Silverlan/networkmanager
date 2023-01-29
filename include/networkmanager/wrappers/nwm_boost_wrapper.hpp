@@ -3,12 +3,10 @@
 
 #include "networkmanager/wrappers/nwm_unique_void.hpp"
 
-namespace nwm
-{
+namespace nwm {
 	template<class TBoostBase>
-		class TBoostWrapper
-	{
-	public:
+	class TBoostWrapper {
+	  public:
 		using UnderlyingType = TBoostBase;
 		TBoostWrapper();
 		TBoostWrapper(const TBoostBase &o);
@@ -20,14 +18,12 @@ namespace nwm
 		TBoostBase *operator->();
 		const TBoostBase &operator*() const;
 		TBoostBase &operator*();
-	protected:
+	  protected:
 		impl::unique_void_ptr m_boostBaseObject;
 	};
 	template<class TBoostBase>
-		class TBoostWrapperCopyable
-			: public TBoostWrapper<TBoostBase>
-	{
-	public:
+	class TBoostWrapperCopyable : public TBoostWrapper<TBoostBase> {
+	  public:
 		using TBoostWrapper<TBoostBase>::TBoostWrapper;
 		TBoostWrapperCopyable(const TBoostWrapperCopyable<TBoostBase> &o);
 		TBoostWrapperCopyable<TBoostBase> &operator=(const TBoostWrapperCopyable<TBoostBase> &other);
@@ -36,46 +32,47 @@ namespace nwm
 };
 
 template<class TBoostBase>
-	nwm::TBoostWrapper<TBoostBase>::TBoostWrapper()
-		: m_boostBaseObject{nullptr,[](void const*) {}}
-{}
+nwm::TBoostWrapper<TBoostBase>::TBoostWrapper() : m_boostBaseObject {nullptr, [](void const *) {}}
+{
+}
 
 template<class TBoostBase>
-	nwm::TBoostWrapper<TBoostBase>::TBoostWrapper(const TBoostBase &o)
-		: m_boostBaseObject{impl::unique_void<TBoostBase>(new TBoostBase(o))}
-{}
+nwm::TBoostWrapper<TBoostBase>::TBoostWrapper(const TBoostBase &o) : m_boostBaseObject {impl::unique_void<TBoostBase>(new TBoostBase(o))}
+{
+}
 
 template<class TBoostBase>
-	nwm::TBoostWrapper<TBoostBase>::~TBoostWrapper()
-{}
-		
-template<class TBoostBase>
-	const TBoostBase &nwm::TBoostWrapper<TBoostBase>::GetBoostObject() const
+nwm::TBoostWrapper<TBoostBase>::~TBoostWrapper()
 {
-	return const_cast<TBoostWrapper*>(this)->GetBoostObject();
+}
+
+template<class TBoostBase>
+const TBoostBase &nwm::TBoostWrapper<TBoostBase>::GetBoostObject() const
+{
+	return const_cast<TBoostWrapper *>(this)->GetBoostObject();
 }
 template<class TBoostBase>
-	TBoostBase &nwm::TBoostWrapper<TBoostBase>::GetBoostObject()
+TBoostBase &nwm::TBoostWrapper<TBoostBase>::GetBoostObject()
 {
-	return *static_cast<TBoostBase*>(m_boostBaseObject.get());
+	return *static_cast<TBoostBase *>(m_boostBaseObject.get());
 }
 template<class TBoostBase>
-	const TBoostBase *nwm::TBoostWrapper<TBoostBase>::operator->() const
+const TBoostBase *nwm::TBoostWrapper<TBoostBase>::operator->() const
 {
-	return const_cast<TBoostWrapper*>(this)->operator->();
+	return const_cast<TBoostWrapper *>(this)->operator->();
 }
 template<class TBoostBase>
-	TBoostBase *nwm::TBoostWrapper<TBoostBase>::operator->()
+TBoostBase *nwm::TBoostWrapper<TBoostBase>::operator->()
 {
 	return &GetBoostObject();
 }
 template<class TBoostBase>
-	const TBoostBase &nwm::TBoostWrapper<TBoostBase>::operator*() const
+const TBoostBase &nwm::TBoostWrapper<TBoostBase>::operator*() const
 {
-	return const_cast<TBoostWrapper*>(this)->operator*();
+	return const_cast<TBoostWrapper *>(this)->operator*();
 }
 template<class TBoostBase>
-	TBoostBase &nwm::TBoostWrapper<TBoostBase>::operator*()
+TBoostBase &nwm::TBoostWrapper<TBoostBase>::operator*()
 {
 	return GetBoostObject();
 }

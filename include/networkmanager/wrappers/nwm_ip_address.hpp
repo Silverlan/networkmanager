@@ -4,13 +4,16 @@
 #include "networkmanager/wrappers/nwm_boost_wrapper.hpp"
 #include <string>
 
-namespace boost{namespace asio{namespace ip{class address;};};};
-namespace nwm
-{
-	class IPAddress
-		: public TBoostWrapperCopyable<boost::asio::ip::address>
-	{
-	public:
+namespace boost {
+	namespace asio {
+		namespace ip {
+			class address;
+		};
+	};
+};
+namespace nwm {
+	class IPAddress : public TBoostWrapperCopyable<boost::asio::ip::address> {
+	  public:
 		IPAddress();
 		using TBoostWrapperCopyable<boost::asio::ip::address>::TBoostWrapperCopyable;
 		bool operator==(const IPAddress &other) const;

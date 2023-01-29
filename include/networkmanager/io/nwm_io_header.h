@@ -8,11 +8,10 @@
 #include <memory>
 #include <stdint.h>
 
-class NWMIOHeader
-{
-protected:
+class NWMIOHeader {
+  protected:
 	std::unique_ptr<uint8_t[]> m_header;
-public:
+  public:
 	NWMIOHeader();
 	virtual ~NWMIOHeader();
 };

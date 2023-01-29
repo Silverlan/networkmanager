@@ -7,16 +7,13 @@
 #include "networkmanager/wrappers/nwm_impl_boost.hpp"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMUDPIOBase::NWMUDPIOBase()
-{}
+NWMUDPIOBase::NWMUDPIOBase() {}
 
-NWMUDPIOBase::~NWMUDPIOBase()
-{}
+NWMUDPIOBase::~NWMUDPIOBase() {}
 
-void NWMUDPIOBase::Terminate()
-{}
+void NWMUDPIOBase::Terminate() {}
 
 bool NWMUDPIOBase::IsTerminated() const
 {
@@ -24,11 +21,11 @@ bool NWMUDPIOBase::IsTerminated() const
 		return true;
 	return false;
 }
-void NWMUDPIOBase::AsyncWrite(nwm::UDPSocket *socket,const std::vector<nwm::MutableBuffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f)
+void NWMUDPIOBase::AsyncWrite(nwm::UDPSocket *socket, const std::vector<nwm::MutableBuffer> &buffers, const NWMEndpoint &endPoint, const std::function<void(const nwm::ErrorCode &, std::size_t)> &f)
 {
 	if(IsTerminated())
 		return;
-	NWMUDPEndpoint *ep = static_cast<NWMUDPEndpoint*>(endPoint.get());
+	NWMUDPEndpoint *ep = static_cast<NWMUDPEndpoint *>(endPoint.get());
 	if(ep == nullptr)
 		return;
 	auto *epUDP = ep->get();
@@ -38,18 +35,14 @@ void NWMUDPIOBase::AsyncWrite(nwm::UDPSocket *socket,const std::vector<nwm::Muta
 	boostBuffers.reserve(buffers.size());
 	for(auto &buf : buffers)
 		boostBuffers.push_back(*buf);
-	cast_socket(*socket)->async_send_to(
-		boostBuffers,
-		*cast_endpoint(*epUDP),
-		f
-	);
+	cast_socket(*socket)->async_send_to(boostBuffers, *cast_endpoint(*epUDP), f);
 }
 
-void NWMUDPIOBase::AsyncRead(nwm::UDPSocket *socket,const std::vector<nwm::MutableBuffer> &buffers,const NWMEndpoint &endPoint,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f,bool bPeek)
+void NWMUDPIOBase::AsyncRead(nwm::UDPSocket *socket, const std::vector<nwm::MutableBuffer> &buffers, const NWMEndpoint &endPoint, const std::function<void(const nwm::ErrorCode &, std::size_t)> &f, bool bPeek)
 {
 	if(IsTerminated())
 		return;
-	NWMUDPEndpoint *ep = static_cast<NWMUDPEndpoint*>(endPoint.get());
+	NWMUDPEndpoint *ep = static_cast<NWMUDPEndpoint *>(endPoint.get());
 	if(ep == nullptr)
 		return;
 	auto *epUDP = ep->get();
@@ -62,14 +55,8 @@ void NWMUDPIOBase::AsyncRead(nwm::UDPSocket *socket,const std::vector<nwm::Mutab
 	boostBuffers.reserve(buffers.size());
 	for(auto &buf : buffers)
 		boostBuffers.push_back(*buf);
-	cast_socket(*socket)->async_receive_from(
-		boostBuffers,
-		*cast_endpoint(*epUDP),flags,
-		[f](const boost::system::error_code &errCode,std::size_t n) {
-			f(errCode,n);
-		}
-	);
+	cast_socket(*socket)->async_receive_from(boostBuffers, *cast_endpoint(*epUDP), flags, [f](const boost::system::error_code &errCode, std::size_t n) { f(errCode, n); });
 }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

@@ -12,18 +12,16 @@
 #include "networkmanager/wrappers/nwm_error_code.hpp"
 #include "networkmanager/wrappers/nwm_io_service.hpp"
 
-class NWMUDPIO
-	: public NWMIO,public NWMUDPIOBase
-{
-protected:
-	NWMUDPIO(nwm::IOService &ioService,unsigned short localPort);
+class NWMUDPIO : public NWMIO, public NWMUDPIOBase {
+  protected:
+	NWMUDPIO(nwm::IOService &ioService, unsigned short localPort);
 	std::unique_ptr<nwm::UDPSocket> m_socket;
 	NWMEndpoint m_localEndpoint;
 	virtual void Terminate() override;
-	virtual void AsyncWrite(const NWMEndpoint &ep,const std::vector<nwm::MutableBuffer> &buffers,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f) override;
-	virtual void AsyncRead(const std::vector<nwm::MutableBuffer> &buffers,const std::function<void(const nwm::ErrorCode&,std::size_t)> &f,bool bPeek=false) override;
+	virtual void AsyncWrite(const NWMEndpoint &ep, const std::vector<nwm::MutableBuffer> &buffers, const std::function<void(const nwm::ErrorCode &, std::size_t)> &f) override;
+	virtual void AsyncRead(const std::vector<nwm::MutableBuffer> &buffers, const std::function<void(const nwm::ErrorCode &, std::size_t)> &f, bool bPeek = false) override;
 	virtual void CloseSocket();
-public:
+  public:
 	virtual ~NWMUDPIO() override;
 	virtual std::string GetIP() const override;
 	virtual nwm::IPAddress GetAddress() const override;

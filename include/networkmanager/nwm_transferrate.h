@@ -7,15 +7,13 @@
 
 #include <sharedutils/chronoutil.h>
 
-namespace nwm
-{
-	struct TransferRate
-	{
-	private:
+namespace nwm {
+	struct TransferRate {
+	  private:
 		char sample;
 		ChronoTimePoint lastUpdate;
 		unsigned long long sampleSize;
-	public:
+	  public:
 		TransferRate();
 		unsigned long long samples[5];
 		void AddSample(unsigned long long s);

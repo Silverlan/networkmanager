@@ -6,11 +6,9 @@
 #include <networkmanager/interface/nwm_manager.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-CLNWMConnection::CLNWMConnection(NWMConnection *con)
-	: m_connection(con),m_bRegistered(false),m_bDisconnecting(false)
-{}
+CLNWMConnection::CLNWMConnection(NWMConnection *con) : m_connection(con), m_bRegistered(false), m_bDisconnecting(false) {}
 
 void CLNWMConnection::OnConnected()
 {
@@ -23,22 +21,21 @@ void CLNWMConnection::OnDisconnected(nwm::ClientDropped reason)
 		m_disconnectedHandle(reason);
 }
 
-void CLNWMConnection::SetConnectionHandle(const std::function<void(void)> cbConnection) {m_connectionHandle = cbConnection;}
-void CLNWMConnection::SetDisconnectionHandle(const std::function<void(nwm::ClientDropped)> cbDisconnected) {m_disconnectedHandle = cbDisconnected;}
+void CLNWMConnection::SetConnectionHandle(const std::function<void(void)> cbConnection) { m_connectionHandle = cbConnection; }
+void CLNWMConnection::SetDisconnectionHandle(const std::function<void(nwm::ClientDropped)> cbDisconnected) { m_disconnectedHandle = cbDisconnected; }
 
 void CLNWMConnection::Disconnect()
 {
 	if(m_bDisconnecting == true || m_connection->IsClosing())
 		return;
 	NetPacket out(NWM_MESSAGE_OUT_CLIENT_DISCONNECT);
-	SendPacket(out,true);
+	SendPacket(out, true);
 	Close();
 	OnDisconnected(nwm::ClientDropped::Disconnected);
 	m_bDisconnecting = true;
 }
 
-
-void CLNWMConnection::OnTimedOut() {OnDisconnected(nwm::ClientDropped::Timeout);}
+void CLNWMConnection::OnTimedOut() { OnDisconnected(nwm::ClientDropped::Timeout); }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

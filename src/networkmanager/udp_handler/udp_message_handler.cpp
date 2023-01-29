@@ -5,16 +5,13 @@
 #include "networkmanager/udp_handler/udp_message_handler.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-UDPMessageHandler::UDPMessageHandler(unsigned short port)
-	: UDPMessageDispatcher(),UDPMessageReceiver(port)
-{}
+UDPMessageHandler::UDPMessageHandler(unsigned short port) : UDPMessageDispatcher(), UDPMessageReceiver(port) {}
 
-UDPMessageHandler::~UDPMessageHandler()
-{}
+UDPMessageHandler::~UDPMessageHandler() {}
 
-std::unique_ptr<UDPMessageHandler> UDPMessageHandler::Create(unsigned short port,unsigned int timeout)
+std::unique_ptr<UDPMessageHandler> UDPMessageHandler::Create(unsigned short port, unsigned int timeout)
 {
 	auto r = std::unique_ptr<UDPMessageHandler>(new UDPMessageHandler(port));
 	r->SetTimeout(timeout);
@@ -27,10 +24,7 @@ void UDPMessageHandler::Poll()
 	UDPMessageReceiver::Poll();
 }
 
-void UDPMessageHandler::DispatchResponse(DataStream &data,nwm::UDPEndpoint &ep,std::function<void(nwm::ErrorCode,Message*)> callback)
-{
-	UDPMessageDispatcher::Dispatch(data,ep,m_socket,callback);
-}
+void UDPMessageHandler::DispatchResponse(DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { UDPMessageDispatcher::Dispatch(data, ep, m_socket, callback); }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

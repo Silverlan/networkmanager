@@ -5,19 +5,16 @@
 #include "networkmanager/nwm_tcpconnection.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-NWMTCPConnection::NWMTCPConnection()
-	: NWMConnection()
-{}
-NWMTCPConnection::~NWMTCPConnection()
-{}
+NWMTCPConnection::NWMTCPConnection() : NWMConnection() {}
+NWMTCPConnection::~NWMTCPConnection() {}
 
 void NWMTCPConnection::CloseSocket() {}
 
 void NWMTCPConnection::Close() {}
 
-void NWMTCPConnection::Terminate() {NWMConnection::Terminate();}
+void NWMTCPConnection::Terminate() { NWMConnection::Terminate(); }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

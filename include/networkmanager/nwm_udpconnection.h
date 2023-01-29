@@ -7,12 +7,10 @@
 
 #include "nwm_connection.h"
 
-class NWMUDPConnection
-	: public NWMConnection
-{
-protected:
-	virtual void CloseSocket() override=0;
-public:
+class NWMUDPConnection : public NWMConnection {
+  protected:
+	virtual void CloseSocket() override = 0;
+  public:
 	NWMUDPConnection();
 	virtual ~NWMUDPConnection() override;
 	virtual void Close() override;

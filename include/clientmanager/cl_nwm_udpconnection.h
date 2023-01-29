@@ -9,23 +9,20 @@
 #include "cl_nwm_connection.h"
 #include "networkmanager/io/nwm_udp_io.h"
 
-class CLNWMUDPConnection
-	: public NWMUDPConnection,public CLNWMConnection,
-	public NWMUDPIO
-{
-protected:
+class CLNWMUDPConnection : public NWMUDPConnection, public CLNWMConnection, public NWMUDPIO {
+  protected:
 	virtual void CloseSocket() override;
-	virtual void SendPacket(const NetPacket &packet,const NWMEndpoint &ep,bool bOwn=false) override;
+	virtual void SendPacket(const NetPacket &packet, const NWMEndpoint &ep, bool bOwn = false) override;
 	virtual void OnTimedOut() override;
-public:
+  public:
 	CLNWMUDPConnection(unsigned short localPort);
 	virtual ~CLNWMUDPConnection() override;
 	NWMUDPEndpoint *GetRemoteEndPoint();
 	std::string GetIP() const override;
-	void Connect(std::string serverIp,unsigned int serverPort);
+	void Connect(std::string serverIp, unsigned int serverPort);
 	virtual void Close() override;
 	virtual bool IsClosing() const override;
-	void SendPacket(const NetPacket &packet,bool bOwn=false);
+	void SendPacket(const NetPacket &packet, bool bOwn = false);
 	virtual void Run() override;
 	virtual void SetReady() override;
 	virtual void SetTimeoutDuration(double duration) override;

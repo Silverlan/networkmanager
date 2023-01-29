@@ -8,20 +8,15 @@
 #include "servermanager/legacy/sv_nwm_sessionhandle.h"
 #include <vector>
 
-enum class RPFilterType
-{
-	INCLUDE,
-	EXCLUDE
-};
+enum class RPFilterType { INCLUDE, EXCLUDE };
 
 class NWMServerClient;
-class RecipientFilter
-{
-private:
+class RecipientFilter {
+  private:
 	std::vector<SessionHandle> m_sessions;
 	RPFilterType m_type;
-public:
-	RecipientFilter(RPFilterType type=RPFilterType::INCLUDE);
+  public:
+	RecipientFilter(RPFilterType type = RPFilterType::INCLUDE);
 	void SetFilterType(RPFilterType type);
 	RPFilterType GetFilterType() const;
 	void Add(const SessionHandle &hSession);

@@ -9,24 +9,22 @@
 #include "servermanager/legacy/sv_nwm_session.h"
 
 class SVNWMUDPConnection;
-class NWMUDPSession
-	: public NWMSession,public NWMIOBase,public NWMUDPIOBase
-{
-public:
+class NWMUDPSession : public NWMSession, public NWMIOBase, public NWMUDPIOBase {
+  public:
 	friend SVNWMUDPConnection;
-protected:
+  protected:
 	SVNWMUDPConnection *m_connection;
 	bool m_bReady;
 	virtual void OnPacketReceived();
 	virtual void InitializeSharedPtr() override;
-public:
-	NWMUDPSession(const NWMEndpoint &ep,SVNWMUDPConnection *con);
+  public:
+	NWMUDPSession(const NWMEndpoint &ep, SVNWMUDPConnection *con);
 	virtual ~NWMUDPSession() override;
 	virtual bool IsUDP() const override;
 	virtual const NWMEndpoint &GetRemoteEndPoint() const override;
 	virtual const NWMEndpoint &GetLocalEndPoint() const override;
 	virtual void Close() override;
-	virtual void SetPacketHandle(const std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> &cbPacket) override;
+	virtual void SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket) override;
 	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) override;
 	virtual std::string GetIP() const override;
 	virtual unsigned short GetPort() const override;

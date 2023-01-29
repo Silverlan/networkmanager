@@ -14,31 +14,30 @@
 #include "wrappers/nwm_io_service.hpp"
 #include "wrappers/nwm_ip_address.hpp"
 
-class NWMConnection
-{
-protected:
+class NWMConnection {
+  protected:
 	NWMConnection();
 	virtual ~NWMConnection();
 	bool m_bClosing;
 	bool m_bShutDown;
 
-	virtual void CloseSocket()=0;
+	virtual void CloseSocket() = 0;
 	virtual void Terminate();
-public:
+  public:
 	std::unique_ptr<nwm::IOService> ioService;
 	virtual void Run();
-	virtual void Close()=0;
+	virtual void Close() = 0;
 	virtual bool IsUDP() const;
 	virtual bool IsTCP() const;
-	virtual void SendPacket(const NetPacket &packet,const NWMEndpoint &ep,bool bOwn=false)=0;
-	virtual void SetCloseHandle(const std::function<void(void)> &cbClose)=0;
-	virtual bool IsClosing() const=0;
-	virtual std::string GetLocalIP() const=0;
-	virtual unsigned short GetLocalPort() const=0;
-	virtual nwm::IPAddress GetLocalAddress() const=0;
+	virtual void SendPacket(const NetPacket &packet, const NWMEndpoint &ep, bool bOwn = false) = 0;
+	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) = 0;
+	virtual bool IsClosing() const = 0;
+	virtual std::string GetLocalIP() const = 0;
+	virtual unsigned short GetLocalPort() const = 0;
+	virtual nwm::IPAddress GetLocalAddress() const = 0;
 	void Poll();
 	bool IsActive() const;
-	virtual void SetTimeoutDuration(double duration)=0;
+	virtual void SetTimeoutDuration(double duration) = 0;
 };
 
 #endif

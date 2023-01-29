@@ -11,29 +11,26 @@
 #include "servermanager/session/sv_nwm_tcp_session.h"
 #include "servermanager/legacy/sv_nwm_serverclient.h"
 
-class SVNWMTCPConnection
-	: public NWMTCPConnection,public SVNWMConnection,public NWMEventBase,
-	public NWMErrorHandle,public std::enable_shared_from_this<SVNWMTCPConnection>
-{
-private:
-	virtual void SendPacket(const NetPacket &packet,const NWMEndpoint &ep,bool bOwn=false) override;
-protected:
+class SVNWMTCPConnection : public NWMTCPConnection, public SVNWMConnection, public NWMEventBase, public NWMErrorHandle, public std::enable_shared_from_this<SVNWMTCPConnection> {
+  private:
+	virtual void SendPacket(const NetPacket &packet, const NWMEndpoint &ep, bool bOwn = false) override;
+  protected:
 	std::function<void(void)> m_closeHandle;
-	std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> m_packetHandle;
+	std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> m_packetHandle;
 	std::unique_ptr<nwm::TCPAcceptor> m_acceptor;
 	bool m_bClosing;
 	bool m_bTerminating;
 	bool m_bNagleEnabled;
 	virtual void Accept() override;
-	void HandleAccept(NWMSessionHandle hSession,const nwm::ErrorCode &err);
+	void HandleAccept(NWMSessionHandle hSession, const nwm::ErrorCode &err);
 	virtual void OnClientConnected(NWMSession *session) override;
 	virtual void ScheduleTermination() override;
-public:
-	SVNWMTCPConnection(unsigned short minPort,unsigned short maxPort);
+  public:
+	SVNWMTCPConnection(unsigned short minPort, unsigned short maxPort);
 	SVNWMTCPConnection(unsigned short port);
 	virtual void Initialize() override;
 	virtual ~SVNWMTCPConnection() override;
-	void SetPacketHandle(const std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> &cbPacket);
+	void SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket);
 	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) override;
 	virtual void Close() override;
 	virtual void Run() override;

@@ -4,13 +4,14 @@
 #include "networkmanager/wrappers/nwm_boost_wrapper.hpp"
 #include <string>
 
-namespace boost{namespace system{class error_code;};};
-namespace nwm
-{
-	class ErrorCode
-		: public TBoostWrapperCopyable<boost::system::error_code>
-	{
-	public:
+namespace boost {
+	namespace system {
+		class error_code;
+	};
+};
+namespace nwm {
+	class ErrorCode : public TBoostWrapperCopyable<boost::system::error_code> {
+	  public:
 		using TBoostWrapperCopyable<boost::system::error_code>::TBoostWrapperCopyable;
 		ErrorCode(const ErrorCode &other);
 		operator bool() const;

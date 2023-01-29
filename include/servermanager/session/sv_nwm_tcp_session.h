@@ -9,25 +9,23 @@
 #include "servermanager/legacy/sv_nwm_session.h"
 
 class SVNWMTCPConnection;
-class NWMTCPSession
-	: public NWMSession,public NWMTCPIO
-{
-public:
+class NWMTCPSession : public NWMSession, public NWMTCPIO {
+  public:
 	friend SVNWMTCPConnection;
-protected:
+  protected:
 	SVNWMTCPConnection *m_connection;
 	virtual void OnPacketReceived();
 	virtual void InitializeSharedPtr() override;
 	virtual void OnTerminated() override;
-public:
-	NWMTCPSession(nwm::IOService& ioService,SVNWMTCPConnection *con);
+  public:
+	NWMTCPSession(nwm::IOService &ioService, SVNWMTCPConnection *con);
 	virtual ~NWMTCPSession() override;
 	void Start();
 	virtual bool IsConnectionActive() override;
 	virtual bool IsUDP() const override;
 	virtual const NWMEndpoint &GetRemoteEndPoint() const override;
 	virtual void Close() override;
-	virtual void SetPacketHandle(const std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> &cbPacket) override;
+	virtual void SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket) override;
 	virtual void SetCloseHandle(const std::function<void(void)> &cbClose) override;
 	virtual void Run() override;
 	virtual std::string GetIP() const override;
