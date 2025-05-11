@@ -14,7 +14,7 @@ UDPMessageBase::~UDPMessageBase() { m_ioService->stop(); }
 
 void UDPMessageBase::Poll()
 {
-	m_ioService->reset();
+	m_ioService->restart();
 	m_ioService->poll();
 }
 #ifdef NWM_DISABLE_OPTIMIZATION

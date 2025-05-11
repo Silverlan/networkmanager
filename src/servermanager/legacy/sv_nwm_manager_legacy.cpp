@@ -154,7 +154,7 @@ void NWMServer::Shutdown()
 
 SessionHandle NWMServer::GetClient(const std::string &ip,unsigned short port)
 {
-	auto address = boost::asio::ip::address::from_string(ip);
+	auto address = boost::asio::ip::make_address(ip);
 	return GetClient(address,port);
 }
 SessionHandle NWMServer::GetClient(const boost::asio::ip::address &address,unsigned short port)
@@ -170,7 +170,7 @@ SessionHandle NWMServer::GetClient(const boost::asio::ip::address &address,unsig
 
 bool NWMServer::IsIPBanned(const std::string &ip)
 {
-	auto address = boost::asio::ip::address::from_string(ip);
+	auto address = boost::asio::ip::make_address(ip);
 	return IsIPBanned(address);
 }
 
@@ -184,13 +184,13 @@ bool NWMServer::IsIPBanned(const boost::asio::ip::address &ip)
 	return false;
 }
 
-void NWMServer::BanIP(const std::string &ip) {m_banned.push_back(boost::asio::ip::address::from_string(ip));} // TODO Kick, if already connected
+void NWMServer::BanIP(const std::string &ip) { m_banned.push_back(boost::asio::ip::make_address(ip)); } // TODO Kick, if already connected
 void NWMServer::BanIPs(const std::vector<std::string> &ips)
 {
 	size_t offset = m_banned.size();
 	m_banned.resize(offset +ips.size());
 	for(size_t i=offset;i<(offset +ips.size());i++)
-		m_banned[i] = boost::asio::ip::address::from_string(ips[i -offset]);
+		m_banned[i] = boost::asio::ip::make_address(ips[i - offset]);
 }
 
 std::vector<NWMServerClient*> NWMServer::GetFilterTargets(const RecipientFilter &filter)

@@ -47,11 +47,10 @@ void CLNWMTCPConnection::HandleOnConnect(const nwm::ErrorCode &err)
 void CLNWMTCPConnection::Connect(std::string serverIp, unsigned short serverPort)
 {
 	tcp::resolver res(**ioService);
-	tcp::resolver::query q(serverIp, std::to_string(serverPort));
-	tcp::resolver::iterator it = res.resolve(q);
-	tcp::endpoint ep = *it;
+	auto results = res.resolve(serverIp, std::to_string(serverPort));
+	auto ep = *results.begin();
 	m_remoteEndpoint = NWMEndpoint::CreateTCP(nwm::TCPEndpoint {&ep});
-	boost::asio::async_connect(*nwm::cast_socket(*socket), it, [this](const boost::system::error_code &err, boost::asio::ip::tcp::resolver::iterator it) { HandleOnConnect(err); });
+	boost::asio::async_connect(*nwm::cast_socket(*socket), results, [this](const boost::system::error_code &ec, const tcp::endpoint &connected_ep) { HandleOnConnect(ec); });
 }
 void CLNWMTCPConnection::CloseSocket() { NWMTCPConnection::CloseSocket(); }
 bool CLNWMTCPConnection::IsClosing() const { return NWMTCPIO::IsClosing(); }

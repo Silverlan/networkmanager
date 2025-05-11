@@ -117,30 +117,39 @@ void UDPMessageDispatcher::ResolveNext(bool lockMutex)
 	auto &msg = m_dispatchQueue.front();
 	if(msg.valid_endpoint == false) {
 		m_resolverQuery = std::make_unique<nwm::UDPResolverQuery>(msg.ip, std::to_string(msg.port));
-		nwm::cast_resolver(m_resolver)->async_resolve(*cast_resolver_query(*m_resolverQuery), [this](const boost::system::error_code &err, udp::resolver::iterator it) {
-			m_dispatchQueueMutex.lock();
-			auto &info = m_dispatchQueue.front();
-			if(err) {
-				auto &callback = info.callback;
-				m_eventMutex.lock();
-				m_active++;
-				m_events.push([callback, err]() { callback(err, nullptr); });
-				m_eventMutex.unlock();
-			}
-			else {
-				boost::asio::ip::udp::endpoint ep = *it;
-				ScheduleMessage(info, nwm::UDPEndpoint {&ep});
-			}
-			auto &x = *it;
-			m_active--;
-			m_dispatchQueue.pop();
-			if(m_dispatchQueue.empty()) {
-				m_dispatchQueueMutex.unlock();
-				return;
-			}
-			// m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
-			ResolveNext(false);
-		});
+		nwm::cast_resolver(m_resolver)
+		  ->async_resolve(
+#if NWM_USE_IPV6 == 0
+		    udp::v4(),
+		    "0.0.0.0", // IPv4 wildcard
+#else
+		    udp::v6(),
+		    "::1", // IPv6 loopback
+#endif
+		    std::to_string(msg.port), // port
+		    [this](const boost::system::error_code &ec, udp::resolver::results_type results) {
+			    m_dispatchQueueMutex.lock();
+			    auto &info = m_dispatchQueue.front();
+			    if(ec) {
+				    auto &callback = info.callback;
+				    m_eventMutex.lock();
+				    m_active++;
+				    m_events.push([callback, ec]() { callback(ec, nullptr); });
+				    m_eventMutex.unlock();
+			    }
+			    else {
+				    boost::asio::ip::udp::endpoint ep = *results.begin();
+				    ScheduleMessage(info, nwm::UDPEndpoint {&ep});
+			    }
+			    m_active--;
+			    m_dispatchQueue.pop();
+			    if(m_dispatchQueue.empty()) {
+				    m_dispatchQueueMutex.unlock();
+				    return;
+			    }
+			    // m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
+			    ResolveNext(false);
+		    });
 	}
 	else {
 		ScheduleMessage(msg, msg.endpoint);

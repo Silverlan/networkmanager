@@ -20,8 +20,9 @@ bool CLNWMUDPConnection::IsClosing() const { return NWMIOBase::IsClosing(); }
 void CLNWMUDPConnection::Connect(std::string serverIp, unsigned int serverPort)
 {
 	udp::resolver resolver(**ioService);
-	udp::resolver::query query(serverIp, std::to_string(serverPort));
-	udp::endpoint ep = *resolver.resolve(query);
+	auto results = resolver.resolve(serverIp, std::to_string(serverPort));
+	udp::endpoint ep = *results.begin();
+
 	m_remoteEndpoint = NWMEndpoint::CreateUDP(nwm::UDPEndpoint {&ep});
 	SetReady();
 	NetPacket out(NWM_MESSAGE_OUT_REGISTER_UDP);

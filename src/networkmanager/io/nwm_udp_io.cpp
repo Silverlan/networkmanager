@@ -15,12 +15,17 @@ NWMUDPIO::NWMUDPIO(nwm::IOService &ioService, unsigned short localPort) : NWMIO(
 {
 	try {
 		udp::resolver resolver(*ioService);
+		boost::system::error_code ec;
 #if NWM_USE_IPV6 == 0
-		udp::resolver::query query(udp::v4(), std::to_string(localPort));
+		auto results = resolver.resolve(udp::v4(), "0.0.0.0", std::to_string(localPort), ec);
 #else
-		udp::resolver::query query("::1", std::to_string(localPort));
+		auto results = resolver.resolve("::1", std::to_string(localPort), ec);
 #endif
-		udp::endpoint localEndpoint = *resolver.resolve(query);
+
+		if(ec)
+			throw boost::system::system_error(ec);
+
+		udp::endpoint localEndpoint = *results.begin();
 		m_localEndpoint = NWMEndpoint::CreateUDP(nwm::UDPEndpoint {&localEndpoint});
 		m_socket = std::make_unique<nwm::UDPSocket>(ioService);
 #if NWM_USE_IPV6 == 0

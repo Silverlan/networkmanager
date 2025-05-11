@@ -194,7 +194,7 @@ bool nwm::Server::HandleAsyncPacket(const NWMEndpoint &ep,NWMSession *session,ui
 void nwm::Server::OnPacketReceived(const NWMEndpoint &ep,ServerClient *cl,uint32_t id,NetPacket &packet) {}
 nwm::ServerClientHandle nwm::Server::GetClient(const std::string &ip,uint16_t port)
 {
-	auto address = boost::asio::ip::address::from_string(ip);
+	auto address = boost::asio::ip::make_address(ip);
 	return GetClient(address,port);
 }
 nwm::ServerClientHandle nwm::Server::GetClient(const nwm::IPAddress &address,uint16_t port)
@@ -223,7 +223,7 @@ void nwm::Server::GetClients(std::vector<ServerClientHandle> &clients) const
 void nwm::Server::SetMaxClients(int32_t numClients) {m_maxClients = numClients;}
 bool nwm::Server::IsIPBanned(const std::string &ip)
 {
-	auto address = boost::asio::ip::address::from_string(ip);
+	auto address = boost::asio::ip::make_address(ip);
 	return IsIPBanned(address);
 }
 
@@ -237,7 +237,7 @@ bool nwm::Server::IsIPBanned(const nwm::IPAddress &ip)
 void nwm::Server::BanIP(const std::string &ip)
 {
 	std::lock_guard<std::mutex> lg(m_banListMutex);
-	m_banned.push_back(boost::asio::ip::address::from_string(ip)); // TODO Kick, if already connected
+	m_banned.push_back(boost::asio::ip::make_address(ip)); // TODO Kick, if already connected
 }
 void nwm::Server::BanIPs(const std::vector<std::string> &ips)
 {
@@ -245,7 +245,7 @@ void nwm::Server::BanIPs(const std::vector<std::string> &ips)
 	m_banned.reserve(m_banned.size() +ips.size());
 	for(auto &ip : ips)
 	{
-		auto address = boost::asio::ip::address::from_string(ip);
+		auto address = boost::asio::ip::make_address(ip);
 		if(IsIPBanned(address) == true)
 			continue;
 		m_banned.push_back(address);
