@@ -41,7 +41,7 @@ class SVNWMTCPConnection : public NWMTCPConnection, public SVNWMConnection, publ
 	virtual std::string GetLocalIP() const override;
 	virtual unsigned short GetLocalPort() const override;
 	virtual nwm::IPAddress GetLocalAddress() const override;
-	void SetNagleAlgorithmEnabled(bool b);
+	virtual void SetNagleAlgorithmEnabled(bool b) override;
 };
 
 #endif

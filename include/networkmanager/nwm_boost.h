@@ -9,6 +9,7 @@
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0601
 #endif
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #pragma warning(default : 4005)

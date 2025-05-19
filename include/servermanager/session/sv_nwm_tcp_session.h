@@ -14,7 +14,7 @@ class NWMTCPSession : public NWMSession, public NWMTCPIO {
 	friend SVNWMTCPConnection;
   protected:
 	SVNWMTCPConnection *m_connection;
-	virtual void OnPacketReceived();
+	virtual void OnPacketReceived() override;
 	virtual void InitializeSharedPtr() override;
 	virtual void OnTerminated() override;
   public:

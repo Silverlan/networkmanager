@@ -17,7 +17,7 @@ void NWMUDPIOBase::Terminate() {}
 
 bool NWMUDPIOBase::IsTerminated() const
 {
-	if(socket == nullptr)
+	if(!socket)
 		return true;
 	return false;
 }

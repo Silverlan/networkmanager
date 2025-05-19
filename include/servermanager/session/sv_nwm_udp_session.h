@@ -15,7 +15,7 @@ class NWMUDPSession : public NWMSession, public NWMIOBase, public NWMUDPIOBase {
   protected:
 	SVNWMUDPConnection *m_connection;
 	bool m_bReady;
-	virtual void OnPacketReceived();
+	virtual void OnPacketReceived() override;
 	virtual void InitializeSharedPtr() override;
   public:
 	NWMUDPSession(const NWMEndpoint &ep, SVNWMUDPConnection *con);

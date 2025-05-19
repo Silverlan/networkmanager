@@ -22,7 +22,7 @@ class CLNWMUDPConnection : public NWMUDPConnection, public CLNWMConnection, publ
 	void Connect(std::string serverIp, unsigned int serverPort);
 	virtual void Close() override;
 	virtual bool IsClosing() const override;
-	void SendPacket(const NetPacket &packet, bool bOwn = false);
+	virtual void SendPacket(const NetPacket &packet, bool bOwn = false) override;
 	virtual void Run() override;
 	virtual void SetReady() override;
 	virtual void SetTimeoutDuration(double duration) override;

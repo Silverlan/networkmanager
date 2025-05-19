@@ -67,8 +67,8 @@ class NWMIO : public NWMErrorHandle, public NWMIOHeader, public NWMIOBase {
   public:
 	void SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket);
 	virtual void SendPacket(const NetPacket &packet);
-	virtual void SetReady();
-	bool IsReady() const;
+	virtual void SetReady() override;
+	virtual bool IsReady() const override;
 	virtual nwm::Protocol GetProtocol() const = 0;
 	bool IsTCP() const;
 	bool IsUDP() const;
