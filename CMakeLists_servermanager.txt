@@ -4,10 +4,7 @@ set(PROJ_NAME servermanager)
 pr_add_library(${PROJ_NAME} STATIC)
 
 pr_add_dependency(${PROJ_NAME} networkmanager TARGET PUBLIC)
-pr_add_external_dependency(${PROJ_NAME} boost HEADER_ONLY)
-pr_add_external_dependency(${PROJ_NAME} boost_system HEADER_ONLY)
-pr_add_external_dependency(${PROJ_NAME} boost_date_time LIBRARY LINK_ONLY)
-pr_add_external_dependency(${PROJ_NAME} boost_regex HEADER_ONLY)
+pr_add_external_dependency(${PROJ_NAME} boost LIBRARY)
 
 pr_add_headers(${PROJ_NAME} "include/")
 pr_add_sources(${PROJ_NAME} "src/servermanager/")
