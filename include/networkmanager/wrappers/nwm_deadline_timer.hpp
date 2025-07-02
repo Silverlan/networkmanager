@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
 #ifndef __NWM_DEADLINE_TIMER_HPP__
 #define __NWM_DEADLINE_TIMER_HPP__
 

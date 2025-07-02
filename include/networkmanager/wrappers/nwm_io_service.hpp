@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
 #ifndef __NWM_IO_SERVICE_HPP__
 #define __NWM_IO_SERVICE_HPP__
 

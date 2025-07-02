@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
 #ifndef __SV_NWM_IMPL_SOCKET_HPP__
 #define __SV_NWM_IMPL_SOCKET_HPP__
 

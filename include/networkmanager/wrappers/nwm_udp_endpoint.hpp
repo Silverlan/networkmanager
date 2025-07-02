@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
 #ifndef __NWM_UDP_ENDPOINT_HPP__
 #define __NWM_UDP_ENDPOINT_HPP__
 

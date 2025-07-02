@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
 #include "servermanager/wrappers/sv_nwm_acceptor.hpp"
 #include <networkmanager/wrappers/nwm_impl_boost.hpp>
 #include <networkmanager/wrappers/nwm_io_service.hpp>

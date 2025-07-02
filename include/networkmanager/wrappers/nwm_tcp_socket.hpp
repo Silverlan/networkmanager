@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
 #ifndef __NWM_TCP_SOCKET_HPP__
 #define __NWM_TCP_SOCKET_HPP__
 
