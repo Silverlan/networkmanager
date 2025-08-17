@@ -250,8 +250,7 @@ void NWMIO::AcceptNextFragment()
 	auto ptr = shared_from_this();
 	// We must only peek when using the UDP protocol, because the body is part of the same message and would be
 	// discarded otherwise
-	AsyncRead(
-	  {boost::asio::buffer(m_header.get(), NWM_PACKET_HEADER_SIZE)}, [ptr](const nwm::ErrorCode &error, std::size_t bytes) { static_cast<NWMIO *>(ptr.get())->HandleReadHeader(error, bytes); }, IsUDP());
+	AsyncRead({boost::asio::buffer(m_header.get(), NWM_PACKET_HEADER_SIZE)}, [ptr](const nwm::ErrorCode &error, std::size_t bytes) { static_cast<NWMIO *>(ptr.get())->HandleReadHeader(error, bytes); }, IsUDP());
 }
 
 void NWMIO::ResetWrite()
@@ -272,8 +271,7 @@ void NWMIO::ReadExtendedHeader()
 	auto ptr = shared_from_this();
 	if(IsUDP()) {
 		// Re-read entire header
-		AsyncRead(
-		  {boost::asio::buffer(m_header.get(), NWM_PACKET_HEADER_EXTENDED_SIZE)}, [ptr](const nwm::ErrorCode &error, std::size_t bytes) { static_cast<NWMIO *>(ptr.get())->HandleReadHeader(error, bytes); }, true);
+		AsyncRead({boost::asio::buffer(m_header.get(), NWM_PACKET_HEADER_EXTENDED_SIZE)}, [ptr](const nwm::ErrorCode &error, std::size_t bytes) { static_cast<NWMIO *>(ptr.get())->HandleReadHeader(error, bytes); }, true);
 	}
 	else {
 		// Only read remaining extended header

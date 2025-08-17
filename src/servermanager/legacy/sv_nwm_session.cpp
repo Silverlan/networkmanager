@@ -5,43 +5,32 @@
 #include "servermanager/legacy/sv_nwm_session.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-DEFINE_BASE_HANDLE(,NWMSession,NWMSession);
+DEFINE_BASE_HANDLE(, NWMSession, NWMSession);
 
-NWMSession::NWMSession()
-	: m_handle(this)
-{}
+NWMSession::NWMSession() : m_handle(this) {}
 
-NWMSession::~NWMSession()
-{
-	m_handle.Invalidate();
-}
+NWMSession::~NWMSession() { m_handle.Invalidate(); }
 
-void NWMSession::Release()
-{
-	m_handle.ptr = nullptr;
-}
+void NWMSession::Release() { m_handle.ptr = nullptr; }
 
-void NWMSession::Initialize()
-{
-	InitializeSharedPtr();
-}
+void NWMSession::Initialize() { InitializeSharedPtr(); }
 
-bool NWMSession::IsTCP() const {return !IsUDP();}
+bool NWMSession::IsTCP() const { return !IsUDP(); }
 
 bool NWMSession::IsTarget(const NWMEndpoint &ep)
 {
 	auto &epOther = GetRemoteEndPoint();
 	return (epOther == ep) ? true : false;
 }
-bool NWMSession::IsTarget(const nwm::IPAddress &address,unsigned short port)
+bool NWMSession::IsTarget(const nwm::IPAddress &address, unsigned short port)
 {
 	auto &ep = GetRemoteEndPoint();
 	return (ep == address && ep.GetPort() == port) ? true : false;
 }
 
-NWMSessionHandle NWMSession::GetHandle() {return m_handle;}
+NWMSessionHandle NWMSession::GetHandle() { return m_handle; }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

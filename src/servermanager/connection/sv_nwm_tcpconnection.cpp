@@ -9,40 +9,33 @@
 #include <sharedutils/scope_guard.h>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-SVNWMTCPConnection::SVNWMTCPConnection(unsigned short minPort,unsigned short maxPort)
-	: NWMTCPConnection(),SVNWMConnection(),NWMErrorHandle(),NWMEventBase(),
-	std::enable_shared_from_this<SVNWMTCPConnection>(),m_acceptor(nullptr),
-	m_bClosing(false),m_bTerminating(false),m_bNagleEnabled(false)
+SVNWMTCPConnection::SVNWMTCPConnection(unsigned short minPort, unsigned short maxPort)
+    : NWMTCPConnection(), SVNWMConnection(), NWMErrorHandle(), NWMEventBase(), std::enable_shared_from_this<SVNWMTCPConnection>(), m_acceptor(nullptr), m_bClosing(false), m_bTerminating(false), m_bNagleEnabled(false)
 {
 	auto port = minPort;
 	const char *msg = nullptr;
-	while(m_acceptor == nullptr && port <= maxPort)
-	{
-		try
-		{
+	while(m_acceptor == nullptr && port <= maxPort) {
+		try {
 #if NWM_USE_IPV6 == 0
-			endPoint = NWMEndpoint::CreateTCP(tcp::v4(),port);
+			endPoint = NWMEndpoint::CreateTCP(tcp::v4(), port);
 #else
-			endPoint = NWMEndpoint::CreateTCP(tcp::v6(),port);
+			endPoint = NWMEndpoint::CreateTCP(tcp::v6(), port);
 #endif
-			auto &ep = *static_cast<NWMTCPEndpoint*>(endPoint.get())->get();
-			m_acceptor = std::make_unique<nwm::TCPAcceptor>(*ioService,ep);
+			auto &ep = *static_cast<NWMTCPEndpoint *>(endPoint.get())->get();
+			m_acceptor = std::make_unique<nwm::TCPAcceptor>(*ioService, ep);
 		}
-		catch(std::exception e)
-		{
+		catch(std::exception e) {
 			port++;
 			msg = e.what();
 		}
 	}
-	if(m_acceptor == nullptr)
-	{
+	if(m_acceptor == nullptr) {
 		ioService = nullptr;
 		std::string err = "Unable to open TCP acceptor on port ";
 		err += std::to_string(port);
-		if(msg != nullptr)
-		{
+		if(msg != nullptr) {
 			err += ": ";
 			err += msg;
 		}
@@ -52,14 +45,11 @@ SVNWMTCPConnection::SVNWMTCPConnection(unsigned short minPort,unsigned short max
 		nwm::cast_acceptor(*m_acceptor)->set_option(tcp::no_delay(m_bNagleEnabled));
 }
 
-SVNWMTCPConnection::SVNWMTCPConnection(unsigned short port)
-	: SVNWMTCPConnection(port,port)
-{}
+SVNWMTCPConnection::SVNWMTCPConnection(unsigned short port) : SVNWMTCPConnection(port, port) {}
 
 SVNWMTCPConnection::~SVNWMTCPConnection()
 {
-	if(m_acceptor != nullptr)
-	{
+	if(m_acceptor != nullptr) {
 		if(nwm::cast_acceptor(*m_acceptor)->is_open())
 			nwm::cast_acceptor(*m_acceptor)->close();
 		m_acceptor = nullptr;
@@ -81,12 +71,9 @@ void SVNWMTCPConnection::SetNagleAlgorithmEnabled(bool b)
 	}*/
 }
 
-void SVNWMTCPConnection::Initialize()
-{
-	Accept();
-}
+void SVNWMTCPConnection::Initialize() { Accept(); }
 
-void SVNWMTCPConnection::SetTimeoutDuration(double duration) {SVNWMConnection::SetTimeoutDuration(duration);}
+void SVNWMTCPConnection::SetTimeoutDuration(double duration) { SVNWMConnection::SetTimeoutDuration(duration); }
 
 void SVNWMTCPConnection::OnClientConnected(NWMSession *session)
 {
@@ -94,15 +81,15 @@ void SVNWMTCPConnection::OnClientConnected(NWMSession *session)
 	SVNWMConnection::OnClientConnected(session);
 }
 
-void SVNWMTCPConnection::SetCloseHandle(const std::function<void(void)> &cbClose) {m_closeHandle = cbClose;}
-void SVNWMTCPConnection::SetPacketHandle(const std::function<void(const NWMEndpoint&,NWMIOBase*,unsigned int,NetPacket&)> &cbPacket)
+void SVNWMTCPConnection::SetCloseHandle(const std::function<void(void)> &cbClose) { m_closeHandle = cbClose; }
+void SVNWMTCPConnection::SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket)
 {
 	m_packetHandle = cbPacket;
-	for(auto it=m_sessions.begin();it!=m_sessions.end();it++)
+	for(auto it = m_sessions.begin(); it != m_sessions.end(); it++)
 		(*it)->SetPacketHandle(cbPacket);
 }
 
-void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const nwm::ErrorCode &err)
+void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession, const nwm::ErrorCode &err)
 {
 	if(!hSession.IsValid() || HandleError(err) == false)
 		return;
@@ -110,7 +97,7 @@ void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const nwm::Error
 	//session->SetNagleAlgorithmEnabled(m_bNagleEnabled);
 	session->InitializeSocket();
 	Accept();
-	ScheduleEvent([this,session]() {
+	ScheduleEvent([this, session]() {
 		if(m_acceptCallbacks.lock != nullptr)
 			m_acceptCallbacks.lock();
 		util::ScopeGuard sg([this]() {
@@ -119,8 +106,7 @@ void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const nwm::Error
 		});
 		auto address = session->GetAddress();
 		auto port = session->GetPort();
-		if(m_acceptCallbacks.has_client != nullptr && m_acceptCallbacks.has_client(address,port) == true)
-		{
+		if(m_acceptCallbacks.has_client != nullptr && m_acceptCallbacks.has_client(address, port) == true) {
 			session->Close();
 			session->Run();
 			session->SetNagleAlgorithmEnabled(m_bNagleEnabled);
@@ -134,7 +120,11 @@ void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession,const nwm::Error
 	});
 }
 
-void SVNWMTCPConnection::ScheduleTermination() {m_bTerminating = true; m_bClosing = true;}
+void SVNWMTCPConnection::ScheduleTermination()
+{
+	m_bTerminating = true;
+	m_bClosing = true;
+}
 
 void SVNWMTCPConnection::Terminate()
 {
@@ -145,30 +135,25 @@ void SVNWMTCPConnection::Terminate()
 		m_closeHandle();
 }
 
-void SVNWMTCPConnection::SendPacket(const NetPacket&,const NWMEndpoint&,bool) {}
+void SVNWMTCPConnection::SendPacket(const NetPacket &, const NWMEndpoint &, bool) {}
 
 void SVNWMTCPConnection::Accept()
 {
-	if(IsClosing()) return;
-	auto *session = new NWMTCPSession(*ioService,this);
+	if(IsClosing())
+		return;
+	auto *session = new NWMTCPSession(*ioService, this);
 	session->Initialize();
 	auto ptrSession = std::static_pointer_cast<NWMTCPSession>(session->shared_from_this());
 	auto hSession = AddSession(ptrSession);
-	nwm::cast_acceptor(*m_acceptor)->async_accept(
-		*nwm::cast_socket(*session->socket),
-		[this,hSession](const boost::system::error_code &err) {
-			HandleAccept(hSession,err);
-		}
-	);
+	nwm::cast_acceptor(*m_acceptor)->async_accept(*nwm::cast_socket(*session->socket), [this, hSession](const boost::system::error_code &err) { HandleAccept(hSession, err); });
 }
 
-bool SVNWMTCPConnection::IsClosing() const {return m_bClosing;}
+bool SVNWMTCPConnection::IsClosing() const { return m_bClosing; }
 
 void SVNWMTCPConnection::Run()
 {
 	NWMEventBase::ProcessEvents();
-	if(IsClosing() && m_bTerminating == true)
-	{
+	if(IsClosing() && m_bTerminating == true) {
 		Terminate();
 		return;
 	}
@@ -182,8 +167,7 @@ void SVNWMTCPConnection::Close()
 		return;
 	m_bClosing = true;
 	NWMTCPConnection::Close();
-	for(auto it=m_sessions.begin();it!=m_sessions.end();it++)
-	{
+	for(auto it = m_sessions.begin(); it != m_sessions.end(); it++) {
 		auto session = *it;
 		session->Close();
 	}
@@ -211,5 +195,5 @@ nwm::IPAddress SVNWMTCPConnection::GetLocalAddress() const
 	return endPoint.address();
 }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

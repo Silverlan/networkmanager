@@ -7,14 +7,12 @@
 #include "servermanager/legacy/sv_nwm_sessionhandle.h"
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
 extern NWMServer *server;
 NWMServerClient::NWMServerClient(NWMServer *manager)
-	: std::enable_shared_from_this<NWMServerClient>(),m_index(0),m_manager(manager),m_udpSession(nullptr),m_tcpSession(nullptr),
-	m_bClosing(false),m_handle(),m_bClosed(false),m_latency(0),m_ip(nwm::invalid_address()),
-	m_port(0),m_address{},m_bReady(false),m_bTCPInitialized(false),m_bUDPInitialized(false),
-	m_bDropped(false)
+    : std::enable_shared_from_this<NWMServerClient>(), m_index(0), m_manager(manager), m_udpSession(nullptr), m_tcpSession(nullptr), m_bClosing(false), m_handle(), m_bClosed(false), m_latency(0), m_ip(nwm::invalid_address()), m_port(0), m_address {}, m_bReady(false),
+      m_bTCPInitialized(false), m_bUDPInitialized(false), m_bDropped(false)
 {
 	m_lastUpdate = util::Clock::now();
 	m_handle = SessionHandle(this);
@@ -29,44 +27,42 @@ NWMServerClient::~NWMServerClient()
 	m_handle.Invalidate();
 }
 
-unsigned short NWMServerClient::GetLatency() const {return m_latency;}
-void NWMServerClient::SetLatency(unsigned short latency) {m_latency = latency;}
+unsigned short NWMServerClient::GetLatency() const { return m_latency; }
+void NWMServerClient::SetLatency(unsigned short latency) { m_latency = latency; }
 
-bool NWMServerClient::IsClosed() const {return m_bClosed;}
+bool NWMServerClient::IsClosed() const { return m_bClosed; }
 
 void NWMServerClient::Remove()
 {
-	if(m_udpSession != nullptr)
-	{
+	if(m_udpSession != nullptr) {
 		m_udpSession->Close();
 		while(m_udpSession != nullptr && !m_udpSession->IsTerminated())
 			m_udpSession->Run();
 	}
-	if(m_tcpSession != nullptr)
-	{
+	if(m_tcpSession != nullptr) {
 		m_tcpSession->Close();
 		while(m_tcpSession != nullptr && !m_tcpSession->IsTerminated())
 			m_tcpSession->Run();
 	}
 }
 
-SessionHandle NWMServerClient::GetHandle() {return m_handle;}
+SessionHandle NWMServerClient::GetHandle() { return m_handle; }
 //SessionHandle *NWMServerClient::CreateHandle() {return m_handle.Copy();}
 
-NWMServer *NWMServerClient::GetManager() const {return m_manager;}
+NWMServer *NWMServerClient::GetManager() const { return m_manager; }
 
 ChronoDuration NWMServerClient::TimeSinceLastActivity() const
 {
 	m_lastUpdateMutex.lock();
-		auto lastUpdate = m_lastUpdate;
+	auto lastUpdate = m_lastUpdate;
 	m_lastUpdateMutex.unlock();
-	return std::chrono::duration_cast<ChronoDuration>(util::Clock::now() -lastUpdate);
+	return std::chrono::duration_cast<ChronoDuration>(util::Clock::now() - lastUpdate);
 }
 
 void NWMServerClient::ResetLastUpdate()
 {
 	m_lastUpdateMutex.lock();
-		m_lastUpdate = util::Clock::now();
+	m_lastUpdate = util::Clock::now();
 	m_lastUpdateMutex.unlock();
 }
 
@@ -82,26 +78,24 @@ void NWMServerClient::InitializeSessionData(NWMSession *session)
 }
 
 template<class T>
-	void NWMServerClient::SessionCloseHandle(std::shared_ptr<T> &t,bool bLock)
+void NWMServerClient::SessionCloseHandle(std::shared_ptr<T> &t, bool bLock)
 {
 	bool bTimedOut = false;
 	boost::system::error_code err {};
-	if(t != nullptr)
-	{
+	if(t != nullptr) {
 		bTimedOut = t->IsTimedOut();
 		err = *t->GetLastError();
 		t->Release();
 		t = nullptr;
 	}
-	if(m_udpSession == nullptr && m_tcpSession == nullptr)
-	{
+	if(m_udpSession == nullptr && m_tcpSession == nullptr) {
 		m_bClosed = true;
 		OnClosed();
 	}
 	if(bTimedOut == true)
-		m_manager->DropClient(this,CLIENT_DROPPED::TIMEOUT,true,false); // TODO lock?
+		m_manager->DropClient(this, CLIENT_DROPPED::TIMEOUT, true, false); // TODO lock?
 	else if(err)
-		m_manager->DropClient(this,CLIENT_DROPPED::ERROR,true,bLock);
+		m_manager->DropClient(this, CLIENT_DROPPED::ERROR, true, bLock);
 }
 void NWMServerClient::SetSession(NWMUDPSession *session)
 {
@@ -109,9 +103,7 @@ void NWMServerClient::SetSession(NWMUDPSession *session)
 		m_udpSession->Release();
 	InitializeSessionData(session);
 	m_udpSession = std::static_pointer_cast<NWMUDPSession>(session->shared_from_this());
-	session->SetCloseHandle(std::bind(
-		&NWMServerClient::SessionCloseHandle<NWMUDPSession>,this,std::ref(m_udpSession),false
-	));
+	session->SetCloseHandle(std::bind(&NWMServerClient::SessionCloseHandle<NWMUDPSession>, this, std::ref(m_udpSession), false));
 	m_handle.Initialize();
 	m_bUDPInitialized = true;
 	UpdateReadyState();
@@ -122,9 +114,7 @@ void NWMServerClient::SetSession(NWMTCPSession *session)
 		m_tcpSession->Release();
 	InitializeSessionData(session);
 	m_tcpSession = std::static_pointer_cast<NWMTCPSession>(session->shared_from_this());
-	session->SetCloseHandle(std::bind(
-		&NWMServerClient::SessionCloseHandle<NWMTCPSession>,this,std::ref(m_tcpSession),true
-	));
+	session->SetCloseHandle(std::bind(&NWMServerClient::SessionCloseHandle<NWMTCPSession>, this, std::ref(m_tcpSession), true));
 	m_handle.Initialize();
 	m_bTCPInitialized = true;
 	UpdateReadyState();
@@ -133,7 +123,7 @@ void NWMServerClient::Drop(CLIENT_DROPPED reason)
 {
 	if(m_manager == nullptr)
 		return;
-	m_manager->DropClient(this,reason);
+	m_manager->DropClient(this, reason);
 }
 
 void NWMServerClient::UpdateReadyState()
@@ -141,18 +131,15 @@ void NWMServerClient::UpdateReadyState()
 	if(IsReady())
 		return;
 	bool bReady = false;
-	if(m_manager->HasUDPConnection())
-	{
-		if(m_bUDPInitialized == true)
-		{
+	if(m_manager->HasUDPConnection()) {
+		if(m_bUDPInitialized == true) {
 			if(!m_manager->HasTCPConnection() || m_bTCPInitialized == true)
 				bReady = true;
 		}
 	}
 	else if(m_manager->HasTCPConnection() && m_bTCPInitialized == true)
 		bReady = true;
-	if(bReady == true)
-	{
+	if(bReady == true) {
 		if(m_udpSession != nullptr)
 			m_udpSession->SetReady();
 		if(m_tcpSession != nullptr)
@@ -160,12 +147,9 @@ void NWMServerClient::UpdateReadyState()
 		m_bReady = true;
 	}
 }
-bool NWMServerClient::IsReady() const {return m_bReady;}
+bool NWMServerClient::IsReady() const { return m_bReady; }
 
-void NWMServerClient::Close()
-{
-	m_bClosing = true;
-}
+void NWMServerClient::Close() { m_bClosing = true; }
 
 void NWMServerClient::Terminate()
 {
@@ -177,8 +161,7 @@ void NWMServerClient::Terminate()
 
 void NWMServerClient::Run()
 {
-	if(m_bClosing == true)
-	{
+	if(m_bClosing == true) {
 		Terminate();
 		m_bClosing = false;
 	}
@@ -188,10 +171,10 @@ void NWMServerClient::Run()
 		m_tcpSession->Run();
 }
 
-bool NWMServerClient::IsClosing() const {return m_bClosing;}
-void NWMServerClient::SetIndex(size_t idx) {m_index = idx;}
-size_t NWMServerClient::GetIndex() const {return m_index;}
-void NWMServerClient::SetEndPoint(const NWMEndpoint&)
+bool NWMServerClient::IsClosing() const { return m_bClosing; }
+void NWMServerClient::SetIndex(size_t idx) { m_index = idx; }
+size_t NWMServerClient::GetIndex() const { return m_index; }
+void NWMServerClient::SetEndPoint(const NWMEndpoint &)
 {
 	// TODO What is this for, exactly?
 	/*if(ep->IsUDP())
@@ -211,17 +194,16 @@ void NWMServerClient::SetEndPoint(const NWMEndpoint&)
 		return;
 	m_tcpSession = new NWMTCPSession(*con->ioService,ep);*/
 }
-std::string NWMServerClient::GetIP() const {return m_ip;}
-nwm::IPAddress NWMServerClient::GetAddress() const {return m_address;}
-unsigned short NWMServerClient::GetPort() const {return m_port;}
-const NWMEndpoint &NWMServerClient::GetRemoteEndpoint() const {return m_remoteEndPoint;}
-std::string NWMServerClient::GetRemoteIP() const {return m_remoteEndPoint.GetIP();}
-nwm::IPAddress NWMServerClient::GetRemoteAddress() const {return *m_remoteEndPoint.GetAddress();}
-unsigned short NWMServerClient::GetRemotePort() const {return m_remoteEndPoint.GetPort();}
+std::string NWMServerClient::GetIP() const { return m_ip; }
+nwm::IPAddress NWMServerClient::GetAddress() const { return m_address; }
+unsigned short NWMServerClient::GetPort() const { return m_port; }
+const NWMEndpoint &NWMServerClient::GetRemoteEndpoint() const { return m_remoteEndPoint; }
+std::string NWMServerClient::GetRemoteIP() const { return m_remoteEndPoint.GetIP(); }
+nwm::IPAddress NWMServerClient::GetRemoteAddress() const { return *m_remoteEndPoint.GetAddress(); }
+unsigned short NWMServerClient::GetRemotePort() const { return m_remoteEndPoint.GetPort(); }
 bool NWMServerClient::IsTarget(const NWMEndpoint &ep)
 {
-	if(ep->IsUDP())
-	{
+	if(ep->IsUDP()) {
 		if(m_udpSession == nullptr)
 			return false;
 		return (m_udpSession->GetRemoteEndPoint() == ep) ? true : false;
@@ -230,7 +212,7 @@ bool NWMServerClient::IsTarget(const NWMEndpoint &ep)
 		return false;
 	return (m_tcpSession->GetRemoteEndPoint() == ep) ? true : false;
 }
-bool NWMServerClient::IsTarget(const nwm::IPAddress &address,unsigned short port)
+bool NWMServerClient::IsTarget(const nwm::IPAddress &address, unsigned short port)
 {
 	if(m_tcpSession != nullptr)
 		return (m_tcpSession->GetAddress() == address && m_tcpSession->GetPort() == port) ? true : false;
@@ -239,19 +221,16 @@ bool NWMServerClient::IsTarget(const nwm::IPAddress &address,unsigned short port
 	return (m_udpSession->GetAddress() == address && m_udpSession->GetPort() == port) ? true : false;
 }
 
-void NWMServerClient::SendPacket(const NetPacket &p,bool bPreferUDP)
+void NWMServerClient::SendPacket(const NetPacket &p, bool bPreferUDP)
 {
-	m_manager->OnClientPacketSent(this,p);
-	if(bPreferUDP == true)
-	{
-		if(m_udpSession != nullptr)
-		{
+	m_manager->OnClientPacketSent(this, p);
+	if(bPreferUDP == true) {
+		if(m_udpSession != nullptr) {
 			m_udpSession->SendPacket(p);
 			return;
 		}
 	}
-	if(m_tcpSession != nullptr)
-	{
+	if(m_tcpSession != nullptr) {
 		m_tcpSession->SendPacket(p);
 		return;
 	}
@@ -259,12 +238,12 @@ void NWMServerClient::SendPacket(const NetPacket &p,bool bPreferUDP)
 		return;
 	m_udpSession->SendPacket(p);
 }
-void NWMServerClient::SendPacketTCP(const NetPacket &p) {SendPacket(p);}
-void NWMServerClient::SendPacketUDP(const NetPacket &p) {SendPacket(p,true);}
+void NWMServerClient::SendPacketTCP(const NetPacket &p) { SendPacket(p); }
+void NWMServerClient::SendPacketUDP(const NetPacket &p) { SendPacket(p, true); }
 
-bool NWMServerClient::IsUDPConnected() const {return (m_udpSession != nullptr) ? true : false;}
-bool NWMServerClient::IsTCPConnected() const {return (m_tcpSession != nullptr) ? true : false;}
-bool NWMServerClient::IsFullyConnected() const {return ((m_manager->HasUDPConnection() && !IsUDPConnected()) || (m_manager->HasTCPConnection() && !IsTCPConnected())) ? false : true;}
+bool NWMServerClient::IsUDPConnected() const { return (m_udpSession != nullptr) ? true : false; }
+bool NWMServerClient::IsTCPConnected() const { return (m_tcpSession != nullptr) ? true : false; }
+bool NWMServerClient::IsFullyConnected() const { return ((m_manager->HasUDPConnection() && !IsUDPConnected()) || (m_manager->HasTCPConnection() && !IsTCPConnected())) ? false : true; }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif

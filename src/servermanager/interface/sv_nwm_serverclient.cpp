@@ -9,14 +9,13 @@
 #include <networkmanager/wrappers/nwm_boost_wrapper_impl.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",off)
+#pragma optimize("", off)
 #endif
-nwm::ServerClient::ServerClient(Server *manager)
-	: std::enable_shared_from_this<nwm::ServerClient>(),m_manager(manager)
+nwm::ServerClient::ServerClient(Server *manager) : std::enable_shared_from_this<nwm::ServerClient>(), m_manager(manager)
 {
-	boost::asio::ip::udp::endpoint udpEp = boost::asio::ip::basic_endpoint<boost::asio::ip::udp>{};
+	boost::asio::ip::udp::endpoint udpEp = boost::asio::ip::basic_endpoint<boost::asio::ip::udp> {};
 	NWMUDPEndpoint udpEndpoint {&udpEp};
-	boost::asio::ip::tcp::endpoint tcpEp = boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>{};
+	boost::asio::ip::tcp::endpoint tcpEp = boost::asio::ip::basic_endpoint<boost::asio::ip::tcp> {};
 	NWMTCPEndpoint tcpEndpoint {&tcpEp};
 	m_conUDP.remoteEndpoint = NWMEndpoint(udpEndpoint);
 	m_conTCP.remoteEndpoint = NWMEndpoint(tcpEndpoint);
@@ -30,101 +29,100 @@ nwm::ServerClient::~ServerClient()
 	assert(m_udpSession == nullptr);
 	assert(m_tcpSession == nullptr);
 	m_sessionDataMutex.lock();
-		m_handle.Invalidate();
+	m_handle.Invalidate();
 	m_sessionDataMutex.unlock();
 }
 
-uint16_t nwm::ServerClient::GetLatency() const {return m_latency;}
-void nwm::ServerClient::SetLatency(uint16_t latency) {m_latency = latency;}
-bool nwm::ServerClient::IsClosed() const {return m_bClosed;}
+uint16_t nwm::ServerClient::GetLatency() const { return m_latency; }
+void nwm::ServerClient::SetLatency(uint16_t latency) { m_latency = latency; }
+bool nwm::ServerClient::IsClosed() const { return m_bClosed; }
 
 nwm::ServerClientHandle nwm::ServerClient::GetHandle() const
 {
 	m_sessionDataMutex.lock();
-		auto h = m_handle;
+	auto h = m_handle;
 	m_sessionDataMutex.unlock();
 	return h;
 }
-nwm::Server *nwm::ServerClient::GetManager() const {return m_manager;}
+nwm::Server *nwm::ServerClient::GetManager() const { return m_manager; }
 
 ChronoDuration nwm::ServerClient::TimeSinceLastActivity() const
 {
 	m_lastUpdateMutex.lock();
-		auto lastUpdate = m_lastUpdate;
+	auto lastUpdate = m_lastUpdate;
 	m_lastUpdateMutex.unlock();
-	return std::chrono::duration_cast<ChronoDuration>(util::Clock::now() -lastUpdate);
+	return std::chrono::duration_cast<ChronoDuration>(util::Clock::now() - lastUpdate);
 }
 
 void nwm::ServerClient::ResetLastUpdate()
 {
 	m_lastUpdateMutex.lock();
-		m_lastUpdate = util::Clock::now();
+	m_lastUpdate = util::Clock::now();
 	m_lastUpdateMutex.unlock();
 }
 
-void nwm::ServerClient::Drop(ClientDropped e) {m_manager->DropClient(this,e);}
-bool nwm::ServerClient::IsReady() const {return m_bReady;}
-void nwm::ServerClient::Close() {m_bClosing = true;}
+void nwm::ServerClient::Drop(ClientDropped e) { m_manager->DropClient(this, e); }
+bool nwm::ServerClient::IsReady() const { return m_bReady; }
+void nwm::ServerClient::Close() { m_bClosing = true; }
 
-bool nwm::ServerClient::IsClosing() const {return m_bClosing;}
-void nwm::ServerClient::SetIndex(size_t idx) {m_index = idx;}
-size_t nwm::ServerClient::GetIndex() const {return m_index;}
+bool nwm::ServerClient::IsClosing() const { return m_bClosing; }
+void nwm::ServerClient::SetIndex(size_t idx) { m_index = idx; }
+size_t nwm::ServerClient::GetIndex() const { return m_index; }
 std::string nwm::ServerClient::GetIP() const
 {
 	m_sessionDataMutex.lock();
-		auto ip = m_conTCP.ip;
+	auto ip = m_conTCP.ip;
 	m_sessionDataMutex.unlock();
 	return ip;
 }
-void nwm::ServerClient::SetAddress(nwm::Protocol protocol,const nwm::IPAddress &address,uint16_t port)
+void nwm::ServerClient::SetAddress(nwm::Protocol protocol, const nwm::IPAddress &address, uint16_t port)
 {
 	m_sessionDataMutex.lock();
-		switch(protocol)
-		{
-			case Protocol::TCP:
-				m_conTCP.address = address;
-				m_conTCP.port = port;
-				break;
-			case Protocol::UDP:
-				m_conUDP.address = address;
-				m_conUDP.port = port;
-				break;
-		}
+	switch(protocol) {
+	case Protocol::TCP:
+		m_conTCP.address = address;
+		m_conTCP.port = port;
+		break;
+	case Protocol::UDP:
+		m_conUDP.address = address;
+		m_conUDP.port = port;
+		break;
+	}
 	m_sessionDataMutex.unlock();
 }
 nwm::IPAddress nwm::ServerClient::GetAddress() const
 {
 	m_sessionDataMutex.lock();
-		auto address = m_conTCP.address;
+	auto address = m_conTCP.address;
 	m_sessionDataMutex.unlock();
 	return address;
 }
-uint16_t nwm::ServerClient::GetPort() const {return m_conTCP.port;}
+uint16_t nwm::ServerClient::GetPort() const { return m_conTCP.port; }
 NWMEndpoint nwm::ServerClient::GetRemoteEndpoint() const
 {
 	m_sessionDataMutex.lock();
-		auto ep = m_conTCP.remoteEndpoint;
+	auto ep = m_conTCP.remoteEndpoint;
 	m_sessionDataMutex.unlock();
 	return ep;
 }
 std::string nwm::ServerClient::GetRemoteIP() const
 {
 	m_sessionDataMutex.lock();
-		auto ip = m_conTCP.remoteEndpoint.GetIP();
+	auto ip = m_conTCP.remoteEndpoint.GetIP();
 	m_sessionDataMutex.unlock();
 	return ip;
 }
 nwm::IPAddress nwm::ServerClient::GetRemoteAddress() const
 {
 	m_sessionDataMutex.lock();
-		auto address = m_conTCP.remoteEndpoint.GetAddress();
+	auto address = m_conTCP.remoteEndpoint.GetAddress();
 	m_sessionDataMutex.unlock();
 	return address;
 }
 uint16_t nwm::ServerClient::GetRemotePort() const
 {
 	m_sessionDataMutex.lock();
-		auto port = m_conTCP.remoteEndpoint.GetPort();
+	auto port = m_conTCP.remoteEndpoint.GetPort();
 	m_sessionDataMutex.unlock();
 	return port;
 }
@@ -137,7 +135,7 @@ bool nwm::ServerClient::IsTarget(const NWMEndpoint &ep) const
 		return true;
 	return false;
 }
-bool nwm::ServerClient::IsTarget(const nwm::IPAddress &address,uint16_t port) const
+bool nwm::ServerClient::IsTarget(const nwm::IPAddress &address, uint16_t port) const
 {
 	std::lock_guard<std::mutex> lg(m_sessionDataMutex);
 	if(IsTCPConnected() && m_conTCP.address == address && m_conTCP.port == port)
@@ -164,18 +162,17 @@ bool nwm::ServerClient::UsesPort(uint16_t port) const
 	return false;
 }
 
-bool nwm::ServerClient::IsUDPConnected() const {return m_conUDP.connected;}
-bool nwm::ServerClient::IsTCPConnected() const {return m_conTCP.connected;}
-bool nwm::ServerClient::IsFullyConnected() const {return ((m_manager->HasUDPConnection() && !IsUDPConnected()) || (m_manager->HasTCPConnection() && !IsTCPConnected())) ? false : true;}
+bool nwm::ServerClient::IsUDPConnected() const { return m_conUDP.connected; }
+bool nwm::ServerClient::IsTCPConnected() const { return m_conTCP.connected; }
+bool nwm::ServerClient::IsFullyConnected() const { return ((m_manager->HasUDPConnection() && !IsUDPConnected()) || (m_manager->HasTCPConnection() && !IsTCPConnected())) ? false : true; }
 
 // The following mustn't be called from main thread!
 template<class T>
-	void nwm::ServerClient::SessionCloseHandle(std::shared_ptr<T> &t)
+void nwm::ServerClient::SessionCloseHandle(std::shared_ptr<T> &t)
 {
 	bool bTimedOut = false;
 	boost::system::error_code err {};
-	if(t != nullptr)
-	{
+	if(t != nullptr) {
 		bTimedOut = t->IsTimedOut();
 		auto pErr = t->GetLastError();
 		if(pErr)
@@ -183,27 +180,24 @@ template<class T>
 		t->Release();
 		t = nullptr;
 	}
-	if(m_udpSession == nullptr && m_tcpSession == nullptr)
-	{
+	if(m_udpSession == nullptr && m_tcpSession == nullptr) {
 		m_bClosed = true;
 		OnClosed();
 	}
 	if(bTimedOut == true)
-		m_manager->DropClient(this,ClientDropped::Timeout,true);
+		m_manager->DropClient(this, ClientDropped::Timeout, true);
 	else if(err)
-		m_manager->DropClient(this,ClientDropped::Error,true);
+		m_manager->DropClient(this, ClientDropped::Error, true);
 }
 void nwm::ServerClient::Release()
 {
-	if(m_udpSession != nullptr)
-	{
+	if(m_udpSession != nullptr) {
 		m_udpSession->Close();
 		while(m_udpSession != nullptr && !m_udpSession->IsTerminated())
 			m_udpSession->Run();
 		m_udpSession = nullptr;
 	}
-	if(m_tcpSession != nullptr)
-	{
+	if(m_tcpSession != nullptr) {
 		m_tcpSession->Close();
 		while(m_tcpSession != nullptr && !m_tcpSession->IsTerminated())
 			m_tcpSession->Run();
@@ -212,8 +206,7 @@ void nwm::ServerClient::Release()
 }
 void nwm::ServerClient::Run()
 {
-	if(m_bClosing == true)
-	{
+	if(m_bClosing == true) {
 		Terminate();
 		m_bClosing = false;
 	}
@@ -229,40 +222,36 @@ void nwm::ServerClient::Terminate()
 	if(m_tcpSession != nullptr)
 		m_tcpSession->Close();
 }
-void nwm::ServerClient::SendPacket(const NetPacket &p,nwm::Protocol protocol)
+void nwm::ServerClient::SendPacket(const NetPacket &p, nwm::Protocol protocol)
 {
 #if NWM_VERBOSE >= 2
-	std::cout<<"[NWMSV] Sending packet "<<p.GetMessageID()<<" to client "<<GetIP()<<" via "<<nwm::protocol_enum_to_string(protocol)<<" protocol..."<<std::endl;
+	std::cout << "[NWMSV] Sending packet " << p.GetMessageID() << " to client " << GetIP() << " via " << nwm::protocol_enum_to_string(protocol) << " protocol..." << std::endl;
 #endif
-	m_manager->OnClientPacketSent(this,p);
-	if(protocol == nwm::Protocol::UDP)
-	{
-		if(m_udpSession != nullptr)
-		{
+	m_manager->OnClientPacketSent(this, p);
+	if(protocol == nwm::Protocol::UDP) {
+		if(m_udpSession != nullptr) {
 #if NWM_VERBOSE >= 2
-			std::cout<<"[NWMSV] Sending UDP packet..."<<std::endl;
+			std::cout << "[NWMSV] Sending UDP packet..." << std::endl;
 #endif
 			m_udpSession->SendPacket(p);
 			return;
 		}
 	}
-	if(m_tcpSession != nullptr)
-	{
+	if(m_tcpSession != nullptr) {
 #if NWM_VERBOSE >= 2
-			std::cout<<"[NWMSV] Sending TCP packet..."<<std::endl;
+		std::cout << "[NWMSV] Sending TCP packet..." << std::endl;
 #endif
 		m_tcpSession->SendPacket(p);
 		return;
 	}
-	if(m_udpSession == nullptr)
-	{
+	if(m_udpSession == nullptr) {
 #if NWM_VERBOSE >= 2
-		std::cout<<"[NWMSV] Unable to send packet: No TCP or UDP session available!"<<std::endl;
+		std::cout << "[NWMSV] Unable to send packet: No TCP or UDP session available!" << std::endl;
 #endif
 		return;
 	}
 #if NWM_VERBOSE >= 2
-	std::cout<<"[NWMSV] Sending UDP packet..."<<std::endl;
+	std::cout << "[NWMSV] Sending UDP packet..." << std::endl;
 #endif
 	m_udpSession->SendPacket(p);
 }
@@ -278,35 +267,31 @@ void nwm::ServerClient::InitializeSessionData(NWMSession *session)
 void nwm::ServerClient::SetSession(NWMUDPSession *session)
 {
 	m_sessionDataMutex.lock();
-		if(m_udpSession != nullptr)
-			m_udpSession->Release();
-		InitializeSessionData(session);
+	if(m_udpSession != nullptr)
+		m_udpSession->Release();
+	InitializeSessionData(session);
 
-		m_udpSession = std::static_pointer_cast<NWMUDPSession>(session->shared_from_this());
-		session->SetCloseHandle(std::bind(
-			&nwm::ServerClient::SessionCloseHandle<NWMUDPSession>,this,std::ref(m_udpSession)
-		));
-		m_handle.Initialize();
-		m_conUDP.initialized = true;
-		UpdateReadyState();
-		m_conUDP.connected = true;
+	m_udpSession = std::static_pointer_cast<NWMUDPSession>(session->shared_from_this());
+	session->SetCloseHandle(std::bind(&nwm::ServerClient::SessionCloseHandle<NWMUDPSession>, this, std::ref(m_udpSession)));
+	m_handle.Initialize();
+	m_conUDP.initialized = true;
+	UpdateReadyState();
+	m_conUDP.connected = true;
 	m_sessionDataMutex.unlock();
 }
 void nwm::ServerClient::SetSession(NWMTCPSession *session)
 {
 	m_sessionDataMutex.lock();
-		if(m_tcpSession != nullptr)
-			m_tcpSession->Release();
-		InitializeSessionData(session);
+	if(m_tcpSession != nullptr)
+		m_tcpSession->Release();
+	InitializeSessionData(session);
 
-		m_tcpSession = std::static_pointer_cast<NWMTCPSession>(session->shared_from_this());
-		session->SetCloseHandle(std::bind(
-			&nwm::ServerClient::SessionCloseHandle<NWMTCPSession>,this,std::ref(m_tcpSession)
-		));
-		m_handle.Initialize();
-		m_conTCP.initialized = true;
-		UpdateReadyState();
-		m_conTCP.connected = true;
+	m_tcpSession = std::static_pointer_cast<NWMTCPSession>(session->shared_from_this());
+	session->SetCloseHandle(std::bind(&nwm::ServerClient::SessionCloseHandle<NWMTCPSession>, this, std::ref(m_tcpSession)));
+	m_handle.Initialize();
+	m_conTCP.initialized = true;
+	UpdateReadyState();
+	m_conTCP.connected = true;
 	m_sessionDataMutex.unlock();
 }
 
@@ -315,18 +300,15 @@ void nwm::ServerClient::UpdateReadyState()
 	if(IsReady())
 		return;
 	auto bReady = false;
-	if(m_manager->HasUDPConnection())
-	{
-		if(m_conUDP.initialized == true)
-		{
+	if(m_manager->HasUDPConnection()) {
+		if(m_conUDP.initialized == true) {
 			if(!m_manager->HasTCPConnection() || m_conTCP.initialized == true)
 				bReady = true;
 		}
 	}
 	else if(m_manager->HasTCPConnection() && m_conTCP.initialized == true)
 		bReady = true;
-	if(bReady == true)
-	{
+	if(bReady == true) {
 		if(m_udpSession != nullptr)
 			m_udpSession->SetReady();
 		if(m_tcpSession != nullptr)
@@ -335,5 +317,5 @@ void nwm::ServerClient::UpdateReadyState()
 	}
 }
 #ifdef NWM_DISABLE_OPTIMIZATION
-#pragma optimize("",on)
+#pragma optimize("", on)
 #endif
