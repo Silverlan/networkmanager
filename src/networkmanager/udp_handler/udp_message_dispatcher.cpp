@@ -5,6 +5,7 @@
 #include "networkmanager/udp_handler/udp_message_dispatcher.h"
 #include "networkmanager/wrappers/nwm_impl_boost.hpp"
 #include "networkmanager/wrappers/nwm_boost_wrapper_impl.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/bind.hpp>
 
 #ifdef NWM_DISABLE_OPTIMIZATION
@@ -12,7 +13,7 @@
 #endif
 UDPMessageDispatcher::UDPMessageDispatcher() : UDPMessageBase(), m_resolver(m_ioService), m_active(0), m_deadline(m_ioService), m_timeout(0)
 {
-	cast_deadline_timer(m_deadline)->expires_at(boost::posix_time::pos_infin);
+	cast_deadline_timer(m_deadline)->expires_at(std::chrono::steady_clock::time_point::max());
 	CheckDeadline();
 }
 
@@ -31,11 +32,16 @@ std::unique_ptr<UDPMessageDispatcher> UDPMessageDispatcher::Create(unsigned int 
 
 void UDPMessageDispatcher::CheckDeadline()
 {
-	if(cast_deadline_timer(m_deadline)->expires_at() <= boost::asio::deadline_timer::traits_type::now()) {
+	auto timer = cast_deadline_timer(m_deadline);
+	if (timer->expiry() <= boost::asio::steady_timer::clock_type::now()) {
 		Cancel();
-		cast_deadline_timer(m_deadline)->expires_at(boost::posix_time::pos_infin);
+
+		timer->expires_at(std::chrono::steady_clock::time_point::max());
 	}
-	cast_deadline_timer(m_deadline)->async_wait(boost::bind(&UDPMessageDispatcher::CheckDeadline, this));
+
+	timer->async_wait([this](const boost::system::error_code& /*ec*/) {
+		CheckDeadline();
+	});
 }
 
 void UDPMessageDispatcher::Cancel()
@@ -88,12 +94,16 @@ void UDPMessageDispatcher::Poll()
 
 void UDPMessageDispatcher::ResetTimeout()
 {
-	if(m_timeout == 0) {
-		cast_deadline_timer(m_deadline)->expires_at(boost::posix_time::pos_infin);
-		return;
-	}
-	cast_deadline_timer(m_deadline)->expires_from_now(boost::posix_time::seconds(m_timeout));
+    auto timer = cast_deadline_timer(m_deadline);
+
+    if (m_timeout == 0) {
+        timer->expires_at(std::chrono::steady_clock::time_point::max());
+        return;
+    }
+
+    timer->expires_after(std::chrono::seconds(m_timeout));
 }
+
 
 void UDPMessageDispatcher::ScheduleMessage(DispatchInfo &info, const nwm::UDPEndpoint &ep)
 {
@@ -119,36 +129,36 @@ void UDPMessageDispatcher::ResolveNext(bool lockMutex)
 		nwm::cast_resolver(m_resolver)
 		  ->async_resolve(
 #if NWM_USE_IPV6 == 0
-		    udp::v4(),
-		    "0.0.0.0", // IPv4 wildcard
+			udp::v4(),
+			"0.0.0.0", // IPv4 wildcard
 #else
-		    udp::v6(),
-		    "::1", // IPv6 loopback
+			udp::v6(),
+			"::1", // IPv6 loopback
 #endif
-		    std::to_string(msg.port), // port
-		    [this](const boost::system::error_code &ec, udp::resolver::results_type results) {
-			    m_dispatchQueueMutex.lock();
-			    auto &info = m_dispatchQueue.front();
-			    if(ec) {
-				    auto &callback = info.callback;
-				    m_eventMutex.lock();
-				    m_active++;
-				    m_events.push([callback, ec]() { callback(ec, nullptr); });
-				    m_eventMutex.unlock();
-			    }
-			    else {
-				    boost::asio::ip::udp::endpoint ep = *results.begin();
-				    ScheduleMessage(info, nwm::UDPEndpoint {&ep});
-			    }
-			    m_active--;
-			    m_dispatchQueue.pop();
-			    if(m_dispatchQueue.empty()) {
-				    m_dispatchQueueMutex.unlock();
-				    return;
-			    }
-			    // m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
-			    ResolveNext(false);
-		    });
+			std::to_string(msg.port), // port
+			[this](const boost::system::error_code &ec, udp::resolver::results_type results) {
+				m_dispatchQueueMutex.lock();
+				auto &info = m_dispatchQueue.front();
+				if(ec) {
+					auto &callback = info.callback;
+					m_eventMutex.lock();
+					m_active++;
+					m_events.push([callback, ec]() { callback(ec, nullptr); });
+					m_eventMutex.unlock();
+				}
+				else {
+					boost::asio::ip::udp::endpoint ep = *results.begin();
+					ScheduleMessage(info, nwm::UDPEndpoint {&ep});
+				}
+				m_active--;
+				m_dispatchQueue.pop();
+				if(m_dispatchQueue.empty()) {
+					m_dispatchQueueMutex.unlock();
+					return;
+				}
+				// m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
+				ResolveNext(false);
+			});
 	}
 	else {
 		ScheduleMessage(msg, msg.endpoint);
