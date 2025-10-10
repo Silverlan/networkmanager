@@ -3,8 +3,6 @@
 
 module;
 
-#include "sharedutils/def_handle.h"
-
 module pragma.server_manager;
 
 import :client_handle;
@@ -12,14 +10,9 @@ import :client_handle;
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("", off)
 #endif
-namespace nwm {
-	DEFINE_BASE_HANDLE(, ServerClient, ServerClientBase);
-};
 
 nwm::ServerClientHandle::ServerClientHandle() : ServerClientBaseHandle() { Initialize(); }
 nwm::ServerClientHandle::ServerClientHandle(ServerClient *cl) : ServerClientBaseHandle(cl) { Initialize(); }
-
-nwm::ServerClientHandle::ServerClientHandle(const ServerClientHandle &hSession) : ServerClientBaseHandle(hSession.get()) { m_manager = hSession.GetManager(); }
 
 nwm::ServerClientHandle::~ServerClientHandle() {}
 
@@ -39,8 +32,6 @@ void nwm::ServerClientHandle::Initialize()
 }
 
 nwm::Server *nwm::ServerClientHandle::GetManager() const { return m_manager; }
-
-void nwm::ServerClientHandle::Invalidate() { ServerClientBaseHandle::Invalidate(); }
 
 void nwm::ServerClientHandle::Drop(ClientDropped e)
 {

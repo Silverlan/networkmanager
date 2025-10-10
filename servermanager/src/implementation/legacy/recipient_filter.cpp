@@ -42,7 +42,7 @@ void RecipientFilter::Add(NWMServerClient *client)
 }
 void RecipientFilter::Remove(NWMServerClient *client) { Remove(client->GetHandle()); }
 bool RecipientFilter::HasRecipient(const SessionHandle &hSession) { return HasRecipient(hSession.get()); }
-bool RecipientFilter::HasRecipient(NWMServerClient *client)
+bool RecipientFilter::HasRecipient(const NWMServerClient *client)
 {
 	for(auto it = m_sessions.begin(); it != m_sessions.end(); it++) {
 		SessionHandle &hSession = *it;

@@ -21,7 +21,7 @@ void NWMTCPSession::OnPacketReceived() { m_tLastMessage = util::Clock::now(); }
 
 void NWMTCPSession::Release()
 {
-	if(m_handle.ptr == nullptr)
+	if(m_handle.expired())
 		return;
 	m_connection->RemoveSession(this);
 	NWMSession::Release();
@@ -45,7 +45,7 @@ void NWMTCPSession::OnTerminated()
 	Release();
 }
 
-void NWMTCPSession::InitializeSharedPtr() { m_handle.ptr = std::dynamic_pointer_cast<NWMSession>(std::shared_ptr<NWMIOBase>(this)); }
+void NWMTCPSession::InitializeSharedPtr() { m_handle.SetPointer(std::dynamic_pointer_cast<NWMSession>(std::shared_ptr<NWMIOBase>(this))); }
 
 const NWMEndpoint &NWMTCPSession::GetRemoteEndPoint() const { return NWMIO::GetRemoteEndPoint(); }
 

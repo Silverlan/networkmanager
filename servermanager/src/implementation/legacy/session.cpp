@@ -3,8 +3,6 @@
 
 module;
 
-#include "sharedutils/def_handle.h"
-
 module pragma.server_manager;
 
 import :legacy.session;
@@ -12,13 +10,11 @@ import :legacy.session;
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("", off)
 #endif
-DEFINE_BASE_HANDLE(, NWMSession, NWMSession);
-
 NWMSession::NWMSession() : m_handle(this) {}
 
 NWMSession::~NWMSession() { m_handle.Invalidate(); }
 
-void NWMSession::Release() { m_handle.ptr = nullptr; }
+void NWMSession::Release() { m_handle.Release(); }
 
 void NWMSession::Initialize() { InitializeSharedPtr(); }
 

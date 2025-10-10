@@ -3,9 +3,9 @@
 
 module;
 
-#include <sharedutils/def_handle.h>
 #include <functional>
 #include <string>
+#include "sharedutils/util_shared_handle.hpp"
 
 export module pragma.server_manager:legacy.session;
 
@@ -13,7 +13,7 @@ export import pragma.network_manager;
 
 export {
 	class NWMSession;
-	DECLARE_BASE_HANDLE_EXT(, NWMSession, NWMSession, public : std::shared_ptr<NWMSession> ptr;);
+	using NWMSessionHandle = util::TSharedHandle<NWMSession>;
 
 	class NWMSession {
 	  protected:

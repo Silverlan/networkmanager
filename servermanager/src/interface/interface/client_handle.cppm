@@ -5,7 +5,7 @@ module;
 
 #include <memory>
 #include <string>
-#include <sharedutils/def_handle.h>
+#include "sharedutils/util_shared_handle.hpp"
 
 export module pragma.server_manager:client_handle;
 
@@ -13,15 +13,14 @@ export import pragma.network_manager;
 
 export namespace nwm {
 	class ServerClient;
-	DECLARE_BASE_HANDLE(, ServerClient, ServerClientBase);
-
 	class Server;
-	class ServerClientHandle : public nwm::ServerClientBaseHandle {
+	using ServerClientBaseHandle = util::TSharedHandle<ServerClient>;
+	class ServerClientHandle : public ServerClientBaseHandle {
 	  public:
 		ServerClientHandle();
 		ServerClientHandle(ServerClient *cl);
 		ServerClientHandle(const ServerClientHandle &hSession);
-		virtual ~ServerClientHandle() override;
+		~ServerClientHandle();
 		bool operator==(const ServerClientHandle &hOther) const;
 		bool operator!=(const ServerClientHandle &hOther) const;
 		Server *GetManager() const;

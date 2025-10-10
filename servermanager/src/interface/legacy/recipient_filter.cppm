@@ -25,7 +25,7 @@ export {
 		void Add(NWMServerClient *client);
 		void Remove(NWMServerClient *client);
 		bool HasRecipient(const SessionHandle &hSession);
-		bool HasRecipient(NWMServerClient *client);
+		bool HasRecipient(const NWMServerClient *client);
 		std::vector<SessionHandle> &get();
 		size_t GetRecipientCount() const;
 	};

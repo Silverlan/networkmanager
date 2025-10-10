@@ -35,7 +35,7 @@ export {
 			void Add(ServerClient *client);
 			void Remove(ServerClient *client);
 			bool HasRecipient(const ServerClientHandle &hSession) const;
-			bool HasRecipient(ServerClient *client) const;
+			bool HasRecipient(const ServerClient *client) const;
 			const std::vector<ServerClientHandle> &get() const;
 			std::vector<ServerClientHandle> &get();
 			size_t GetRecipientCount() const;
