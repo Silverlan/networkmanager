@@ -5,7 +5,6 @@ module;
 
 #include <functional>
 #include <string>
-#include "sharedutils/util_shared_handle.hpp"
 
 export module pragma.server_manager:legacy.session;
 

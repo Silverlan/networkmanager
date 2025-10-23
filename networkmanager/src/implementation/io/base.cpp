@@ -3,8 +3,8 @@
 
 module;
 
-#include <sharedutils/util_clock.hpp>
 #include <functional>
+#include <chrono>
 
 module pragma.network_manager;
 

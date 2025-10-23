@@ -5,7 +5,6 @@ module;
 
 #include <memory>
 #include <string>
-#include "sharedutils/util_shared_handle.hpp"
 
 export module pragma.server_manager:client_handle;
 

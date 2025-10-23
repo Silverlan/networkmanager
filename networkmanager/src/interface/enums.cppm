@@ -5,9 +5,10 @@ module;
 
 #include <memory>
 #include <string>
-#include "sharedutils/util_clock.hpp"
 
 export module pragma.network_manager:enums;
+
+export import pragma.util;
 
 export {
 	// Number of messages reserved for internal use. Don't use package IDs below this value!

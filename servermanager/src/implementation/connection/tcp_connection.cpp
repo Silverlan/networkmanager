@@ -7,7 +7,6 @@ module;
 #include <functional>
 #include <memory>
 #include <string>
-#include <sharedutils/scope_guard.h>
 
 module pragma.server_manager;
 

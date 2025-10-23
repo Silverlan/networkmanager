@@ -3,7 +3,6 @@
 
 module;
 
-#include <sharedutils/datastream.h>
 #include <queue>
 #include <mutex>
 #include <atomic>
@@ -18,6 +17,7 @@ export import :udp_handler.core;
 export import :udp.resolver;
 export import :udp.resolver_query;
 export import :udp.socket;
+export import pragma.util;
 
 export {
 	class UDPMessageDispatcher : virtual public UDPMessageBase {

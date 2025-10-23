@@ -3,9 +3,9 @@
 
 module;
 
-#include <sharedutils/chronoutil.h>
-
 export module pragma.network_manager:transfer_rate;
+
+import pragma.util;
 
 export namespace nwm {
 	struct TransferRate {

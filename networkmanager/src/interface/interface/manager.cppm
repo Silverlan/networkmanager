@@ -8,7 +8,6 @@ module;
 #include <atomic>
 #include <mutex>
 #include <queue>
-#include <sharedutils/util_clock.hpp>
 
 export module pragma.network_manager:manager;
 

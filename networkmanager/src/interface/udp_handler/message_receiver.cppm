@@ -3,7 +3,6 @@
 
 module;
 
-#include <sharedutils/datastream.h>
 #include <memory>
 #include <functional>
 
@@ -13,6 +12,7 @@ export import :error_code;
 export import :udp.endpoint;
 export import :udp_handler.core;
 export import :udp.socket;
+export import pragma.util;
 
 export class UDPMessageReceiver : virtual public UDPMessageBase {
   private:

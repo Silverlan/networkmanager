@@ -4,7 +4,6 @@
 module;
 
 #include <boost/asio.hpp>
-#include <sharedutils/scope_guard.h>
 #include <memory>
 
 module pragma.server_manager;
