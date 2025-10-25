@@ -29,9 +29,9 @@ UDPMessageReceiver::~UDPMessageReceiver() { nwm::cast_socket(m_socket)->close();
 
 std::unique_ptr<UDPMessageReceiver> UDPMessageReceiver::Create(unsigned short port) { return std::unique_ptr<UDPMessageReceiver>(new UDPMessageReceiver(port)); }
 
-void UDPMessageReceiver::Receive(unsigned int size, const std::function<void(nwm::UDPEndpoint &, nwm::ErrorCode, DataStream)> &callback)
+void UDPMessageReceiver::Receive(unsigned int size, const std::function<void(nwm::UDPEndpoint &, nwm::ErrorCode, util::DataStream)> &callback)
 {
-	m_data = DataStream();
+	m_data = util::DataStream();
 	m_data->Resize(size);
 	nwm::cast_socket(m_socket)->async_receive_from(boost::asio::buffer(m_data->GetData(), size), *nwm::cast_endpoint(m_epOrigin), [this, callback](boost::system::error_code err, std::size_t) { callback(m_epOrigin, err, m_data); });
 }

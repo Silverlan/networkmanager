@@ -3,6 +3,9 @@
 
 module;
 
+#include <cinttypes>
+#include <memory>
+
 module pragma.network_manager;
 
 import :io.header;

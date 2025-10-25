@@ -4,6 +4,7 @@
 module;
 
 #include <chrono>
+#include <functional>
 
 export module pragma.network_manager:io.base;
 
@@ -36,9 +37,15 @@ export {
 		virtual bool ShouldTerminate();
 		virtual void OnTimedOut();
 		template<class T>
-		T *GetRemoteEndPoint();
+		T *GetRemoteEndPoint()
+		{
+			return static_cast<T *>(m_remoteEndpoint.get());
+		}
 		template<class S, class T>
-		T *GetRemoteEndPoint();
+		T *GetRemoteEndPoint()
+		{
+			return static_cast<S *>(m_remoteEndpoint.get())->get();
+		}
 		virtual void OnTerminated();
 		virtual void OnError(const nwm::ErrorCode &err);
 	public:
@@ -64,16 +71,4 @@ export {
 		bool IsTimedOut() const;
 		const nwm::ErrorCode &GetLastError() const;
 	};
-
-	template<class T>
-	T *NWMIOBase::GetRemoteEndPoint()
-	{
-		return static_cast<T *>(m_remoteEndpoint.get());
-	}
-
-	template<class S, class T>
-	T *NWMIOBase::GetRemoteEndPoint()
-	{
-		return static_cast<S *>(m_remoteEndpoint.get())->get();
-	}
 }

@@ -39,68 +39,68 @@ export {
 			TBoostWrapperCopyable<TBoostBase> &operator=(const TBoostWrapperCopyable<TBoostBase> &other);
 			TBoostWrapperCopyable<TBoostBase> &operator=(const TBoostBase &o);
 		};
+
+		template<class TBoostBase>
+		TBoostWrapper<TBoostBase>::TBoostWrapper() : m_boostBaseObject {nullptr, [](void const *) {}}
+		{
+		}
+
+		template<class TBoostBase>
+		TBoostWrapper<TBoostBase>::TBoostWrapper(const TBoostBase &o) : m_boostBaseObject {impl::unique_void<TBoostBase>(new TBoostBase(o))}
+		{
+		}
+
+		template<class TBoostBase>
+		TBoostWrapper<TBoostBase>::~TBoostWrapper()
+		{
+		}
+
+		template<class TBoostBase>
+		const TBoostBase &TBoostWrapper<TBoostBase>::GetBoostObject() const
+		{
+			return const_cast<TBoostWrapper *>(this)->GetBoostObject();
+		}
+		template<class TBoostBase>
+		TBoostBase &TBoostWrapper<TBoostBase>::GetBoostObject()
+		{
+			return *static_cast<TBoostBase *>(m_boostBaseObject.get());
+		}
+		template<class TBoostBase>
+		const TBoostBase *TBoostWrapper<TBoostBase>::operator->() const
+		{
+			return const_cast<TBoostWrapper *>(this)->operator->();
+		}
+		template<class TBoostBase>
+		TBoostBase *TBoostWrapper<TBoostBase>::operator->()
+		{
+			return &GetBoostObject();
+		}
+		template<class TBoostBase>
+		const TBoostBase &TBoostWrapper<TBoostBase>::operator*() const
+		{
+			return const_cast<TBoostWrapper *>(this)->operator*();
+		}
+		template<class TBoostBase>
+		TBoostBase &TBoostWrapper<TBoostBase>::operator*()
+		{
+			return GetBoostObject();
+		}
+
+		template<class TBoostBase>
+		TBoostWrapperCopyable<TBoostBase>::TBoostWrapperCopyable(const TBoostWrapperCopyable<TBoostBase> &o)
+		{
+			this->m_boostBaseObject = impl::unique_void<TBoostBase>(new TBoostBase(o.GetBoostObject()));
+		}
+		template<class TBoostBase>
+		TBoostWrapperCopyable<TBoostBase> &TBoostWrapperCopyable<TBoostBase>::operator=(const TBoostWrapperCopyable<TBoostBase> &other)
+		{
+			return operator=(other.GetBoostObject());
+		}
+		template<class TBoostBase>
+		TBoostWrapperCopyable<TBoostBase> &TBoostWrapperCopyable<TBoostBase>::operator=(const TBoostBase &o)
+		{
+			this->m_boostBaseObject = impl::unique_void<TBoostBase>(new TBoostBase(o));
+			return *this;
+		}
 	};
-
-	template<class TBoostBase>
-	nwm::TBoostWrapper<TBoostBase>::TBoostWrapper() : m_boostBaseObject {nullptr, [](void const *) {}}
-	{
-	}
-
-	template<class TBoostBase>
-	nwm::TBoostWrapper<TBoostBase>::TBoostWrapper(const TBoostBase &o) : m_boostBaseObject {impl::unique_void<TBoostBase>(new TBoostBase(o))}
-	{
-	}
-
-	template<class TBoostBase>
-	nwm::TBoostWrapper<TBoostBase>::~TBoostWrapper()
-	{
-	}
-
-	template<class TBoostBase>
-	const TBoostBase &nwm::TBoostWrapper<TBoostBase>::GetBoostObject() const
-	{
-		return const_cast<TBoostWrapper *>(this)->GetBoostObject();
-	}
-	template<class TBoostBase>
-	TBoostBase &nwm::TBoostWrapper<TBoostBase>::GetBoostObject()
-	{
-		return *static_cast<TBoostBase *>(m_boostBaseObject.get());
-	}
-	template<class TBoostBase>
-	const TBoostBase *nwm::TBoostWrapper<TBoostBase>::operator->() const
-	{
-		return const_cast<TBoostWrapper *>(this)->operator->();
-	}
-	template<class TBoostBase>
-	TBoostBase *nwm::TBoostWrapper<TBoostBase>::operator->()
-	{
-		return &GetBoostObject();
-	}
-	template<class TBoostBase>
-	const TBoostBase &nwm::TBoostWrapper<TBoostBase>::operator*() const
-	{
-		return const_cast<TBoostWrapper *>(this)->operator*();
-	}
-	template<class TBoostBase>
-	TBoostBase &nwm::TBoostWrapper<TBoostBase>::operator*()
-	{
-		return GetBoostObject();
-	}
-
-	template<class TBoostBase>
-	nwm::TBoostWrapperCopyable<TBoostBase>::TBoostWrapperCopyable(const TBoostWrapperCopyable<TBoostBase> &o)
-	{
-		this->m_boostBaseObject = impl::unique_void<TBoostBase>(new TBoostBase(o.GetBoostObject()));
-	}
-	template<class TBoostBase>
-	nwm::TBoostWrapperCopyable<TBoostBase> &nwm::TBoostWrapperCopyable<TBoostBase>::operator=(const TBoostWrapperCopyable<TBoostBase> &other)
-	{
-		return operator=(other.GetBoostObject());
-	}
-	template<class TBoostBase>
-	nwm::TBoostWrapperCopyable<TBoostBase> &nwm::TBoostWrapperCopyable<TBoostBase>::operator=(const TBoostBase &o)
-	{
-		this->m_boostBaseObject = impl::unique_void<TBoostBase>(new TBoostBase(o));
-		return *this;
-	}
 }

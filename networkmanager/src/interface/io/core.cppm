@@ -5,6 +5,8 @@ module;
 
 #include <functional>
 #include <queue>
+#include <cinttypes>
+#include <memory>
 
 export module pragma.network_manager:io.core;
 
@@ -22,7 +24,7 @@ export {
 		struct PacketQueueItem {
 			PacketQueueItem(const NetPacket &p, const NWMEndpoint &ep, bool bOwn) : packet(p), own(bOwn), endPoint(ep) {}
 			NetPacket packet;
-			DataStream header;
+			util::DataStream header;
 			NWMEndpoint endPoint;
 			bool own;
 		};
@@ -48,7 +50,7 @@ export {
 		virtual void Terminate() override;
 		bool IsWriting();
 		bool IsReading();
-		bool GetPacketHeaderData(NetPacket &packet, DataStream &header);
+		bool GetPacketHeaderData(NetPacket &packet, util::DataStream &header);
 		void ClearPackets();
 		void AsyncReceive(uint32_t headerSize);
 

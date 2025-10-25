@@ -3,6 +3,9 @@
 
 module;
 
+#include <memory>
+#include <functional>
+
 module pragma.network_manager;
 
 import :udp_handler.message_handler;
@@ -27,7 +30,7 @@ void UDPMessageHandler::Poll()
 	UDPMessageReceiver::Poll();
 }
 
-void UDPMessageHandler::DispatchResponse(DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { UDPMessageDispatcher::Dispatch(data, ep, m_socket, callback); }
+void UDPMessageHandler::DispatchResponse(util::DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { UDPMessageDispatcher::Dispatch(data, ep, m_socket, callback); }
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("", on)
 #endif

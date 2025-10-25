@@ -3,6 +3,8 @@
 
 module;
 
+#include <thread>
+
 #include <memory>
 #include <functional>
 

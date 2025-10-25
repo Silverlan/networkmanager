@@ -185,9 +185,9 @@ void UDPMessageDispatcher::Dispatch(const DispatchInfo &info)
 	if(bFirst == true)
 		ResolveNext();
 }
-void UDPMessageDispatcher::Dispatch(DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(DispatchInfo(data, ip, port, callback)); }
-void UDPMessageDispatcher::Dispatch(DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(DispatchInfo(data, ep, callback)); }
-void UDPMessageDispatcher::Dispatch(DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(DispatchInfo(data, ep, socket, callback)); }
+void UDPMessageDispatcher::Dispatch(util::DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(DispatchInfo(data, ip, port, callback)); }
+void UDPMessageDispatcher::Dispatch(util::DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(DispatchInfo(data, ep, callback)); }
+void UDPMessageDispatcher::Dispatch(util::DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(DispatchInfo(data, ep, socket, callback)); }
 
 unsigned int UDPMessageDispatcher::GetTimeout() const { return m_timeout; }
 void UDPMessageDispatcher::SetTimeout(unsigned int t) { m_timeout = t; }

@@ -13,7 +13,7 @@ export import :boost_wrapper;
 export namespace nwm {
 	class IPAddress : public TBoostWrapperCopyable<boost::asio::ip::address> {
 	public:
-		IPAddress() :TBoostWrapperCopyable<boost::asio::ip::address>{} {}
+		IPAddress();
 		IPAddress(const boost::asio::ip::address &o) : TBoostWrapperCopyable<boost::asio::ip::address>{o} {}
 		IPAddress(const IPAddress &o) : TBoostWrapperCopyable<boost::asio::ip::address>{o} {}
 

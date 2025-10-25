@@ -67,16 +67,35 @@ export {
 		std::vector<SessionHandle> GetAllClients();
 		void GetAllClients(std::vector<SessionHandle> &clients);
 		template<class T>
-		std::shared_ptr<T> CreateClient();
+		std::shared_ptr<T> CreateClient()
+		{
+			return std::shared_ptr<T>(new T(this));
+		}
 		void DropClient(NWMServerClient *client, CLIENT_DROPPED reason, bool bDontTellClient = false, bool bLock = true);
 		void ScheduleDropClient(NWMServerClient *client, CLIENT_DROPPED reason);
 
 		std::vector<NWMServerClient *> GetFilterTargets(const RecipientFilter &filter);
 	  public:
 		template<class T>
-		static std::unique_ptr<T> Create(uint16_t tcpPort, uint16_t udpPort, unsigned char conType = NETWORK_CON_TYPE_UDP);
+		static std::unique_ptr<T> Create(uint16_t tcpPort, uint16_t udpPort, unsigned char conType = NETWORK_CON_TYPE_UDP)
+		{
+			std::shared_ptr<SVNWMUDPConnection> udp;
+			if(conType == NETWORK_CON_TYPE_UDP || conType == NETWORK_CON_TYPE_BOTH) {
+				udp = std::shared_ptr<SVNWMUDPConnection>(new SVNWMUDPConnection(udpPort));
+				udp->Initialize();
+			}
+			std::shared_ptr<SVNWMTCPConnection> tcp;
+			if(conType == NETWORK_CON_TYPE_TCP || conType == NETWORK_CON_TYPE_BOTH) {
+				tcp = std::shared_ptr<SVNWMTCPConnection>(new SVNWMTCPConnection(tcpPort));
+				tcp->Initialize();
+			}
+			return std::unique_ptr<T>(new T(udp, tcp));
+		}
 		template<class T>
-		static std::unique_ptr<T> Create(uint16_t port, unsigned char conType = NETWORK_CON_TYPE_UDP);
+		static std::unique_ptr<T> Create(uint16_t port, unsigned char conType = NETWORK_CON_TYPE_UDP)
+		{
+			return Create<T>(port, port, conType);
+		}
 		//static NWMServer *Create(unsigned int masterServerPort,unsigned char conType=NETWORK_CON_TYPE_UDP);
 		virtual ~NWMServer() override;
 		void BanIP(const std::string &ip);
@@ -100,32 +119,4 @@ export {
 		void SetMaxClients(int numClients);
 		bool AcceptClient(NWMSession *session);
 	};
-
-	template<class T>
-	std::shared_ptr<T> NWMServer::CreateClient()
-	{
-		return std::shared_ptr<T>(new T(this));
-	}
-
-	template<class T>
-	std::unique_ptr<T> NWMServer::Create(uint16_t tcpPort, uint16_t udpPort, unsigned char conType)
-	{
-		std::shared_ptr<SVNWMUDPConnection> udp;
-		if(conType == NETWORK_CON_TYPE_UDP || conType == NETWORK_CON_TYPE_BOTH) {
-			udp = std::shared_ptr<SVNWMUDPConnection>(new SVNWMUDPConnection(udpPort));
-			udp->Initialize();
-		}
-		std::shared_ptr<SVNWMTCPConnection> tcp;
-		if(conType == NETWORK_CON_TYPE_TCP || conType == NETWORK_CON_TYPE_BOTH) {
-			tcp = std::shared_ptr<SVNWMTCPConnection>(new SVNWMTCPConnection(tcpPort));
-			tcp->Initialize();
-		}
-		return std::unique_ptr<T>(new T(udp, tcp));
-	}
-
-	template<class T>
-	std::unique_ptr<T> NWMServer::Create(unsigned short port, unsigned char conType)
-	{
-		return Create<T>(port, port, conType);
-	}
 }

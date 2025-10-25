@@ -16,7 +16,7 @@ export import pragma.util;
 
 export class UDPMessageReceiver : virtual public UDPMessageBase {
   private:
-	DataStream m_data;
+	util::DataStream m_data;
 	nwm::UDPEndpoint m_epOrigin;
   protected:
 	UDPMessageReceiver(nwm::UDPEndpoint &ep);
@@ -24,6 +24,6 @@ export class UDPMessageReceiver : virtual public UDPMessageBase {
 	nwm::UDPSocket m_socket;
   public:
 	virtual ~UDPMessageReceiver();
-	void Receive(unsigned int size, const std::function<void(nwm::UDPEndpoint &, nwm::ErrorCode, DataStream)> &callback);
+	void Receive(unsigned int size, const std::function<void(nwm::UDPEndpoint &, nwm::ErrorCode, util::DataStream)> &callback);
 	static std::unique_ptr<UDPMessageReceiver> Create(unsigned short port);
 };

@@ -5,6 +5,7 @@ module;
 
 #include <mutex>
 #include <array>
+#include <memory>
 
 export module pragma.client_manager:manager;
 
@@ -26,7 +27,37 @@ export {
 			void SendPacket(nwm::Protocol protocol, const NetPacket &packet);
 
 			template<class T>
-			static std::unique_ptr<T> Create(const std::string &serverIp, uint16_t serverPort, uint16_t localPort = 0, nwm::ConnectionType type = nwm::ConnectionType::UDP);
+			static std::unique_ptr<T> Create(const std::string &serverIp, uint16_t serverPort, uint16_t localPort = 0, nwm::ConnectionType type = nwm::ConnectionType::UDP)
+			{
+				std::shared_ptr<CLNWMUDPConnection> udp;
+				if(type == ConnectionType::UDP || type == ConnectionType::TCPUDP) {
+					try {
+						udp = std::shared_ptr<CLNWMUDPConnection>(new CLNWMUDPConnection(localPort));
+					}
+					catch(NWMException &e) {
+						throw e;
+					}
+				}
+				std::shared_ptr<CLNWMTCPConnection> tcp;
+				if(type == ConnectionType::TCP || type == ConnectionType::TCPUDP) {
+					try {
+						tcp = std::shared_ptr<CLNWMTCPConnection>(new CLNWMTCPConnection);
+					}
+					catch(NWMException &e) {
+						throw e;
+					}
+				}
+				auto r = std::unique_ptr<T>(new T(udp, tcp));
+				try {
+					r->Initialize(serverIp, serverPort);
+				}
+				catch(std::exception &e) {
+					udp = nullptr;
+					tcp = nullptr;
+					throw NWMException(e.what());
+				}
+				return r;
+			}
 		protected:
 			Client(const std::shared_ptr<CLNWMUDPConnection> &udp, const std::shared_ptr<CLNWMTCPConnection> &tcp);
 			virtual void Initialize(const std::string &serverIp, uint16_t serverPort);
@@ -61,37 +92,4 @@ export {
 			void Pong();
 		};
 	};
-
-	template<class T>
-	std::unique_ptr<T> nwm::Client::Create(const std::string &serverIp, uint16_t serverPort, uint16_t localPort, nwm::ConnectionType type)
-	{
-		std::shared_ptr<CLNWMUDPConnection> udp;
-		if(type == ConnectionType::UDP || type == ConnectionType::TCPUDP) {
-			try {
-				udp = std::shared_ptr<CLNWMUDPConnection>(new CLNWMUDPConnection(localPort));
-			}
-			catch(NWMException &e) {
-				throw e;
-			}
-		}
-		std::shared_ptr<CLNWMTCPConnection> tcp;
-		if(type == ConnectionType::TCP || type == ConnectionType::TCPUDP) {
-			try {
-				tcp = std::shared_ptr<CLNWMTCPConnection>(new CLNWMTCPConnection);
-			}
-			catch(NWMException &e) {
-				throw e;
-			}
-		}
-		auto r = std::unique_ptr<T>(new T(udp, tcp));
-		try {
-			r->Initialize(serverIp, serverPort);
-		}
-		catch(std::exception &e) {
-			udp = nullptr;
-			tcp = nullptr;
-			throw NWMException(e.what());
-		}
-		return r;
-	}
 }

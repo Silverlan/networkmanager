@@ -122,7 +122,7 @@ void NWMIO::Terminate()
 	NWMIOBase::Terminate();
 }
 
-static bool write_packet_header_data(DataStream &header, NetPacket &packet, uint32_t size)
+static bool write_packet_header_data(util::DataStream &header, NetPacket &packet, uint32_t size)
 {
 	header->Write<uint16_t>(packet.GetMessageID());
 	if(size > util::get_max_unsigned_integer(std::numeric_limits<uint32_t>::digits - 1))
@@ -134,7 +134,7 @@ static bool write_packet_header_data(DataStream &header, NetPacket &packet, uint
 		header->Write<uint16_t>((size << 1) & ~1);
 	return true;
 }
-bool NWMIO::GetPacketHeaderData(NetPacket &packet, DataStream &header) { return write_packet_header_data(header, packet, packet->GetSize()); }
+bool NWMIO::GetPacketHeaderData(NetPacket &packet, util::DataStream &header) { return write_packet_header_data(header, packet, packet->GetSize()); }
 
 void NWMIO::SendNextFragment(const NWMEndpoint &ep)
 {

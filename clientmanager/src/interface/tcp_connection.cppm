@@ -4,6 +4,7 @@
 module;
 
 #include <string>
+#include <functional>
 
 export module pragma.client_manager:tcp_connection;
 

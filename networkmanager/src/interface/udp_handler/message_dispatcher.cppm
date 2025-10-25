@@ -6,6 +6,7 @@ module;
 #include <queue>
 #include <mutex>
 #include <atomic>
+#include <memory>
 #include <functional>
 
 export module pragma.network_manager:udp_handler.message_dispatcher;
@@ -39,21 +40,21 @@ export {
 			~Message();
 			std::unique_ptr<nwm::UDPSocket> socket;
 			nwm::UDPSocket *external_socket;
-			DataStream data;
+			util::DataStream data;
 			nwm::UDPEndpoint endpoint;
 			std::function<void(nwm::ErrorCode, Message *)> callback;
 			bool IsActive() const;
-			void Receive(unsigned int size, std::function<void(nwm::ErrorCode, DataStream)> callback);
+			void Receive(unsigned int size, std::function<void(nwm::ErrorCode, util::DataStream)> callback);
 		};
 	private:
 		std::mutex m_eventMutex;
 		std::queue<std::function<void()>> m_events;
 	protected:
 		struct DispatchInfo {
-			DispatchInfo(DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
-			DispatchInfo(DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
-			DispatchInfo(DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
-			DataStream data;
+			DispatchInfo(util::DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+			DispatchInfo(util::DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+			DispatchInfo(util::DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+			util::DataStream data;
 			std::string ip;
 			unsigned short port;
 			nwm::UDPEndpoint endpoint;
@@ -78,12 +79,12 @@ export {
 		void Update();
 		void Dispatch(const DispatchInfo &info);
 		void ScheduleMessage(DispatchInfo &info, const nwm::UDPEndpoint &ep);
-		void Dispatch(DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+		void Dispatch(util::DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
 	public:
 		virtual ~UDPMessageDispatcher();
 		static std::unique_ptr<UDPMessageDispatcher> Create(unsigned int timeout = 0);
-		void Dispatch(DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
-		void Dispatch(DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+		void Dispatch(util::DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+		void Dispatch(util::DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
 		virtual void Poll() override;
 		bool IsActive() const;
 		unsigned int GetTimeout() const;

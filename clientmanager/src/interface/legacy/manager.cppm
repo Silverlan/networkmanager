@@ -53,7 +53,38 @@ export {
 		virtual void OnConnected() = 0;
 		virtual void OnDisconnected(CLIENT_DROPPED reason) = 0;
 		template<class T>
-		static std::unique_ptr<T> Create(const std::string &serverIp, unsigned short serverPort, unsigned short localPort = 0, unsigned char conType = NETWORK_CON_TYPE_UDP);
+		static std::unique_ptr<T> Create(const std::string &serverIp, unsigned short serverPort, unsigned short localPort = 0, unsigned char conType = NETWORK_CON_TYPE_UDP)
+		{
+			std::shared_ptr<CLNWMUDPConnection> udp;
+			if(conType == NETWORK_CON_TYPE_UDP || conType == NETWORK_CON_TYPE_BOTH) {
+				try {
+					udp = std::shared_ptr<CLNWMUDPConnection>(new CLNWMUDPConnection(localPort));
+				}
+				catch(NWMException &e) {
+					throw e;
+				}
+			}
+			std::shared_ptr<CLNWMTCPConnection> tcp;
+			if(conType == NETWORK_CON_TYPE_TCP || conType == NETWORK_CON_TYPE_BOTH) {
+				try {
+					tcp = std::shared_ptr<CLNWMTCPConnection>(new CLNWMTCPConnection);
+				}
+				catch(NWMException &e) {
+					throw e;
+				}
+			}
+			auto r = std::unique_ptr<T>(new T(udp, tcp));
+			try {
+				r->Initialize(serverIp, serverPort);
+			}
+			catch(std::exception &e) {
+				udp = nullptr;
+				tcp = nullptr;
+				r->Release();
+				throw NWMException(e.what());
+			}
+			return r;
+		}
 		void SendPacketTCP(const NetPacket &packet, bool bOwn);
 		void SendPacketUDP(const NetPacket &packet, bool bOwn);
 		virtual void Close() override;
@@ -75,38 +106,4 @@ export {
 		const nwm::ErrorCode &GetLastError() const;
 		void SetPingEnabled(bool b);
 	};
-
-	template<class T>
-	std::unique_ptr<T> NWMClient::Create(const std::string &serverIp, unsigned short serverPort, unsigned short localPort, unsigned char conType)
-	{
-		std::shared_ptr<CLNWMUDPConnection> udp;
-		if(conType == NETWORK_CON_TYPE_UDP || conType == NETWORK_CON_TYPE_BOTH) {
-			try {
-				udp = std::shared_ptr<CLNWMUDPConnection>(new CLNWMUDPConnection(localPort));
-			}
-			catch(NWMException &e) {
-				throw e;
-			}
-		}
-		std::shared_ptr<CLNWMTCPConnection> tcp;
-		if(conType == NETWORK_CON_TYPE_TCP || conType == NETWORK_CON_TYPE_BOTH) {
-			try {
-				tcp = std::shared_ptr<CLNWMTCPConnection>(new CLNWMTCPConnection);
-			}
-			catch(NWMException &e) {
-				throw e;
-			}
-		}
-		auto r = std::unique_ptr<T>(new T(udp, tcp));
-		try {
-			r->Initialize(serverIp, serverPort);
-		}
-		catch(std::exception &e) {
-			udp = nullptr;
-			tcp = nullptr;
-			r->Release();
-			throw NWMException(e.what());
-		}
-		return r;
-	}
 }

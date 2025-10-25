@@ -3,6 +3,8 @@
 
 module;
 
+#include <cmath>
+
 #include <functional>
 #include <memory>
 #include <chrono>

@@ -43,11 +43,11 @@ void UDPMessageDispatcher::Message::Cancel()
 		nwm::cast_socket(*socket)->close();
 }
 
-void UDPMessageDispatcher::Message::Receive(unsigned int size, std::function<void(nwm::ErrorCode, DataStream)> cb)
+void UDPMessageDispatcher::Message::Receive(unsigned int size, std::function<void(nwm::ErrorCode, util::DataStream)> cb)
 {
 	assert(socket != nullptr); // Can't receive on a socket we don't own (external_socket)
 	m_bComplete = false;
-	DataStream d;
+	util::DataStream d;
 	d->Resize(size);
 
 	nwm::cast_socket(*socket)->async_receive(boost::asio::buffer(d->GetData(), size), [this, d, cb](boost::system::error_code err, std::size_t) {
@@ -75,11 +75,11 @@ void UDPMessageDispatcher::Message::Dispatch()
 
 ///////////////////////
 
-UDPMessageDispatcher::DispatchInfo::DispatchInfo(DataStream &_data, const std::string &_ip, unsigned short _port, std::function<void(nwm::ErrorCode, Message *)> _callback) : data(_data), ip(_ip), port(_port), callback(_callback), valid_endpoint(false), socket(nullptr) {}
+UDPMessageDispatcher::DispatchInfo::DispatchInfo(util::DataStream &_data, const std::string &_ip, unsigned short _port, std::function<void(nwm::ErrorCode, Message *)> _callback) : data(_data), ip(_ip), port(_port), callback(_callback), valid_endpoint(false), socket(nullptr) {}
 
-UDPMessageDispatcher::DispatchInfo::DispatchInfo(DataStream &_data, const nwm::UDPEndpoint &_ep, std::function<void(nwm::ErrorCode, UDPMessageDispatcher::Message *)> _callback) : data(_data), endpoint(_ep), callback(_callback), valid_endpoint(true), socket(nullptr) {}
+UDPMessageDispatcher::DispatchInfo::DispatchInfo(util::DataStream &_data, const nwm::UDPEndpoint &_ep, std::function<void(nwm::ErrorCode, UDPMessageDispatcher::Message *)> _callback) : data(_data), endpoint(_ep), callback(_callback), valid_endpoint(true), socket(nullptr) {}
 
-UDPMessageDispatcher::DispatchInfo::DispatchInfo(DataStream &_data, const nwm::UDPEndpoint &_ep, nwm::UDPSocket &_socket, std::function<void(nwm::ErrorCode, UDPMessageDispatcher::Message *)> _callback)
+UDPMessageDispatcher::DispatchInfo::DispatchInfo(util::DataStream &_data, const nwm::UDPEndpoint &_ep, nwm::UDPSocket &_socket, std::function<void(nwm::ErrorCode, UDPMessageDispatcher::Message *)> _callback)
     : data(_data), endpoint(_ep), callback(_callback), valid_endpoint(true), socket(&_socket)
 {
 }

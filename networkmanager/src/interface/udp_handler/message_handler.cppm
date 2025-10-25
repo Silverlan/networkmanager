@@ -3,6 +3,9 @@
 
 module;
 
+#include <functional>
+#include <memory>
+
 export module pragma.network_manager:udp_handler.message_handler;
 
 export import :udp_handler.message_dispatcher;
@@ -15,6 +18,6 @@ export class UDPMessageHandler : public UDPMessageDispatcher, public UDPMessageR
 	virtual ~UDPMessageHandler();
 	virtual void Poll() override;
 	// Send a response to a message we've received from a client
-	void DispatchResponse(DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+	void DispatchResponse(util::DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
 	static std::unique_ptr<UDPMessageHandler> Create(unsigned short port, unsigned int timeout = 0);
 };

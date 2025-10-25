@@ -3,6 +3,9 @@
 
 module;
 
+#include <memory>
+#include <string>
+
 module pragma.network_manager;
 
 import :udp.resolver_query;
