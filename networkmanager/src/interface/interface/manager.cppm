@@ -3,12 +3,6 @@
 
 module;
 
-#include <chrono>
-#include <thread>
-#include <atomic>
-#include <mutex>
-#include <queue>
-#include <functional>
 
 export module pragma.network_manager:manager;
 

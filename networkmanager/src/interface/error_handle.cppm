@@ -3,9 +3,6 @@
 
 module;
 
-#include <functional>
-#include <string>
-#include <stdexcept>
 
 export module pragma.network_manager:error_handle;
 

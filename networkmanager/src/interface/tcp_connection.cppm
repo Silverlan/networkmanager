@@ -3,7 +3,6 @@
 
 module;
 
-#include <vector>
 export module pragma.network_manager:tcp_connection;
 
 export import :connection;

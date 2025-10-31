@@ -3,7 +3,6 @@
 
 module;
 
-#include <string>
 
 module pragma.network_manager;
 

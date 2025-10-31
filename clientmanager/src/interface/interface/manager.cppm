@@ -3,9 +3,6 @@
 
 module;
 
-#include <mutex>
-#include <array>
-#include <memory>
 
 export module pragma.client_manager:manager;
 

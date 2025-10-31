@@ -3,14 +3,6 @@
 
 module;
 
-#include <queue>
-#include <functional>
-#include <atomic>
-#include <array>
-#include <mutex>
-#include <string>
-#include <cinttypes>
-#include <memory>
 
 export module pragma.client_manager:legacy.manager;
 

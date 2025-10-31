@@ -3,7 +3,6 @@
 
 module;
 
-#include <functional>
 
 export module pragma.server_manager:connection;
 

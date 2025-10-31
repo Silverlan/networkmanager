@@ -3,12 +3,10 @@
 
 module;
 
-#include <mutex>
-#include <functional>
-#include <queue>
-#include <memory>
 
 export module pragma.network_manager:event_base;
+
+export import std;
 
 export class NWMEventBase {
   protected:

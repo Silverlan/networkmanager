@@ -4,7 +4,6 @@
 module;
 
 #include <boost/asio.hpp>
-#include <string>
 
 export module pragma.network_manager:ip_address;
 

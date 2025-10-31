@@ -3,9 +3,10 @@
 
 module;
 
-#include <cinttypes>
 
 export module pragma.network_manager:legacy_enums;
+
+export import std.compat;
 
 export {
 	constexpr uint32_t NETWORK_CON_TYPE_UDP = 0;

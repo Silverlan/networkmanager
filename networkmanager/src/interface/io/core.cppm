@@ -3,10 +3,6 @@
 
 module;
 
-#include <functional>
-#include <queue>
-#include <cinttypes>
-#include <memory>
 
 export module pragma.network_manager:io.core;
 

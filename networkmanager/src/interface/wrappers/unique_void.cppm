@@ -3,9 +3,10 @@
 
 module;
 
-#include <memory>
 
 export module pragma.network_manager:unique_void;
+
+export import std;
 
 export namespace nwm {
 	namespace impl {

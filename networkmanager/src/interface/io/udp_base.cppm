@@ -3,9 +3,6 @@
 
 module;
 
-#include <cinttypes>
-#include <functional>
-#include <string>
 
 export module pragma.network_manager:io.udp_base;
 

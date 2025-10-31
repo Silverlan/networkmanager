@@ -3,7 +3,6 @@
 
 module;
 
-#include <vector>
 
 export module pragma.server_manager:legacy.recipient_filter;
 

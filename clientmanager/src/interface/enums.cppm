@@ -3,9 +3,10 @@
 
 module;
 
-#include <cinttypes>
 
 export module pragma.client_manager:enums;
+
+export import std.compat;
 
 export {
 	uint32_t NWM_MESSAGE_OUT_PING = 1;

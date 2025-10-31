@@ -3,7 +3,6 @@
 
 module;
 
-#include <string>
 
 export module pragma.network_manager:udp.resolver_query;
 

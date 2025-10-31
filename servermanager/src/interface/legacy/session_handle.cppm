@@ -3,8 +3,6 @@
 
 module;
 
-#include <memory>
-#include <string>
 
 export module pragma.server_manager:legacy.session_handle;
 

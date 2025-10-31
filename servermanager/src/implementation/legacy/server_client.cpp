@@ -5,8 +5,6 @@ module;
 
 #include "mathutil/glmutil.h"
 #include <boost/asio.hpp>
-#include <functional>
-#include <chrono>
 
 module pragma.server_manager;
 

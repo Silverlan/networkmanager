@@ -3,9 +3,6 @@
 
 module;
 
-#include <functional>
-#include <memory>
-#include <string>
 
 export module pragma.network_manager:io.udp;
 

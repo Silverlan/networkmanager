@@ -4,8 +4,6 @@
 module;
 
 #include <boost/asio.hpp>
-#include <string>
-#include <functional>
 
 module pragma.client_manager;
 

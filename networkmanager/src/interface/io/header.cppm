@@ -3,10 +3,10 @@
 
 module;
 
-#include <memory>
-#include <stdint.h>
 
 export module pragma.network_manager:io.header;
+
+export import std.compat;
 
 export class NWMIOHeader {
   protected:

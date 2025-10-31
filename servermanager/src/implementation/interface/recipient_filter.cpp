@@ -3,8 +3,6 @@
 
 module;
 
-#include <algorithm>
-#include <vector>
 
 module pragma.server_manager;
 

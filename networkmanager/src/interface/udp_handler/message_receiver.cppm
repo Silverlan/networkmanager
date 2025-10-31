@@ -3,8 +3,6 @@
 
 module;
 
-#include <memory>
-#include <functional>
 
 export module pragma.network_manager:udp_handler.message_receiver;
 

@@ -3,10 +3,7 @@
 
 module;
 
-#include <functional>
-#include <queue>
 
-#include <mutex>
 
 module pragma.network_manager;
 

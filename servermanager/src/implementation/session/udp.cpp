@@ -3,8 +3,6 @@
 
 module;
 
-#include <memory>
-#include <functional>
 
 module pragma.server_manager;
 

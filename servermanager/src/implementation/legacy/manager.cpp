@@ -4,8 +4,6 @@
 module;
 
 #include <boost/asio.hpp>
-#include <functional>
-#include <string>
 
 module pragma.server_manager;
 

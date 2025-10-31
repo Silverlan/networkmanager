@@ -4,8 +4,6 @@
 module;
 
 #include <boost/asio.hpp>
-#include <string>
-#include <memory>
 
 module pragma.network_manager;
 

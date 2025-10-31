@@ -3,12 +3,8 @@
 
 module;
 
-#include <cmath>
 
 #include "mathutil/glmutil.h"
-#include <functional>
-#include <string>
-#include <chrono>
 
 module pragma.client_manager;
 

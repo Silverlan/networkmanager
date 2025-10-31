@@ -3,11 +3,6 @@
 
 module;
 
-#include <exception>
-#include <string>
-#include <queue>
-#include <functional>
-#include <memory>
 
 export module pragma.network_manager:connection;
 

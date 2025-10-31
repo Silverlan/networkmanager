@@ -3,8 +3,6 @@
 
 module;
 
-#include <functional>
-#include <chrono>
 
 module pragma.network_manager;
 
