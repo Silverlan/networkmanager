@@ -10,6 +10,8 @@ module pragma.server_manager;
 
 import :legacy.server_client;
 
+#undef ERROR
+
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("", off)
 #endif
