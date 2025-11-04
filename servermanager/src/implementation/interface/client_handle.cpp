@@ -13,8 +13,11 @@ import :client_handle;
 
 nwm::ServerClientHandle::ServerClientHandle() : ServerClientBaseHandle() { Initialize(); }
 nwm::ServerClientHandle::ServerClientHandle(ServerClient *cl) : ServerClientBaseHandle(cl) { Initialize(); }
+nwm::ServerClientHandle::ServerClientHandle(const ServerClientHandle &hSession) : ServerClientBaseHandle{hSession}, m_manager {hSession.m_manager} {}
 
 nwm::ServerClientHandle::~ServerClientHandle() {}
+
+void nwm::ServerClientHandle::Invalidate() { m_manager = nullptr; }
 
 bool nwm::ServerClientHandle::IsValid() const { return ServerClientBaseHandle::IsValid(); }
 
