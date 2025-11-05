@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.server_manager:legacy.recipient_filter;
 
 export import :legacy.session_handle;

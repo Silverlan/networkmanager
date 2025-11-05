@@ -3,11 +3,9 @@
 
 module;
 
-
 export module pragma.server_manager:connection.udp;
 
 export import :connection.core;
-
 
 export {
 	constexpr uint32_t NWM_MESSAGE_IN_REGISTER_UDP = 2;

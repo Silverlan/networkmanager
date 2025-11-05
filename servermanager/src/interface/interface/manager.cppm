@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.server_manager:manager;
 
 export import :server_client;

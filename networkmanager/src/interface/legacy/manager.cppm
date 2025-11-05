@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:legacy.manager;
 
 export import :udp_connection;
@@ -14,23 +13,23 @@ export import pragma.util;
 
 export {
 	class NWMError {
-	private:
+	  private:
 		std::string m_message;
 		int m_value;
-	public:
+	  public:
 		NWMError(int err, const std::string &msg);
 		virtual const char *name() const;
 		virtual std::string message() const;
 		int value() const;
 	};
 
-	#undef ERROR
+#undef ERROR
 
 	enum class CLIENT_DROPPED { DISCONNECTED, TIMEOUT, KICKED, SHUTDOWN, ERROR };
 	std::string GetClientDroppedReasonString(CLIENT_DROPPED reason);
 
 	class NWManagerBase {
-	protected:
+	  protected:
 		struct SendPacketQueue {
 			SendPacketQueue(const NetPacket &p, NWMEndpoint endPoint, bool bOwn, bool bTCP) : packet(p), ep(endPoint), own(bOwn), tcp(bTCP) {}
 			NetPacket packet;
@@ -38,9 +37,9 @@ export {
 			bool own;
 			bool tcp;
 		};
-	private:
+	  private:
 		void SendPackets();
-	protected:
+	  protected:
 		NWManagerBase(const std::shared_ptr<NWMUDPConnection> &udp, const std::shared_ptr<NWMTCPConnection> &tcp);
 		virtual ~NWManagerBase();
 		void Poll();
@@ -72,7 +71,7 @@ export {
 		virtual void CloseConnections();
 
 		virtual void OnPacketSent(const NWMEndpoint &ep, const NetPacket &packet);
-	public:
+	  public:
 		NWMUDPConnection *GetUDPConnection() const;
 		NWMTCPConnection *GetTCPConnection() const;
 		virtual void Run();

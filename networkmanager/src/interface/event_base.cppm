@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:event_base;
 
 export import std;

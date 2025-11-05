@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.server_manager:connection.core;
 
 export import :legacy.session;

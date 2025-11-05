@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.client_manager:manager;
 
 export import :udp_connection;
@@ -13,7 +12,7 @@ export import pragma.network_manager;
 export {
 	namespace nwm {
 		class Client : public impl::ManagerBase {
-		public:
+		  public:
 			virtual ~Client() override;
 			void Disconnect();
 			uint16_t GetLatency() const;
@@ -55,7 +54,7 @@ export {
 				}
 				return r;
 			}
-		protected:
+		  protected:
 			Client(const std::shared_ptr<CLNWMUDPConnection> &udp, const std::shared_ptr<CLNWMTCPConnection> &tcp);
 			virtual void Initialize(const std::string &serverIp, uint16_t serverPort);
 			void SendPacket(nwm::Protocol protocol, const NetPacket &packet, bool bOwn);
@@ -70,7 +69,7 @@ export {
 			virtual void Run() override;
 			CLNWMUDPConnection *GetUDPConnection();
 			CLNWMTCPConnection *GetTCPConnection();
-		private:
+		  private:
 			static const uint32_t PING_INTERVAL;
 			void Disconnect(ClientDropped reason);
 

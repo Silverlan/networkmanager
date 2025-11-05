@@ -11,9 +11,9 @@ export import :boost_wrapper;
 
 export namespace nwm {
 	class TCP : public TBoostWrapperCopyable<boost::asio::ip::tcp> {
-	public:
-		TCP() :TBoostWrapperCopyable<boost::asio::ip::tcp>{} {}
-		TCP(const boost::asio::ip::tcp &o) : TBoostWrapperCopyable<boost::asio::ip::tcp>{o} {}
-		TCP(const TCP &o) : TBoostWrapperCopyable<boost::asio::ip::tcp>{o} {}
+	  public:
+		TCP() : TBoostWrapperCopyable<boost::asio::ip::tcp> {} {}
+		TCP(const boost::asio::ip::tcp &o) : TBoostWrapperCopyable<boost::asio::ip::tcp> {o} {}
+		TCP(const TCP &o) : TBoostWrapperCopyable<boost::asio::ip::tcp> {o} {}
 	};
 };

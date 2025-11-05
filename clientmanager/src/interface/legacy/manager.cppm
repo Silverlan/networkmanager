@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.client_manager:legacy.manager;
 
 export import :tcp_connection;
@@ -14,10 +13,10 @@ export import pragma.util;
 export {
 	constexpr uint32_t NWM_CLIENT_PING_INTERVAL = 2;
 	class NWMServerInfo {
-	private:
+	  private:
 		unsigned int m_numClients;
 		unsigned int m_maxClients;
-	public:
+	  public:
 		NWMServerInfo();
 		unsigned int GetClientCount() const;
 		unsigned int GetMaxClients() const;
@@ -26,7 +25,7 @@ export {
 	};
 
 	class NWMClient : public NWManagerBase {
-	protected:
+	  protected:
 		NWMClient(const std::shared_ptr<CLNWMUDPConnection> &udp, const std::shared_ptr<CLNWMTCPConnection> &tcp);
 		virtual ~NWMClient() override;
 		virtual void Initialize(const std::string &serverIp, unsigned short serverPort);
@@ -87,7 +86,7 @@ export {
 
 		void Ping();
 		void Pong();
-	public:
+	  public:
 		//static NWMClient *Create(const std::string &serverIp,unsigned int serverPort,unsigned int minClientPort,unsigned int maxClientPort,unsigned char conType=NETWORK_CON_TYPE_UDP);
 		virtual void Run() override;
 		void SendPacketTCP(const NetPacket &packet);

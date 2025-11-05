@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.client_manager:connection;
 
 export import pragma.network_manager;

@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:io.header;
 
 export import std.compat;

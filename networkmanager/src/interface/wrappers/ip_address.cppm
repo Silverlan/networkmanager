@@ -11,10 +11,10 @@ export import :boost_wrapper;
 
 export namespace nwm {
 	class IPAddress : public TBoostWrapperCopyable<boost::asio::ip::address> {
-	public:
+	  public:
 		IPAddress();
-		IPAddress(const boost::asio::ip::address &o) : TBoostWrapperCopyable<boost::asio::ip::address>{o} {}
-		IPAddress(const IPAddress &o) : TBoostWrapperCopyable<boost::asio::ip::address>{o} {}
+		IPAddress(const boost::asio::ip::address &o) : TBoostWrapperCopyable<boost::asio::ip::address> {o} {}
+		IPAddress(const IPAddress &o) : TBoostWrapperCopyable<boost::asio::ip::address> {o} {}
 
 		bool operator==(const IPAddress &other) const;
 		bool operator!=(const IPAddress &other) const;

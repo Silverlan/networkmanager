@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:udp_handler.message_receiver;
 
 export import :error_code;

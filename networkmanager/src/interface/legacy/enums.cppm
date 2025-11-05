@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:legacy_enums;
 
 export import std.compat;

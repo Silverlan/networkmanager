@@ -37,15 +37,13 @@ std::unique_ptr<UDPMessageDispatcher> UDPMessageDispatcher::Create(unsigned int 
 void UDPMessageDispatcher::CheckDeadline()
 {
 	auto timer = cast_deadline_timer(m_deadline);
-	if (timer->expiry() <= boost::asio::steady_timer::clock_type::now()) {
+	if(timer->expiry() <= boost::asio::steady_timer::clock_type::now()) {
 		Cancel();
 
 		timer->expires_at(std::chrono::steady_clock::time_point::max());
 	}
 
-	timer->async_wait([this](const boost::system::error_code& /*ec*/) {
-		CheckDeadline();
-	});
+	timer->async_wait([this](const boost::system::error_code & /*ec*/) { CheckDeadline(); });
 }
 
 void UDPMessageDispatcher::Cancel()
@@ -98,16 +96,15 @@ void UDPMessageDispatcher::Poll()
 
 void UDPMessageDispatcher::ResetTimeout()
 {
-    auto timer = cast_deadline_timer(m_deadline);
+	auto timer = cast_deadline_timer(m_deadline);
 
-    if (m_timeout == 0) {
-        timer->expires_at(std::chrono::steady_clock::time_point::max());
-        return;
-    }
+	if(m_timeout == 0) {
+		timer->expires_at(std::chrono::steady_clock::time_point::max());
+		return;
+	}
 
-    timer->expires_after(std::chrono::seconds(m_timeout));
+	timer->expires_after(std::chrono::seconds(m_timeout));
 }
-
 
 void UDPMessageDispatcher::ScheduleMessage(DispatchInfo &info, const nwm::UDPEndpoint &ep)
 {
@@ -133,36 +130,36 @@ void UDPMessageDispatcher::ResolveNext(bool lockMutex)
 		nwm::cast_resolver(m_resolver)
 		  ->async_resolve(
 #if NWM_USE_IPV6 == 0
-			boost::asio::ip::udp::v4(),
-			"0.0.0.0", // IPv4 wildcard
+		    boost::asio::ip::udp::v4(),
+		    "0.0.0.0", // IPv4 wildcard
 #else
-			boost::asio::ip::udp::v6(),
-			"::1", // IPv6 loopback
+		    boost::asio::ip::udp::v6(),
+		    "::1", // IPv6 loopback
 #endif
-			std::to_string(msg.port), // port
-			[this](const boost::system::error_code &ec, boost::asio::ip::udp::resolver::results_type results) {
-				m_dispatchQueueMutex.lock();
-				auto &info = m_dispatchQueue.front();
-				if(ec) {
-					auto &callback = info.callback;
-					m_eventMutex.lock();
-					m_active++;
-					m_events.push([callback, ec]() { callback(ec, nullptr); });
-					m_eventMutex.unlock();
-				}
-				else {
-					boost::asio::ip::udp::endpoint ep = *results.begin();
-					ScheduleMessage(info, nwm::UDPEndpoint {&ep});
-				}
-				m_active--;
-				m_dispatchQueue.pop();
-				if(m_dispatchQueue.empty()) {
-					m_dispatchQueueMutex.unlock();
-					return;
-				}
-				// m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
-				ResolveNext(false);
-			});
+		    std::to_string(msg.port), // port
+		    [this](const boost::system::error_code &ec, boost::asio::ip::udp::resolver::results_type results) {
+			    m_dispatchQueueMutex.lock();
+			    auto &info = m_dispatchQueue.front();
+			    if(ec) {
+				    auto &callback = info.callback;
+				    m_eventMutex.lock();
+				    m_active++;
+				    m_events.push([callback, ec]() { callback(ec, nullptr); });
+				    m_eventMutex.unlock();
+			    }
+			    else {
+				    boost::asio::ip::udp::endpoint ep = *results.begin();
+				    ScheduleMessage(info, nwm::UDPEndpoint {&ep});
+			    }
+			    m_active--;
+			    m_dispatchQueue.pop();
+			    if(m_dispatchQueue.empty()) {
+				    m_dispatchQueueMutex.unlock();
+				    return;
+			    }
+			    // m_dispatchQueueMutex.unlock(); // It'll be unlocked through 'ResolveNext', but it has to stay locked until then
+			    ResolveNext(false);
+		    });
 	}
 	else {
 		ScheduleMessage(msg, msg.endpoint);

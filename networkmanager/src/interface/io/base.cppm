@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:io.base;
 
 export import :endpoint;
@@ -15,7 +14,7 @@ export import :event_base;
 
 export {
 	class NWMIOBase : public std::enable_shared_from_this<NWMIOBase>, public NWMEventBase {
-	protected:
+	  protected:
 		std::function<void(void)> m_closeHandle;
 		ChronoTimePoint m_tSent;
 		ChronoTimePoint m_tLastMessage;
@@ -46,7 +45,7 @@ export {
 		}
 		virtual void OnTerminated();
 		virtual void OnError(const nwm::ErrorCode &err);
-	public:
+	  public:
 		NWMIOBase();
 		virtual ~NWMIOBase();
 		virtual void SetCloseHandle(const std::function<void(void)> &cbClose);

@@ -86,13 +86,13 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 									return;
 								sv->m_clientMutex.lock();
 								if(hCl.IsValid()) {
-									auto *cl = const_cast<ServerClient*>(hCl.get());
+									auto *cl = const_cast<ServerClient *>(hCl.get());
 									if(bTcp == true) {
-										auto *session = const_cast<NWMTCPSession*>(static_cast<const NWMTCPSession *>(hSession->get()));
+										auto *session = const_cast<NWMTCPSession *>(static_cast<const NWMTCPSession *>(hSession->get()));
 										cl->SetSession(session);
 									}
 									else {
-										auto *session = const_cast<NWMUDPSession*>(static_cast<const NWMUDPSession *>(hSession->get()));
+										auto *session = const_cast<NWMUDPSession *>(static_cast<const NWMUDPSession *>(hSession->get()));
 										cl->SetSession(session);
 									}
 									sv->UpdateClientReadyState(cl);
@@ -113,7 +113,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 						return;
 					sv->m_clientMutex.lock();
 					if(hCl.IsValid()) {
-						auto *cl = const_cast<ServerClient*>(hCl.get());
+						auto *cl = const_cast<ServerClient *>(hCl.get());
 						if(bTcp == true)
 							cl->SetSession(static_cast<NWMTCPSession *>(hSession->get()));
 						else

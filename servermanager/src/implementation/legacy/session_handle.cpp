@@ -14,7 +14,7 @@ import :legacy.session_handle;
 SessionHandle::SessionHandle() : NWMServerClientHandle() { Initialize(); }
 SessionHandle::SessionHandle(NWMServerClient *cl) : NWMServerClientHandle(cl) { Initialize(); }
 
-SessionHandle::SessionHandle(const SessionHandle &hSession) : NWMServerClientHandle(const_cast<NWMServerClient*>(hSession.get())) { m_manager = hSession.GetManager(); }
+SessionHandle::SessionHandle(const SessionHandle &hSession) : NWMServerClientHandle(const_cast<NWMServerClient *>(hSession.get())) { m_manager = hSession.GetManager(); }
 
 bool SessionHandle::IsValid() const { return NWMServerClientHandle::IsValid(); }
 

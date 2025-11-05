@@ -283,7 +283,7 @@ void NWMServer::ScheduleDropClient(NWMServerClient *client, CLIENT_DROPPED reaso
 	m_callQueue.push_back([this, hClient, reason]() {
 		if(!hClient.IsValid())
 			return true;
-		DropClient(const_cast<NWMServerClient*>(hClient.get()), reason);
+		DropClient(const_cast<NWMServerClient *>(hClient.get()), reason);
 		return true;
 	});
 }

@@ -27,9 +27,9 @@ export {
 	class NWMTCPEndpoint;
 	class NWMUDPEndpoint;
 	class NWMEndpoint : public std::shared_ptr<NWMBaseEndpoint> {
-	protected:
+	  protected:
 		NWMEndpoint(NWMBaseEndpoint *ep);
-	public:
+	  public:
 		NWMEndpoint();
 		NWMEndpoint(NWMTCPEndpoint &ep);
 		NWMEndpoint(NWMUDPEndpoint &ep);
@@ -49,17 +49,17 @@ export {
 	};
 
 	class NWMBaseEndpoint {
-	protected:
+	  protected:
 		NWMBaseEndpoint();
-	public:
+	  public:
 		virtual bool IsTCP();
 		virtual bool IsUDP();
 	};
 
 	class NWMUDPEndpoint : public NWMBaseEndpoint {
-	protected:
+	  protected:
 		nwm::UDPEndpoint m_endPoint;
-	public:
+	  public:
 		NWMUDPEndpoint(const nwm::UDP &ip, unsigned short port);
 		NWMUDPEndpoint(const nwm::UDPEndpoint &ep);
 		NWMUDPEndpoint(NWMUDPEndpoint &ep);
@@ -70,9 +70,9 @@ export {
 	};
 
 	class NWMTCPEndpoint : public NWMBaseEndpoint {
-	protected:
+	  protected:
 		nwm::TCPEndpoint m_endPoint;
-	public:
+	  public:
 		NWMTCPEndpoint(const nwm::TCP &ip, unsigned short port);
 		NWMTCPEndpoint(const nwm::TCPEndpoint &ep);
 		NWMTCPEndpoint(NWMTCPEndpoint &ep);

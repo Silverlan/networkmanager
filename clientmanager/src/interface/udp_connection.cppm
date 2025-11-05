@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.client_manager:udp_connection;
 
 export import :connection;

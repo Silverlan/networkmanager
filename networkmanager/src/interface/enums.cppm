@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:enums;
 
 export import pragma.util;
@@ -22,5 +21,4 @@ export {
 		std::string client_dropped_enum_to_string(ClientDropped e);
 		std::string protocol_enum_to_string(Protocol e);
 	};
-
 }

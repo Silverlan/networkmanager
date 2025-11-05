@@ -12,8 +12,8 @@ export import :boost_wrapper;
 export namespace nwm {
 	class UDP : public TBoostWrapperCopyable<boost::asio::ip::udp> {
 	  public:
-		UDP() :TBoostWrapperCopyable<boost::asio::ip::udp>{} {}
-		UDP(const boost::asio::ip::udp &o) : TBoostWrapperCopyable<boost::asio::ip::udp>{o} {}
-		UDP(const UDP &o) : TBoostWrapperCopyable<boost::asio::ip::udp>{o} {}
+		UDP() : TBoostWrapperCopyable<boost::asio::ip::udp> {} {}
+		UDP(const boost::asio::ip::udp &o) : TBoostWrapperCopyable<boost::asio::ip::udp> {o} {}
+		UDP(const UDP &o) : TBoostWrapperCopyable<boost::asio::ip::udp> {o} {}
 	};
 };

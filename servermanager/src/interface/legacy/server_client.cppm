@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.server_manager:legacy.server_client;
 
 export import :legacy.session_handle;

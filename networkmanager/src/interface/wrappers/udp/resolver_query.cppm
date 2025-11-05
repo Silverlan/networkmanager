@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:udp.resolver_query;
 
 import :unique_void;

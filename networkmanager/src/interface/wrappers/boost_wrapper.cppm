@@ -14,7 +14,7 @@ export {
 	namespace nwm {
 		template<class TBoostBase>
 		class TBoostWrapper {
-		public:
+		  public:
 			using UnderlyingType = TBoostBase;
 			TBoostWrapper();
 			TBoostWrapper(const TBoostBase &o);
@@ -26,14 +26,14 @@ export {
 			TBoostBase *operator->();
 			const TBoostBase &operator*() const;
 			TBoostBase &operator*();
-		protected:
+		  protected:
 			impl::unique_void_ptr m_boostBaseObject;
 		};
 		template<class TBoostBase>
 		class TBoostWrapperCopyable : public TBoostWrapper<TBoostBase> {
-		public:
-			TBoostWrapperCopyable() : TBoostWrapper<TBoostBase>{} {}
-			TBoostWrapperCopyable(const TBoostBase &o) : TBoostWrapper<TBoostBase>{o} {}
+		  public:
+			TBoostWrapperCopyable() : TBoostWrapper<TBoostBase> {} {}
+			TBoostWrapperCopyable(const TBoostBase &o) : TBoostWrapper<TBoostBase> {o} {}
 
 			TBoostWrapperCopyable(const TBoostWrapperCopyable<TBoostBase> &o);
 			TBoostWrapperCopyable<TBoostBase> &operator=(const TBoostWrapperCopyable<TBoostBase> &other);

@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:manager;
 
 export import :enums;
@@ -14,10 +13,10 @@ export import :ip_address;
 export {
 	namespace nwm {
 		class Error {
-		private:
+		  private:
 			std::string m_message = "";
 			int32_t m_value = -1;
-		public:
+		  public:
 			Error(int err, const std::string &msg);
 			virtual const char *name() const;
 			virtual std::string message() const;
@@ -26,7 +25,7 @@ export {
 
 		namespace impl {
 			class ManagerBase {
-			public:
+			  public:
 				enum class PollEventResult : uint8_t { Complete = 0, Pending };
 				void Close();
 				void Start();
@@ -44,7 +43,7 @@ export {
 				uint16_t GetLocalTCPPort() const;
 				nwm::IPAddress GetLocalAddress() const;
 				void SetNagleAlgorithmEnabled(bool b);
-			protected:
+			  protected:
 				ManagerBase(const std::shared_ptr<NWMUDPConnection> &udp, const std::shared_ptr<NWMTCPConnection> &tcp);
 				virtual ~ManagerBase();
 				void InitializeConnectionData();
@@ -65,7 +64,7 @@ export {
 				void CloseUDPConnection();
 				void CloseTCPConnection();
 				void CloseAsync();
-			private:
+			  private:
 				bool m_bHasTCP = false;
 				bool m_bHasUDP = false;
 				std::string m_localIp;

@@ -3,7 +3,6 @@
 
 module;
 
-
 module pragma.server_manager;
 
 import :legacy.recipient_filter;

@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:unique_void;
 
 export import std;

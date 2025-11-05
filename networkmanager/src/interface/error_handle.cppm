@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:error_handle;
 
 export import :error_code;
@@ -14,16 +13,16 @@ export {
 	};
 
 	class NWMException : public std::runtime_error {
-	public:
+	  public:
 		NWMException(const std::string &err);
 	};
 
 	class NWMErrorHandle {
-	protected:
+	  protected:
 		NWMErrorHandle();
 		std::function<void(const nwm::ErrorCode &)> m_errorHandle;
 		virtual bool HandleError(const nwm::ErrorCode &error);
-	public:
+	  public:
 		static std::string GetErrorName(int id);
 		void SetErrorHandle(const std::function<void(const nwm::ErrorCode &)> &cbError);
 	};

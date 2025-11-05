@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:udp_handler.message_dispatcher;
 
 export import :deadline_timer;
@@ -17,19 +16,19 @@ export import pragma.util;
 
 export {
 	class UDPMessageDispatcher : virtual public UDPMessageBase {
-	public:
+	  public:
 		struct Message {
-		public:
+		  public:
 			friend UDPMessageDispatcher;
-		private:
+		  private:
 			std::mutex m_eventMutex;
 			std::queue<std::function<void()>> m_events;
 			bool m_bComplete;
-		protected:
+		  protected:
 			void Dispatch();
 			void Poll();
 			void Cancel();
-		public:
+		  public:
 			Message(nwm::IOService &ioService, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
 			Message(nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
 			~Message();
@@ -41,10 +40,10 @@ export {
 			bool IsActive() const;
 			void Receive(unsigned int size, std::function<void(nwm::ErrorCode, util::DataStream)> callback);
 		};
-	private:
+	  private:
 		std::mutex m_eventMutex;
 		std::queue<std::function<void()>> m_events;
-	protected:
+	  protected:
 		struct DispatchInfo {
 			DispatchInfo(util::DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
 			DispatchInfo(util::DataStream &data, const nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
@@ -75,7 +74,7 @@ export {
 		void Dispatch(const DispatchInfo &info);
 		void ScheduleMessage(DispatchInfo &info, const nwm::UDPEndpoint &ep);
 		void Dispatch(util::DataStream &data, const nwm::UDPEndpoint &ep, nwm::UDPSocket &socket, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
-	public:
+	  public:
 		virtual ~UDPMessageDispatcher();
 		static std::unique_ptr<UDPMessageDispatcher> Create(unsigned int timeout = 0);
 		void Dispatch(util::DataStream &data, const std::string &ip, unsigned short port, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);

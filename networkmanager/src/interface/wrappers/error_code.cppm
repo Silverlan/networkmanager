@@ -12,8 +12,8 @@ export import :boost_wrapper;
 export namespace nwm {
 	class ErrorCode : public TBoostWrapperCopyable<boost::system::error_code> {
 	  public:
-		ErrorCode() : TBoostWrapperCopyable<boost::system::error_code>{} {}
-		ErrorCode(const boost::system::error_code &o) : TBoostWrapperCopyable<boost::system::error_code>{o} {}
+		ErrorCode() : TBoostWrapperCopyable<boost::system::error_code> {} {}
+		ErrorCode(const boost::system::error_code &o) : TBoostWrapperCopyable<boost::system::error_code> {o} {}
 
 		ErrorCode(const ErrorCode &other);
 		operator bool() const;

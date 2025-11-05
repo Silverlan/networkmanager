@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.network_manager:io.core;
 
 export import :endpoint;
@@ -16,7 +15,7 @@ export import pragma.util;
 
 export {
 	class NWMIO : public NWMErrorHandle, public NWMIOHeader, public NWMIOBase {
-	protected:
+	  protected:
 		struct PacketQueueItem {
 			PacketQueueItem(const NetPacket &p, const NWMEndpoint &ep, bool bOwn) : packet(p), own(bOwn), endPoint(ep) {}
 			NetPacket packet;
@@ -24,13 +23,13 @@ export {
 			NWMEndpoint endPoint;
 			bool own;
 		};
-	private:
+	  private:
 		void SendPacket(const PacketQueueItem &item);
 		void ResetRead();
 		void ResetWrite();
 		void ReadExtendedHeader();
 		void DiscardUDPData(uint32_t size, const std::function<void(void)> &f);
-	protected:
+	  protected:
 		NWMIO();
 		virtual ~NWMIO();
 		std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> m_packetHandle;
@@ -65,7 +64,7 @@ export {
 		virtual bool HandleError(const nwm::ErrorCode &error) override;
 		virtual void SendPacket(const NetPacket &packet, const NWMEndpoint &ep, bool bOwn = false);
 		void SendPacket(const NetPacket &packet, bool bOwn);
-	public:
+	  public:
 		void SetPacketHandle(const std::function<void(const NWMEndpoint &, NWMIOBase *, unsigned int, NetPacket &)> &cbPacket);
 		virtual void SendPacket(const NetPacket &packet);
 		virtual void SetReady() override;

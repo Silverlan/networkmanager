@@ -3,7 +3,6 @@
 
 module;
 
-
 module pragma.network_manager;
 
 import :io.base;

@@ -3,8 +3,6 @@
 
 module;
 
-
-
 module pragma.network_manager;
 
 import :legacy.manager;
