@@ -8,6 +8,6 @@ pr_add_external_dependency(${PROJ_NAME} boost LIBRARY)
 
 pr_init_module(${PROJ_NAME})
 
-pr_add_compile_definitions(${PROJ_NAME} -DBOOST_ALL_DYN_LINK)
+pr_add_compile_definitions(${PROJ_NAME} -DBOOST_ALL_DYN_LINK -DBOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)
 
 pr_finalize(${PROJ_NAME})
