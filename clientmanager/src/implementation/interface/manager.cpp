@@ -3,7 +3,6 @@
 
 module;
 
-
 module pragma.client_manager;
 
 import :enums;
