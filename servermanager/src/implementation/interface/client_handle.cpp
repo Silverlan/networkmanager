@@ -1,0 +1,47 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
+module;
+
+module pragma.server_manager;
+
+import :client_handle;
+
+#ifdef NWM_DISABLE_OPTIMIZATION
+#pragma optimize("", off)
+#endif
+
+nwm::ServerClientHandle::ServerClientHandle() : ServerClientBaseHandle() { Initialize(); }
+nwm::ServerClientHandle::ServerClientHandle(ServerClient *cl) : ServerClientBaseHandle(cl) { Initialize(); }
+nwm::ServerClientHandle::ServerClientHandle(const ServerClientHandle &hSession) : ServerClientBaseHandle {hSession}, m_manager {hSession.m_manager} {}
+
+nwm::ServerClientHandle::~ServerClientHandle() {}
+
+void nwm::ServerClientHandle::Invalidate() { m_manager = nullptr; }
+
+bool nwm::ServerClientHandle::IsValid() const { return ServerClientBaseHandle::IsValid(); }
+
+bool nwm::ServerClientHandle::operator==(const ServerClientHandle &hOther) const { return (get() == hOther.get()) ? true : false; }
+bool nwm::ServerClientHandle::operator!=(const ServerClientHandle &hOther) const { return (*this == hOther) ? false : true; }
+
+void nwm::ServerClientHandle::Initialize()
+{
+	auto *cl = get();
+	if(cl == nullptr) {
+		m_manager = nullptr;
+		return;
+	}
+	m_manager = cl->GetManager();
+}
+
+nwm::Server *nwm::ServerClientHandle::GetManager() const { return m_manager; }
+
+void nwm::ServerClientHandle::Drop(ClientDropped e)
+{
+	if(m_manager == nullptr)
+		return;
+	m_manager->DropClient(get(), e);
+}
+#ifdef NWM_DISABLE_OPTIMIZATION
+#pragma optimize("", on)
+#endif

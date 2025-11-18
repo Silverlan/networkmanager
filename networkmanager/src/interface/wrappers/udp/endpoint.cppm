@@ -1,0 +1,27 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
+module;
+
+export module pragma.network_manager:udp.endpoint;
+
+import :unique_void;
+
+export namespace nwm {
+	class IOService;
+	// Note: Can't use TBoostWrapper as base since boost udp endpoint cannot be pre-declared
+	class UDPEndpoint {
+	  public:
+		UDPEndpoint(const UDPEndpoint &ep);
+		UDPEndpoint(void *boostUDPEndpoint);
+		UDPEndpoint();
+		UDPEndpoint &operator=(const UDPEndpoint &other);
+
+		const void *operator*() const;
+		void *operator*();
+		const void *GetBoostObject() const;
+		void *GetBoostObject();
+	  private:
+		impl::unique_void_ptr m_endPoint;
+	};
+};

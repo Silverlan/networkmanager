@@ -1,0 +1,20 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
+module;
+
+export module pragma.network_manager:udp_handler.message_handler;
+
+export import :udp_handler.message_dispatcher;
+export import :udp_handler.message_receiver;
+
+export class UDPMessageHandler : public UDPMessageDispatcher, public UDPMessageReceiver {
+  protected:
+	UDPMessageHandler(unsigned short port);
+  public:
+	virtual ~UDPMessageHandler();
+	virtual void Poll() override;
+	// Send a response to a message we've received from a client
+	void DispatchResponse(util::DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback = nullptr);
+	static std::unique_ptr<UDPMessageHandler> Create(unsigned short port, unsigned int timeout = 0);
+};

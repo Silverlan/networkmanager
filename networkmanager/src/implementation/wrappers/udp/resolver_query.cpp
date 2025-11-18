@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: (c) 2019 Silverlan <opensource@pragma-engine.com>
+// SPDX-License-Identifier: MIT
+
+module;
+
+module pragma.network_manager;
+
+import :udp.resolver_query;
+
+// TODO: This class is obsolete and should be removed
+nwm::UDPResolverQuery::UDPResolverQuery(const std::string &ip, const std::string &port) : m_resolverQuery {std::unique_ptr<void, void (*)(void const *)> {nullptr, [](const void *) {}}} {}
+
+const void *nwm::UDPResolverQuery::operator*() const { return const_cast<UDPResolverQuery *>(this)->operator*(); }
+void *nwm::UDPResolverQuery::operator*() { return GetBoostObject(); }
+void *nwm::UDPResolverQuery::GetBoostObject() { return m_resolverQuery.get(); }
