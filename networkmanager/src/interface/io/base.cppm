@@ -10,8 +10,6 @@ export import :enums;
 export import :error_code;
 export import :event_base;
 
-#define NWM_USE_IPV6 0
-
 export {
 	class NWMIOBase : public std::enable_shared_from_this<NWMIOBase>, public NWMEventBase {
 	  protected:
