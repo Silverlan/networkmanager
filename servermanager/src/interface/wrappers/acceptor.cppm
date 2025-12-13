@@ -11,7 +11,7 @@ export namespace nwm {
 	// Note: Can't use TBoostWrapper as base since boost acceptor cannot be pre-declared
 	class TCPAcceptor {
 	  public:
-		TCPAcceptor(nwm::IOService &ioService, const TCPEndpoint &ep);
+		TCPAcceptor(IOService &ioService, const TCPEndpoint &ep);
 
 		const void *operator*() const;
 		void *operator*();

@@ -101,7 +101,7 @@ void SVNWMTCPConnection::HandleAccept(NWMSessionHandle hSession, const nwm::Erro
 	ScheduleEvent([this, session]() {
 		if(m_acceptCallbacks.lock != nullptr)
 			m_acceptCallbacks.lock();
-		util::ScopeGuard sg([this]() {
+		pragma::util::ScopeGuard sg([this]() {
 			if(m_acceptCallbacks.unlock != nullptr)
 				m_acceptCallbacks.unlock();
 		});
@@ -153,7 +153,7 @@ bool SVNWMTCPConnection::IsClosing() const { return m_bClosing; }
 
 void SVNWMTCPConnection::Run()
 {
-	NWMEventBase::ProcessEvents();
+	ProcessEvents();
 	if(IsClosing() && m_bTerminating == true) {
 		Terminate();
 		return;

@@ -95,7 +95,7 @@ void NWMClient::Run()
 		return;
 	if(m_bPingEnabled == false)
 		return;
-	auto now = util::Clock::now();
+	auto now = pragma::util::Clock::now();
 	m_lastPingMutex.lock();
 	auto lastPing = m_tLastPing;
 	m_lastPingMutex.unlock();
@@ -107,7 +107,7 @@ void NWMClient::Run()
 void NWMClient::Ping()
 {
 	m_lastPingMutex.lock();
-	m_tLastPing = util::Clock::now();
+	m_tLastPing = pragma::util::Clock::now();
 	m_lastPingMutex.unlock();
 	NetPacket p(NWM_MESSAGE_OUT_PING);
 	p->Write<unsigned short>(m_latency);
@@ -122,7 +122,7 @@ void NWMClient::Pong()
 	m_lastPingMutex.lock();
 	ChronoTimePoint lastPing = m_tLastPing;
 	m_lastPingMutex.unlock();
-	m_latencies[4] = static_cast<unsigned short>(round(std::chrono::duration_cast<std::chrono::milliseconds>(util::Clock::now() - lastPing).count() * ratio + m_latency * (1.0 - ratio)));
+	m_latencies[4] = static_cast<unsigned short>(round(std::chrono::duration_cast<std::chrono::milliseconds>(pragma::util::Clock::now() - lastPing).count() * ratio + m_latency * (1.0 - ratio)));
 	unsigned short sum = 0;
 	for(char i = 0; i < 5; i++)
 		sum += m_latencies[i];

@@ -11,8 +11,8 @@ export import :session.tcp;
 export import pragma.network_manager;
 
 export {
-	using ChronoTimePoint = util::Clock::time_point;
-	using ChronoDuration = util::Clock::duration;
+	using ChronoTimePoint = pragma::util::Clock::time_point;
+	using ChronoDuration = pragma::util::Clock::duration;
 
 	class NWMServer;
 	class NWMServerClient : public std::enable_shared_from_this<NWMServerClient> {

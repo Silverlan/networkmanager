@@ -41,7 +41,7 @@ void CLNWMUDPConnection::SetReady()
 	NWMUDPIO::SetReady();
 }
 
-NWMUDPEndpoint *CLNWMUDPConnection::GetRemoteEndPoint() { return NWMIO::GetRemoteEndPoint<NWMUDPEndpoint>(); }
+NWMUDPEndpoint *CLNWMUDPConnection::GetRemoteEndPoint() { return NWMUDPIO::GetRemoteEndPoint<NWMUDPEndpoint>(); }
 
 std::string CLNWMUDPConnection::GetIP() const { return ""; }
 

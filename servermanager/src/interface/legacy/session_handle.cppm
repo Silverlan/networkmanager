@@ -10,7 +10,7 @@ export import pragma.network_manager;
 export {
 	class NWMServerClient;
 	class NWMServer;
-	using NWMServerClientHandle = util::TSharedHandle<NWMServerClient>;
+	using NWMServerClientHandle = pragma::util::TSharedHandle<NWMServerClient>;
 	class SessionHandle : public NWMServerClientHandle {
 	  public:
 		friend NWMServerClient;

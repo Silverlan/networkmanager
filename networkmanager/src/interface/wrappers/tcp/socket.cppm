@@ -12,7 +12,7 @@ export namespace nwm {
 	// Note: Can't use TBoostWrapper as base since boost tcp socket cannot be pre-declared
 	class TCPSocket {
 	  public:
-		TCPSocket(nwm::IOService &ioService);
+		TCPSocket(IOService &ioService);
 
 		const void *operator*() const;
 		void *operator*();

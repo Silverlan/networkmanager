@@ -14,9 +14,9 @@ export namespace nwm {
 	// Note: Can't use TBoostWrapper as base since boost tcp socket cannot be pre-declared
 	class UDPSocket {
 	  public:
-		UDPSocket(nwm::IOService &ioService);
-		UDPSocket(nwm::IOService &ioService, const nwm::UDP &udp);
-		UDPSocket(nwm::IOService &ioService, const nwm::UDPEndpoint &udp);
+		UDPSocket(IOService &ioService);
+		UDPSocket(IOService &ioService, const UDP &udp);
+		UDPSocket(IOService &ioService, const UDPEndpoint &udp);
 
 		const void *operator*() const;
 		void *operator*();

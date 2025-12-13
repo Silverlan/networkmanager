@@ -20,7 +20,7 @@ NWMUDPSession::~NWMUDPSession() {}
 
 void NWMUDPSession::InitializeSharedPtr() { m_handle.SetPointer(std::dynamic_pointer_cast<NWMSession>(std::shared_ptr<NWMIOBase>(this))); }
 
-void NWMUDPSession::OnPacketReceived() { m_tLastMessage = util::Clock::now(); }
+void NWMUDPSession::OnPacketReceived() { m_tLastMessage = pragma::util::Clock::now(); }
 
 void NWMUDPSession::Release()
 {

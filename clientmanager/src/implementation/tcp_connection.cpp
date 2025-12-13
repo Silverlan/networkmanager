@@ -21,7 +21,7 @@ std::string CLNWMTCPConnection::GetLocalIP() const { return NWMTCPIO::GetLocalIP
 unsigned short CLNWMTCPConnection::GetLocalPort() const { return NWMTCPIO::GetLocalPort(); }
 nwm::IPAddress CLNWMTCPConnection::GetLocalAddress() const { return NWMTCPIO::GetLocalAddress(); }
 void CLNWMTCPConnection::SetTimeoutDuration(double duration) { NWMTCPIO::SetTimeoutDuration(duration, false); }
-NWMTCPEndpoint *CLNWMTCPConnection::GetRemoteEndPoint() { return NWMIO::GetRemoteEndPoint<NWMTCPEndpoint>(); }
+NWMTCPEndpoint *CLNWMTCPConnection::GetRemoteEndPoint() { return NWMTCPIO::GetRemoteEndPoint<NWMTCPEndpoint>(); }
 void CLNWMTCPConnection::SetNagleAlgorithmEnabled(bool b) { NWMTCPIO::SetNagleAlgorithmEnabled(b); }
 void CLNWMTCPConnection::OnConnect(const nwm::ErrorCode &)
 {

@@ -17,13 +17,13 @@ export {
 			void Disconnect();
 			uint16_t GetLatency() const;
 			const std::string &GetIP() const;
-			const nwm::ErrorCode &GetLastError() const;
+			const ErrorCode &GetLastError() const;
 			const NWMEndpoint &GetRemoteEndpoint() const;
 			void SetPingEnabled(bool b);
-			void SendPacket(nwm::Protocol protocol, const NetPacket &packet);
+			void SendPacket(Protocol protocol, const NetPacket &packet);
 
 			template<class T>
-			static std::unique_ptr<T> Create(const std::string &serverIp, uint16_t serverPort, uint16_t localPort = 0, nwm::ConnectionType type = nwm::ConnectionType::UDP)
+			static std::unique_ptr<T> Create(const std::string &serverIp, uint16_t serverPort, uint16_t localPort = 0, ConnectionType type = ConnectionType::UDP)
 			{
 				std::shared_ptr<CLNWMUDPConnection> udp;
 				if(type == ConnectionType::UDP || type == ConnectionType::TCPUDP) {
@@ -57,13 +57,13 @@ export {
 		  protected:
 			Client(const std::shared_ptr<CLNWMUDPConnection> &udp, const std::shared_ptr<CLNWMTCPConnection> &tcp);
 			virtual void Initialize(const std::string &serverIp, uint16_t serverPort);
-			void SendPacket(nwm::Protocol protocol, const NetPacket &packet, bool bOwn);
+			void SendPacket(Protocol protocol, const NetPacket &packet, bool bOwn);
 			virtual bool HandlePacket(const NWMEndpoint &ep, uint32_t id, NetPacket &packet);
 			// Called before HandlePacket is called
 			virtual void OnPacketReceived(const NWMEndpoint &ep, unsigned int id, NetPacket &packet);
 
 			virtual void OnConnected() = 0;
-			virtual void OnDisconnected(nwm::ClientDropped reason) = 0;
+			virtual void OnDisconnected(ClientDropped reason) = 0;
 
 			// NOT thread-safe!
 			virtual void Run() override;
@@ -78,7 +78,7 @@ export {
 			ChronoTimePoint m_tLastPing;
 
 			NWMEndpoint m_remoteEndpoint;
-			nwm::ErrorCode m_lastError;
+			ErrorCode m_lastError;
 			std::array<uint16_t, 5> m_latencies;
 			std::atomic<uint16_t> m_latency = {0u};
 			std::string m_ip;

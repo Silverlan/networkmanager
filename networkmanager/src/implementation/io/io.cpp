@@ -49,7 +49,7 @@ void NWMIO::SetReady()
 {
 	if(m_bReady == true)
 		return;
-	m_tLastMessage = util::Clock::now();
+	m_tLastMessage = pragma::util::Clock::now();
 	m_bReady = true;
 	while(!m_initPackets.empty()) {
 		PacketQueueItem &item = m_initPackets.front();
@@ -122,23 +122,23 @@ void NWMIO::Terminate()
 	NWMIOBase::Terminate();
 }
 
-static bool write_packet_header_data(util::DataStream &header, NetPacket &packet, uint32_t size)
+static bool write_packet_header_data(pragma::util::DataStream &header, NetPacket &packet, uint32_t size)
 {
 	header->Write<uint16_t>(packet.GetMessageID());
-	if(size > util::get_max_unsigned_integer(std::numeric_limits<uint32_t>::digits - 1))
+	if(size > pragma::util::get_max_unsigned_integer(std::numeric_limits<uint32_t>::digits - 1))
 		return false;
 	constexpr auto maxSizeBits = std::numeric_limits<uint16_t>::digits - 1;
-	if(size > util::get_max_unsigned_integer(maxSizeBits))
+	if(size > pragma::util::get_max_unsigned_integer(maxSizeBits))
 		header->Write<uint32_t>((size << 1) | 1);
 	else
 		header->Write<uint16_t>((size << 1) & ~1);
 	return true;
 }
-bool NWMIO::GetPacketHeaderData(NetPacket &packet, util::DataStream &header) { return write_packet_header_data(header, packet, packet->GetSize()); }
+bool NWMIO::GetPacketHeaderData(NetPacket &packet, pragma::util::DataStream &header) { return write_packet_header_data(header, packet, packet->GetSize()); }
 
 void NWMIO::SendNextFragment(const NWMEndpoint &ep)
 {
-	auto writeSize = umath::min(m_writeSizeLeft, static_cast<std::size_t>(NWM_MAX_PACKET_SIZE));
+	auto writeSize = pragma::math::min(m_writeSizeLeft, static_cast<std::size_t>(NWM_MAX_PACKET_SIZE));
 	auto packetSize = m_writeItem->packet->GetSize();
 	auto szWritten = packetSize - m_writeSizeLeft;
 	std::vector<nwm::MutableBuffer> buffers = {boost::asio::buffer(m_writeItem->header->GetData(), m_writeItem->header->GetSize()), boost::asio::buffer(m_writeItem->packet->GetData() + szWritten, writeSize)};
@@ -164,19 +164,19 @@ void NWMIO::SendNextPacket()
 	item.header->Resize(NWM_PACKET_HEADER_SIZE);
 	if(GetPacketHeaderData(item.packet, item.header) == false) {
 #ifdef NWM_VERBOSE
-		std::cout << "[NWM] Packet " << item.packet.GetMessageID() << " is too large! (" << util::get_pretty_bytes(item.packet->GetSize()) << ")" << std::endl;
+		std::cout << "[NWM] Packet " << item.packet.GetMessageID() << " is too large! (" << pragma::util::get_pretty_bytes(item.packet->GetSize()) << ")" << std::endl;
 #endif
 		m_packets.pop();
 		return;
 	}
 
 	m_writeItem = std::make_unique<PacketQueueItem>(item);
-	m_writeItem->packet.SetTimeActivated(util::clock::to_int(util::clock::get_duration_since_start()));
+	m_writeItem->packet.SetTimeActivated(pragma::util::clock::to_int(pragma::util::clock::get_duration_since_start()));
 #ifdef NWM_VERBOSE
 	//std::cout<<"Sending message to "<<ep.GetIP()<<std::endl;
 #endif
 #if NWM_VERBOSE >= 2
-	std::cout << "[NWM] SendNextPacket to " << item.endPoint.GetIP() << ": " << item.packet.GetMessageID() << " (" << util::get_pretty_bytes(item.packet->GetSize()) << ")" << std::endl;
+	std::cout << "[NWM] SendNextPacket to " << item.endPoint.GetIP() << ": " << item.packet.GetMessageID() << " (" << pragma::util::get_pretty_bytes(item.packet->GetSize()) << ")" << std::endl;
 #endif
 	m_bWriting = true;
 	m_packets.pop();
@@ -199,7 +199,7 @@ void NWMIO::HandleWriteBody(NWMEndpoint ep, const nwm::ErrorCode &error, std::si
 		m_writeItem->header->SetOffset(0);
 		if(write_packet_header_data(m_writeItem->header, m_writeItem->packet, m_writeSizeLeft) == false) {
 #ifdef NWM_VERBOSE
-			std::cout << "[NWM] Packet " << m_writeItem->packet.GetMessageID() << " is too large! (" << util::get_pretty_bytes(m_writeItem->packet->GetSize()) << ")" << std::endl;
+			std::cout << "[NWM] Packet " << m_writeItem->packet.GetMessageID() << " is too large! (" << pragma::util::get_pretty_bytes(m_writeItem->packet->GetSize()) << ")" << std::endl;
 #endif
 			ResetWrite();
 			return;
@@ -213,7 +213,7 @@ void NWMIO::HandleWriteBody(NWMEndpoint ep, const nwm::ErrorCode &error, std::si
 	ResetWrite();
 
 #if NWM_VERBOSE >= 2
-	std::cout << "[NWM] HandleWriteBody: " << writePacket.GetMessageID() << " (" << util::get_pretty_bytes(sz) << " / " << util::get_pretty_bytes(writePacket->GetSize()) << ") (" << error.message() << ")" << std::endl;
+	std::cout << "[NWM] HandleWriteBody: " << writePacket.GetMessageID() << " (" << pragma::util::get_pretty_bytes(sz) << " / " << pragma::util::get_pretty_bytes(writePacket->GetSize()) << ") (" << error.message() << ")" << std::endl;
 #endif
 	SendNextPacket();
 }
@@ -294,7 +294,7 @@ void NWMIO::HandleReadHeader(const nwm::ErrorCode &err, std::size_t bytes)
 {
 	if(!IsConnectionActive() || HandleError(err) == false)
 		return;
-	m_tLastMessage = util::Clock::now();
+	m_tLastMessage = pragma::util::Clock::now();
 	auto bExtended = (bytes == NWM_PACKET_HEADER_EXTENDED_SIZE) ? true : false;
 	if(bytes != NWM_PACKET_HEADER_SIZE && bExtended == false) {
 #ifdef NWM_VERBOSE
@@ -320,7 +320,7 @@ void NWMIO::HandleReadHeader(const nwm::ErrorCode &err, std::size_t bytes)
 	szBody >>= 1;
 
 #if NWM_VERBOSE >= 2
-	std::cout << "[NWM] HandleReadHeader: " << id << " (" << util::get_pretty_bytes(bytes) << " / " << util::get_pretty_bytes(szBody) << ") (" << err.message() << ")" << std::endl;
+	std::cout << "[NWM] HandleReadHeader: " << id << " (" << pragma::util::get_pretty_bytes(bytes) << " / " << pragma::util::get_pretty_bytes(szBody) << ") (" << err.message() << ")" << std::endl;
 #endif
 #ifndef NWM_SEGMENT_LARGE_PACKAGES
 	if(szBody > NWM_MAX_PACKET_SIZE) // Something's wrong; Skip this packet
@@ -336,13 +336,13 @@ void NWMIO::HandleReadHeader(const nwm::ErrorCode &err, std::size_t bytes)
 	{
 		m_readPacket = NetPacket(id, szBody);
 		m_readSizeLeft = szBody;
-		m_readPacket.SetTimeActivated(util::clock::to_int(util::clock::get_duration_since_start()));
+		m_readPacket.SetTimeActivated(pragma::util::clock::to_int(pragma::util::clock::get_duration_since_start()));
 	}
 	else if(szBody != m_readSizeLeft) // Size has to be the same as what we're expecting, otherwise a packet was most likely lost
 	{
 		ResetRead();
 #ifdef NWM_VERBOSE
-		std::cout << "[NWM] Unexpected packet " << id << " with size " << util::get_pretty_bytes(szBody) << "! Discarding..." << std::endl;
+		std::cout << "[NWM] Unexpected packet " << id << " with size " << pragma::util::get_pretty_bytes(szBody) << "! Discarding..." << std::endl;
 #endif
 		AcceptNextFragment();
 		return;
@@ -366,10 +366,10 @@ void NWMIO::HandleReadBody(const nwm::ErrorCode &error, std::size_t sz)
 	m_bReading = false;
 	if(!IsConnectionActive() || HandleError(error) == false)
 		return;
-	m_tLastMessage = util::Clock::now();
+	m_tLastMessage = pragma::util::Clock::now();
 	unsigned int id = m_readPacket.GetMessageID();
 #if NWM_VERBOSE >= 2
-	std::cout << "[NWM] HandleReadBody: " << id << " (" << util::get_pretty_bytes(sz) << " / " << util::get_pretty_bytes(m_readPacket->GetSize()) << ") (" << error.message() << ")" << std::endl;
+	std::cout << "[NWM] HandleReadBody: " << id << " (" << pragma::util::get_pretty_bytes(sz) << " / " << pragma::util::get_pretty_bytes(m_readPacket->GetSize()) << ") (" << error.message() << ")" << std::endl;
 #endif
 	if(m_readSizeLeft > 0) {
 		m_bReading = true;

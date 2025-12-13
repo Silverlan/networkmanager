@@ -43,7 +43,7 @@ void nwm::impl::ManagerBase::InitializeConnectionData()
 	else if(udp != nullptr)
 		m_localIp = udp->GetLocalIP();
 	else
-		m_localIp = nwm::invalid_address();
+		m_localIp = invalid_address();
 
 	if(udp != nullptr) {
 		m_bHasUDP = true;

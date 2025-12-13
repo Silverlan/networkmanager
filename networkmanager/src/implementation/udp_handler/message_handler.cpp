@@ -23,11 +23,11 @@ std::unique_ptr<UDPMessageHandler> UDPMessageHandler::Create(unsigned short port
 
 void UDPMessageHandler::Poll()
 {
-	UDPMessageDispatcher::Update(); // Skips the 'Poll' of UDPMessageBase, which will already be invoked by 'UDPMessageReceiver::Poll'
+	Update(); // Skips the 'Poll' of UDPMessageBase, which will already be invoked by 'UDPMessageReceiver::Poll'
 	UDPMessageReceiver::Poll();
 }
 
-void UDPMessageHandler::DispatchResponse(util::DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { UDPMessageDispatcher::Dispatch(data, ep, m_socket, callback); }
+void UDPMessageHandler::DispatchResponse(pragma::util::DataStream &data, nwm::UDPEndpoint &ep, std::function<void(nwm::ErrorCode, Message *)> callback) { Dispatch(data, ep, m_socket, callback); }
 #ifdef NWM_DISABLE_OPTIMIZATION
 #pragma optimize("", on)
 #endif

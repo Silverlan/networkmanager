@@ -19,7 +19,7 @@ export {
 		struct PacketQueueItem {
 			PacketQueueItem(const NetPacket &p, const NWMEndpoint &ep, bool bOwn) : packet(p), own(bOwn), endPoint(ep) {}
 			NetPacket packet;
-			util::DataStream header;
+			pragma::util::DataStream header;
 			NWMEndpoint endPoint;
 			bool own;
 		};
@@ -45,7 +45,7 @@ export {
 		virtual void Terminate() override;
 		bool IsWriting();
 		bool IsReading();
-		bool GetPacketHeaderData(NetPacket &packet, util::DataStream &header);
+		bool GetPacketHeaderData(NetPacket &packet, pragma::util::DataStream &header);
 		void ClearPackets();
 		void AsyncReceive(uint32_t headerSize);
 

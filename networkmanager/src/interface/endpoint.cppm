@@ -16,10 +16,10 @@ export import :udp.endpoint;
 export {
 	namespace nwm {
 		std::string to_string(const std::string &ip, unsigned short port, bool bV6 = false);
-		std::string to_string(const nwm::IPAddress &address, unsigned short port);
+		std::string to_string(const IPAddress &address, unsigned short port);
 		std::string to_string(const boost::asio::ip::address &address, unsigned short port);
-		std::string to_string(const nwm::UDPEndpoint &ep);
-		std::string to_string(const nwm::TCPEndpoint &ep);
+		std::string to_string(const UDPEndpoint &ep);
+		std::string to_string(const TCPEndpoint &ep);
 		std::string invalid_address();
 	};
 

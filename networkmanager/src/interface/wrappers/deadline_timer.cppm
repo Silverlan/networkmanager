@@ -12,7 +12,7 @@ export namespace nwm {
 	// Note: Can't use TBoostWrapper as base since boost tcp socket cannot be pre-declared
 	class DeadlineTimer {
 	  public:
-		DeadlineTimer(nwm::IOService &ioService);
+		DeadlineTimer(IOService &ioService);
 
 		const void *operator*() const;
 		void *operator*();

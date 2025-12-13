@@ -9,7 +9,7 @@ export import pragma.network_manager;
 
 export {
 	class NWMSession;
-	using NWMSessionHandle = util::TSharedHandle<NWMSession>;
+	using NWMSessionHandle = pragma::util::TSharedHandle<NWMSession>;
 
 	class NWMSession {
 	  protected:

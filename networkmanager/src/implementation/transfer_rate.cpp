@@ -17,7 +17,7 @@ nwm::TransferRate::TransferRate() : sample(0), sampleSize(0) {}
 void nwm::TransferRate::AddSample(unsigned long long s)
 {
 	sampleSize += s * (1000 / TRANSFER_RATE_INTERVAL_MS);
-	ChronoTimePoint p = util::Clock::now();
+	ChronoTimePoint p = pragma::util::Clock::now();
 	auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(p - lastUpdate);
 	if(delta.count() >= TRANSFER_RATE_INTERVAL_MS) {
 		if(sample < 5)

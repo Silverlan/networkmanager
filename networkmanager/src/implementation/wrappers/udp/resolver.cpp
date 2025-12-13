@@ -9,7 +9,7 @@ module pragma.network_manager;
 
 import :udp.resolver;
 
-nwm::UDPResolver::UDPResolver(nwm::IOService &ioService) : m_resolver {impl::unique_void<boost::asio::ip::udp::resolver>(new boost::asio::ip::udp::resolver {*ioService})} {}
+nwm::UDPResolver::UDPResolver(IOService &ioService) : m_resolver {impl::unique_void<boost::asio::ip::udp::resolver>(new boost::asio::ip::udp::resolver {*ioService})} {}
 
 const void *nwm::UDPResolver::operator*() const { return const_cast<UDPResolver *>(this)->operator*(); }
 void *nwm::UDPResolver::operator*() { return GetBoostObject(); }

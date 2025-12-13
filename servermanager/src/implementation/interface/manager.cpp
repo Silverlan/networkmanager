@@ -24,7 +24,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 		  auto bValidSession = (session != nullptr) ? true : false;
 		  auto epSession = (bValidSession == true) ? session->GetRemoteEndPoint() : ep;
 		  epSession = epSession.Copy();
-		  if(id == umath::to_integral(MessageIn::Ping)) {
+		  if(id == pragma::math::to_integral(MessageIn::Ping)) {
 			  if(session != nullptr) {
 				  // Special packet, we need to send the response immediately, otherwise we
 				  // can't calculate the correct latency
@@ -35,7 +35,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 						  svCl->SetLatency(latency);
 					  return PollEventResult::Complete;
 				  });
-				  NetPacket p(umath::to_integral(MessageOut::Pong));
+				  NetPacket p(pragma::math::to_integral(MessageOut::Pong));
 				  session->SendPacket(p);
 			  }
 			  return;
@@ -47,7 +47,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 		  sv->SchedulePollEvent([epSession, bValidSession, sv, id, readPacket]() mutable -> PollEventResult {
 			  auto *svCl = (bValidSession == true) ? sv->FindClient(epSession) : nullptr;
 			  if(sv->HandlePacket(epSession, svCl, id, readPacket) == false)
-				  sv->HandleError(Error(umath::to_integral(Result::UnhandledPacket), "Unhandled packet '" + std::to_string(id) + "'"));
+				  sv->HandleError(Error(pragma::math::to_integral(Result::UnhandledPacket), "Unhandled packet '" + std::to_string(id) + "'"));
 			  return PollEventResult::Complete;
 		  });
 	  },
@@ -63,7 +63,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 		auto hSession = std::make_shared<NWMSessionHandle>(session->GetHandle());
 		sv->SchedulePollEvent([sv, address, port, bUdp, bTcp, hSession]() -> PollEventResult {
 			auto clients = sv->GetAllClients(false); // Client mutex is already locked at this point, don't lock it again!
-			auto protocol = bUdp ? nwm::Protocol::UDP : nwm::Protocol::TCP;
+			auto protocol = bUdp ? Protocol::UDP : Protocol::TCP;
 			ServerClient *cl = nullptr;
 			for(auto &client : clients) {
 				if(client.IsValid() && !client->IsClosed() && !client->IsClosing() && client->UsesAddress(address)) {
@@ -131,7 +131,7 @@ nwm::Server::Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::s
 	SVNWMConnection::AcceptCallbacks acceptCallbacks {};
 	acceptCallbacks.lock = [this]() { m_clientMutex.lock(); };
 	acceptCallbacks.unlock = [this]() { m_clientMutex.unlock(); };
-	acceptCallbacks.has_client = [this](nwm::IPAddress address, uint16_t port) -> bool { return GetClient(address, port).IsValid() ? true : false; };
+	acceptCallbacks.has_client = [this](IPAddress address, uint16_t port) -> bool { return GetClient(address, port).IsValid() ? true : false; };
 	acceptCallbacks.accept_client = [this](NWMSession *session) -> bool { return AcceptClient(session); };
 	if(udp != nullptr) {
 		//udp->SetServer(this);
@@ -169,7 +169,7 @@ bool nwm::Server::HandlePacket(const NWMEndpoint &ep, ServerClient *cl, uint32_t
 	if(cl == nullptr || !cl->IsFullyConnected())
 		return true;
 	cl->ResetLastUpdate();
-	if(id == umath::to_integral(MessageIn::ClientDisconnect)) {
+	if(id == pragma::math::to_integral(MessageIn::ClientDisconnect)) {
 		DropClient(cl, ClientDropped::Disconnected, true);
 		return true;
 	}
@@ -182,9 +182,9 @@ nwm::ServerClientHandle nwm::Server::GetClient(const std::string &ip, uint16_t p
 	auto address = boost::asio::ip::make_address(ip);
 	return GetClient(address, port);
 }
-nwm::ServerClientHandle nwm::Server::GetClient(const nwm::IPAddress &address, uint16_t port)
+nwm::ServerClientHandle nwm::Server::GetClient(const IPAddress &address, uint16_t port)
 {
-	auto it = std::find_if(m_clients.begin(), m_clients.end(), [&address, port](const std::shared_ptr<nwm::ServerClient> &client) { return client->IsTarget(address, port); });
+	auto it = std::find_if(m_clients.begin(), m_clients.end(), [&address, port](const std::shared_ptr<ServerClient> &client) { return client->IsTarget(address, port); });
 	return (it != m_clients.end()) ? (*it)->GetHandle() : ServerClientHandle {};
 }
 int32_t nwm::Server::GetMaxClients() const { return m_maxClients; }
@@ -210,7 +210,7 @@ bool nwm::Server::IsIPBanned(const std::string &ip)
 	return IsIPBanned(address);
 }
 
-bool nwm::Server::IsIPBanned(const nwm::IPAddress &ip)
+bool nwm::Server::IsIPBanned(const IPAddress &ip)
 {
 	std::lock_guard<std::mutex> lg(m_banListMutex);
 	auto it = std::find(m_banned.begin(), m_banned.end(), ip);
@@ -289,7 +289,7 @@ void nwm::Server::GetAllClients(std::vector<ServerClientHandle> &clients, bool b
 }
 nwm::ServerClient *nwm::Server::FindClient(const NWMEndpoint &ep)
 {
-	auto it = std::find_if(m_clients.begin(), m_clients.end(), [&ep](const std::shared_ptr<nwm::ServerClient> &cl) { return cl->IsTarget(ep); });
+	auto it = std::find_if(m_clients.begin(), m_clients.end(), [&ep](const std::shared_ptr<ServerClient> &cl) { return cl->IsTarget(ep); });
 	return (it != m_clients.end()) ? it->get() : nullptr;
 }
 void nwm::Server::BroadcastPacket(Protocol protocol, const NetPacket &packet)
@@ -328,7 +328,7 @@ void nwm::Server::DropClient(ServerClient *client, ClientDropped reason, bool bD
 	client->m_bDropped = true;
 	ScheduleAsyncEvent([this, bDontTellClient, client, reason]() {
 		if(bDontTellClient == false && client->IsReady()) {
-			NetPacket p(umath::to_integral(MessageOut::Dropped));
+			NetPacket p(pragma::math::to_integral(MessageOut::Dropped));
 			p->Write<int8_t>(static_cast<int8_t>(reason));
 			client->SendPacket(p);
 		}
@@ -347,7 +347,7 @@ void nwm::Server::DropClient(ServerClient *client, ClientDropped reason, bool bD
 			}
 			else
 				clients = &m_clientsConnecting;
-			auto it = std::find_if(clients->begin(), clients->end(), [client](const std::shared_ptr<nwm::ServerClient> &clientOther) { return (clientOther.get() == client) ? true : false; });
+			auto it = std::find_if(clients->begin(), clients->end(), [client](const std::shared_ptr<ServerClient> &clientOther) { return (clientOther.get() == client) ? true : false; });
 			assert(it != clients->end());
 			if(it == clients->end())
 				throw NWMException("[NWM] Attempted to remove invalid client from client list!");
@@ -392,7 +392,7 @@ void nwm::Server::UpdateClientReadyState(ServerClient *cl)
 			std::lock_guard<std::mutex> lg(m_clientMutex);
 			if(hCl->IsValid() == false)
 				return;
-			NetPacket out(umath::to_integral(MessageOut::RegisterConfirmation));
+			NetPacket out(pragma::math::to_integral(MessageOut::RegisterConfirmation));
 			(*hCl)->SendPacket(out);
 		});
 		return PollEventResult::Complete;

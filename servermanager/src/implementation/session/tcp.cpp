@@ -16,7 +16,7 @@ NWMTCPSession::NWMTCPSession(nwm::IOService &ioService, SVNWMTCPConnection *con)
 
 NWMTCPSession::~NWMTCPSession() {}
 
-void NWMTCPSession::OnPacketReceived() { m_tLastMessage = util::Clock::now(); }
+void NWMTCPSession::OnPacketReceived() { m_tLastMessage = pragma::util::Clock::now(); }
 
 void NWMTCPSession::Release()
 {

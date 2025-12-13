@@ -27,12 +27,12 @@ std::string nwm::to_string(const std::string &ip, unsigned short port, bool bV6)
 	address += std::string(":") + std::to_string(port);
 	return address;
 }
-std::string nwm::to_string(const nwm::IPAddress &address, unsigned short port) { return nwm::to_string(address->to_string(), port, address->is_v6()); }
+std::string nwm::to_string(const IPAddress &address, unsigned short port) { return nwm::to_string(address->to_string(), port, address->is_v6()); }
 std::string nwm::to_string(const boost::asio::ip::address &address, unsigned short port) { return nwm::to_string(address.to_string(), port, address.is_v6()); }
 std::string nwm::to_string(const boost::asio::ip::udp::endpoint &ep) { return endPointToString(ep, boost::asio::ip::udp::v6()); }
 std::string nwm::to_string(const boost::asio::ip::tcp::endpoint &ep) { return endPointToString(ep, boost::asio::ip::tcp::v6()); }
-std::string nwm::to_string(const nwm::UDPEndpoint &ep) { return to_string(*cast_endpoint(ep)); }
-std::string nwm::to_string(const nwm::TCPEndpoint &ep) { return to_string(*cast_endpoint(ep)); }
+std::string nwm::to_string(const UDPEndpoint &ep) { return to_string(*cast_endpoint(ep)); }
+std::string nwm::to_string(const TCPEndpoint &ep) { return to_string(*cast_endpoint(ep)); }
 std::string nwm::invalid_address() { return "[::]:0"; }
 
 ////////////////////////

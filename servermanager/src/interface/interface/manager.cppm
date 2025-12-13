@@ -62,7 +62,7 @@ export {
 			void BanIP(const std::string &ip);
 			void BanIPs(const std::vector<std::string> &ips);
 			bool IsIPBanned(const std::string &ip);
-			bool IsIPBanned(const nwm::IPAddress &ip);
+			bool IsIPBanned(const IPAddress &ip);
 
 			int32_t GetMaxClients() const;
 			void SetMaxClients(int32_t numClients);
@@ -90,7 +90,7 @@ export {
 			Server(const std::shared_ptr<SVNWMUDPConnection> &udp, const std::shared_ptr<SVNWMTCPConnection> &tcp);
 
 			ServerClientHandle GetClient(const std::string &ip, uint16_t port);
-			ServerClientHandle GetClient(const nwm::IPAddress &address, uint16_t port);
+			ServerClientHandle GetClient(const IPAddress &address, uint16_t port);
 			std::vector<ServerClient *> GetFilterTargets(const RecipientFilter &filter);
 			void OnClientPacketSent(ServerClient *cl, const NetPacket &packet);
 
@@ -117,7 +117,7 @@ export {
 			void RemoveClient(std::vector<std::shared_ptr<ServerClient>> &clients, ServerClient *cl);
 
 			std::atomic<int32_t> m_maxClients = {-1};
-			std::vector<nwm::IPAddress> m_banned;
+			std::vector<IPAddress> m_banned;
 			mutable std::mutex m_banListMutex;
 			mutable std::mutex m_clientMutex; // Not required for actual clients; Only required for 'm_clients' and 'm_clientsConnecting' containers!
 
@@ -136,13 +136,13 @@ export {
 		};
 
 		template<class T>
-		std::shared_ptr<T> nwm::Server::CreateClient()
+		std::shared_ptr<T> Server::CreateClient()
 		{
 			return std::shared_ptr<T>(new T(this));
 		}
 
 		template<class T>
-		std::unique_ptr<T> nwm::Server::Create(uint16_t tcpPort, uint16_t udpPort, ConnectionType conType)
+		std::unique_ptr<T> Server::Create(uint16_t tcpPort, uint16_t udpPort, ConnectionType conType)
 		{
 			std::shared_ptr<SVNWMUDPConnection> udp;
 			if(conType == ConnectionType::UDP || conType == ConnectionType::TCPUDP) {
@@ -158,7 +158,7 @@ export {
 		}
 
 		template<class T>
-		std::unique_ptr<T> nwm::Server::Create(uint16_t port, ConnectionType conType)
+		std::unique_ptr<T> Server::Create(uint16_t port, ConnectionType conType)
 		{
 			return Create<T>(port, port, conType);
 		}

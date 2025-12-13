@@ -11,8 +11,8 @@ export {
 	// Number of messages reserved for internal use. Don't use package IDs below this value!
 	constexpr uint32_t NWM_MESSAGE_RESERVED = 100;
 	//#define NETWORK_ERROR_UNHANDLED_PACKET 10
-	using ChronoTimePoint = util::Clock::time_point;
-	using ChronoDuration = util::Clock::duration;
+	using ChronoTimePoint = pragma::util::Clock::time_point;
+	using ChronoDuration = pragma::util::Clock::duration;
 	namespace nwm {
 		enum class ConnectionType : uint32_t { UDP = 0, TCP, TCPUDP };
 		enum class Protocol : uint32_t { UDP = 0, TCP };

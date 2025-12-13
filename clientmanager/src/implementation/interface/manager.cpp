@@ -12,7 +12,7 @@ import :manager;
 #pragma optimize("", on)
 #endif
 decltype(nwm::Client::PING_INTERVAL) nwm::Client::PING_INTERVAL = 2;
-nwm::Client::Client(const std::shared_ptr<CLNWMUDPConnection> &udp, const std::shared_ptr<CLNWMTCPConnection> &tcp) : impl::ManagerBase(udp, tcp) {}
+nwm::Client::Client(const std::shared_ptr<CLNWMUDPConnection> &udp, const std::shared_ptr<CLNWMTCPConnection> &tcp) : ManagerBase(udp, tcp) {}
 nwm::Client::~Client() { Close(); }
 CLNWMUDPConnection *nwm::Client::GetUDPConnection() { return static_cast<CLNWMUDPConnection *>(ManagerBase::GetUDPConnection()); }
 CLNWMTCPConnection *nwm::Client::GetTCPConnection() { return static_cast<CLNWMTCPConnection *>(ManagerBase::GetTCPConnection()); }
@@ -25,11 +25,11 @@ void nwm::Client::Initialize(const std::string &serverIp, uint16_t serverPort)
 	auto *tcp = GetTCPConnection();
 	std::fill(m_latencies.begin(), m_latencies.end(), 0);
 	auto packetHandle = std::bind(
-	  [](nwm::Client *cl, const NWMEndpoint &, NWMIOBase *io, uint32_t id, NetPacket &readPacket) {
+	  [](Client *cl, const NWMEndpoint &, NWMIOBase *io, uint32_t id, NetPacket &readPacket) {
 		  auto ep = io->GetRemoteEndPoint();
 		  cl->SchedulePollEvent([cl, ep, id, readPacket]() mutable -> PollEventResult {
 			  if(cl->HandlePacket(ep, id, readPacket) == false)
-				  cl->HandleError(nwm::Error(umath::to_integral(nwm::Result::UnhandledPacket), "Unhandled packet '" + std::to_string(id) + '\''));
+				  cl->HandleError(nwm::Error(pragma::math::to_integral(Result::UnhandledPacket), "Unhandled packet '" + std::to_string(id) + '\''));
 			  return PollEventResult::Complete;
 		  });
 	  },
@@ -48,7 +48,7 @@ void nwm::Client::Initialize(const std::string &serverIp, uint16_t serverPort)
 				return PollEventResult::Complete;
 			});
 		});
-		udp->SetDisconnectionHandle([this](nwm::ClientDropped reason) {
+		udp->SetDisconnectionHandle([this](ClientDropped reason) {
 #ifdef NWM_VERBOSE
 			std::cout << "[NWMCL] UDP connection has been disconnected: " << nwm::client_dropped_enum_to_string(reason) << "!" << std::endl;
 #endif
@@ -75,7 +75,7 @@ void nwm::Client::Initialize(const std::string &serverIp, uint16_t serverPort)
 				CloseTCPConnection();
 			CloseUDPConnection();
 		});
-		udp->SetErrorHandle([this](const nwm::ErrorCode &errCode) { HandleError(nwm::Error(errCode->value(), errCode->message())); });
+		udp->SetErrorHandle([this](const ErrorCode &errCode) { HandleError(Error(errCode->value(), errCode->message())); });
 		udp->Connect(serverIp, serverPort);
 	}
 	if(tcp != nullptr) {
@@ -92,7 +92,7 @@ void nwm::Client::Initialize(const std::string &serverIp, uint16_t serverPort)
 				return PollEventResult::Complete;
 			});
 		});
-		tcp->SetDisconnectionHandle([this](nwm::ClientDropped reason) {
+		tcp->SetDisconnectionHandle([this](ClientDropped reason) {
 #ifdef NWM_VERBOSE
 			std::cout << "[NWMCL] TCP connection has been disconnected: " << nwm::client_dropped_enum_to_string(reason) << "!" << std::endl;
 #endif
@@ -123,7 +123,7 @@ void nwm::Client::Initialize(const std::string &serverIp, uint16_t serverPort)
 			auto *tcp = GetTCPConnection();
 			m_ip = tcp->GetIP();
 		});
-		tcp->SetErrorHandle([this](const nwm::ErrorCode &errCode) { HandleError(nwm::Error(errCode->value(), errCode->message())); });
+		tcp->SetErrorHandle([this](const ErrorCode &errCode) { HandleError(Error(errCode->value(), errCode->message())); });
 		tcp->Connect(serverIp, serverPort);
 	}
 	InitializeConnectionData();
@@ -138,7 +138,7 @@ void nwm::Client::Initialize(const std::string &serverIp, uint16_t serverPort)
 #endif
 }
 void nwm::Client::OnPacketReceived(const NWMEndpoint &ep, unsigned int id, NetPacket &packet) {}
-void nwm::Client::SendPacket(nwm::Protocol protocol, const NetPacket &packet) { SendPacket(protocol, packet, false); }
+void nwm::Client::SendPacket(Protocol protocol, const NetPacket &packet) { SendPacket(protocol, packet, false); }
 bool nwm::Client::HandlePacket(const NWMEndpoint &ep, uint32_t id, NetPacket &packet)
 {
 #ifdef NWM_VERBOSE
@@ -168,7 +168,7 @@ void nwm::Client::Disconnect(ClientDropped reason)
 	OnDisconnected(reason);
 	Close();
 }
-void nwm::Client::SendPacket(nwm::Protocol protocol, const NetPacket &packet, bool bOwn)
+void nwm::Client::SendPacket(Protocol protocol, const NetPacket &packet, bool bOwn)
 {
 	if(IsActive() == false)
 		return;
@@ -177,14 +177,14 @@ void nwm::Client::SendPacket(nwm::Protocol protocol, const NetPacket &packet, bo
 #endif
 	OnPacketSent(GetRemoteEndpoint(), packet);
 	if(HasUDPConnection() == false)
-		protocol = nwm::Protocol::TCP;
+		protocol = Protocol::TCP;
 	auto ep = GetRemoteEndpoint();
-	impl::ManagerBase::SendPacket(protocol, packet, ep, bOwn);
+	ManagerBase::SendPacket(protocol, packet, ep, bOwn);
 }
 void nwm::Client::Ping()
 {
 	m_lastPingMutex.lock();
-	m_tLastPing = util::Clock::now();
+	m_tLastPing = pragma::util::Clock::now();
 	m_lastPingMutex.unlock();
 	NetPacket p(NWM_MESSAGE_OUT_PING);
 	p->Write<uint16_t>(m_latency);
@@ -199,7 +199,7 @@ void nwm::Client::Pong()
 	m_lastPingMutex.lock();
 	auto lastPing = m_tLastPing;
 	m_lastPingMutex.unlock();
-	m_latencies.back() = static_cast<uint16_t>(round(std::chrono::duration_cast<std::chrono::milliseconds>(util::Clock::now() - lastPing).count() * ratio + m_latency * (1.0 - ratio)));
+	m_latencies.back() = static_cast<uint16_t>(round(std::chrono::duration_cast<std::chrono::milliseconds>(pragma::util::Clock::now() - lastPing).count() * ratio + m_latency * (1.0 - ratio)));
 	uint16_t sum = 0;
 	for(auto l : m_latencies)
 		sum += l;
@@ -211,7 +211,7 @@ void nwm::Client::Run()
 		return;
 	if(m_bPingEnabled == false)
 		return;
-	auto now = util::Clock::now();
+	auto now = pragma::util::Clock::now();
 	m_lastPingMutex.lock();
 	auto lastPing = m_tLastPing;
 	m_lastPingMutex.unlock();

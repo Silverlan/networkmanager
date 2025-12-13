@@ -41,7 +41,7 @@ export {
 				uint16_t GetLocalPort() const;
 				uint16_t GetLocalUDPPort() const;
 				uint16_t GetLocalTCPPort() const;
-				nwm::IPAddress GetLocalAddress() const;
+				IPAddress GetLocalAddress() const;
 				void SetNagleAlgorithmEnabled(bool b);
 			  protected:
 				ManagerBase(const std::shared_ptr<NWMUDPConnection> &udp, const std::shared_ptr<NWMTCPConnection> &tcp);
@@ -70,7 +70,7 @@ export {
 				std::string m_localIp;
 				uint16_t m_localUDPPort = 0;
 				uint16_t m_localTCPPort = 0;
-				nwm::IPAddress m_localAddress = {};
+				IPAddress m_localAddress = {};
 				std::function<void(const Error &)> m_cbError;
 				std::unique_ptr<std::thread> m_thread = nullptr;
 				std::atomic<bool> m_bActive = {false};

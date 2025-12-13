@@ -19,7 +19,7 @@ NWMServerClient::NWMServerClient(NWMServer *manager)
     : std::enable_shared_from_this<NWMServerClient>(), m_index(0), m_manager(manager), m_udpSession(nullptr), m_tcpSession(nullptr), m_bClosing(false), m_handle(), m_bClosed(false), m_latency(0), m_ip(nwm::invalid_address()), m_port(0), m_address {}, m_bReady(false),
       m_bTCPInitialized(false), m_bUDPInitialized(false), m_bDropped(false)
 {
-	m_lastUpdate = util::Clock::now();
+	m_lastUpdate = pragma::util::Clock::now();
 	m_handle = SessionHandle(this);
 }
 
@@ -61,13 +61,13 @@ ChronoDuration NWMServerClient::TimeSinceLastActivity() const
 	m_lastUpdateMutex.lock();
 	auto lastUpdate = m_lastUpdate;
 	m_lastUpdateMutex.unlock();
-	return std::chrono::duration_cast<ChronoDuration>(util::Clock::now() - lastUpdate);
+	return std::chrono::duration_cast<ChronoDuration>(pragma::util::Clock::now() - lastUpdate);
 }
 
 void NWMServerClient::ResetLastUpdate()
 {
 	m_lastUpdateMutex.lock();
-	m_lastUpdate = util::Clock::now();
+	m_lastUpdate = pragma::util::Clock::now();
 	m_lastUpdateMutex.unlock();
 }
 

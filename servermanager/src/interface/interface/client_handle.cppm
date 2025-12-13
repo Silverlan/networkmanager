@@ -10,7 +10,7 @@ export import pragma.network_manager;
 export namespace nwm {
 	class ServerClient;
 	class Server;
-	using ServerClientBaseHandle = util::TSharedHandle<ServerClient>;
+	using ServerClientBaseHandle = pragma::util::TSharedHandle<ServerClient>;
 	class ServerClientHandle : public ServerClientBaseHandle {
 	  public:
 		ServerClientHandle();

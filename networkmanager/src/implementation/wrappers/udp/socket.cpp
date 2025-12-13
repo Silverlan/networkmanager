@@ -10,9 +10,9 @@ module pragma.network_manager;
 import :boost_cast;
 import :udp.socket;
 
-nwm::UDPSocket::UDPSocket(nwm::IOService &ioService) : m_socket {impl::unique_void<boost::asio::ip::udp::socket>(new boost::asio::ip::udp::socket {*ioService})} {}
-nwm::UDPSocket::UDPSocket(nwm::IOService &ioService, const nwm::UDP &udp) : m_socket {impl::unique_void<boost::asio::ip::udp::socket>(new boost::asio::ip::udp::socket {*ioService, *udp})} {}
-nwm::UDPSocket::UDPSocket(nwm::IOService &ioService, const nwm::UDPEndpoint &udp) : m_socket {impl::unique_void<boost::asio::ip::udp::socket>(new boost::asio::ip::udp::socket {*ioService, *cast_endpoint(udp)})} {}
+nwm::UDPSocket::UDPSocket(IOService &ioService) : m_socket {impl::unique_void<boost::asio::ip::udp::socket>(new boost::asio::ip::udp::socket {*ioService})} {}
+nwm::UDPSocket::UDPSocket(IOService &ioService, const UDP &udp) : m_socket {impl::unique_void<boost::asio::ip::udp::socket>(new boost::asio::ip::udp::socket {*ioService, *udp})} {}
+nwm::UDPSocket::UDPSocket(IOService &ioService, const UDPEndpoint &udp) : m_socket {impl::unique_void<boost::asio::ip::udp::socket>(new boost::asio::ip::udp::socket {*ioService, *cast_endpoint(udp)})} {}
 
 const void *nwm::UDPSocket::operator*() const { return const_cast<UDPSocket *>(this)->operator*(); }
 void *nwm::UDPSocket::operator*() { return GetBoostObject(); }

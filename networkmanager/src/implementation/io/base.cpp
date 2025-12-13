@@ -12,7 +12,7 @@ import :io.base;
 #endif
 NWMIOBase::NWMIOBase() : std::enable_shared_from_this<NWMIOBase>(), NWMEventBase(), m_bClosing(false), m_bTerminated(false), m_bTerminating(false), m_remoteEndpoint(), m_localEndpoint(), m_tTimeout(0.0), m_bTimedOut(false), m_closeHandle(), m_lastError {}
 {
-	m_tLastMessage = util::Clock::now();
+	m_tLastMessage = pragma::util::Clock::now();
 }
 
 NWMIOBase::~NWMIOBase() {}
@@ -20,7 +20,7 @@ NWMIOBase::~NWMIOBase() {}
 void NWMIOBase::SetTimeoutDuration(double duration, bool bIfConnectionActive)
 {
 	m_tTimeout = duration;
-	m_tLastMessage = util::Clock::now(); // Make sure we're not causing a timeout right after this function has been called
+	m_tLastMessage = pragma::util::Clock::now(); // Make sure we're not causing a timeout right after this function has been called
 }
 
 const nwm::ErrorCode &NWMIOBase::GetLastError() const { return m_lastError; }
@@ -95,7 +95,7 @@ void NWMIOBase::Run()
 		return;
 	}
 	else if((m_bTimeoutIfConnectionActive == false || IsConnectionActive()) && m_tTimeout > 0.0 && IsReady() == true) {
-		auto now = util::Clock::now();
+		auto now = pragma::util::Clock::now();
 		double t = std::chrono::duration<double>(now - m_tLastMessage).count();
 		if(t > m_tTimeout) {
 			m_bTimedOut = true;

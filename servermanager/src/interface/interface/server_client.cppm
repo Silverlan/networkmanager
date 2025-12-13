@@ -19,21 +19,21 @@ export {
 			ServerClientHandle GetHandle() const;
 
 			bool IsTarget(const NWMEndpoint &ep) const;
-			bool IsTarget(const nwm::IPAddress &address, uint16_t port) const;
-			bool UsesAddress(const nwm::IPAddress &address) const;
+			bool IsTarget(const IPAddress &address, uint16_t port) const;
+			bool UsesAddress(const IPAddress &address) const;
 			bool UsesPort(uint16_t port) const;
-			void SetAddress(nwm::Protocol protocol, const nwm::IPAddress &address, uint16_t port);
+			void SetAddress(Protocol protocol, const IPAddress &address, uint16_t port);
 
 			bool IsClosed() const;
 			bool IsClosing() const;
 			uint16_t GetLatency() const;
 			void SetLatency(uint16_t latency);
 			std::string GetIP() const;
-			nwm::IPAddress GetAddress() const;
+			IPAddress GetAddress() const;
 			uint16_t GetPort() const;
 			NWMEndpoint GetRemoteEndpoint() const;
 			std::string GetRemoteIP() const;
-			nwm::IPAddress GetRemoteAddress() const;
+			IPAddress GetRemoteAddress() const;
 			uint16_t GetRemotePort() const;
 			ChronoDuration TimeSinceLastActivity() const;
 			Server *GetManager() const;
@@ -67,8 +67,8 @@ export {
 				// NOT thread-safe
 				NWMEndpoint remoteEndpoint;
 				std::atomic<uint16_t> port = {0u};
-				nwm::IPAddress address;
-				std::string ip = nwm::invalid_address();
+				IPAddress address;
+				std::string ip = invalid_address();
 			};
 
 			Connection m_conUDP = {};
@@ -81,7 +81,7 @@ export {
 
 			// These are NOT thread-safe!
 			// The 'protocol'-parameter is merely a preference and not a guarantee the specified protocol will be used!
-			virtual void SendPacket(const NetPacket &p, nwm::Protocol protocol = nwm::Protocol::TCP);
+			virtual void SendPacket(const NetPacket &p, Protocol protocol = Protocol::TCP);
 			virtual void Run();
 			void Terminate();
 			void UpdateReadyState();

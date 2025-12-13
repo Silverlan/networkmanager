@@ -9,7 +9,7 @@ module pragma.network_manager;
 
 import :deadline_timer;
 
-nwm::DeadlineTimer::DeadlineTimer(nwm::IOService &ioService) : m_deadlineTimer {impl::unique_void<boost::asio::steady_timer>(new boost::asio::steady_timer {*ioService})} {}
+nwm::DeadlineTimer::DeadlineTimer(IOService &ioService) : m_deadlineTimer {impl::unique_void<boost::asio::steady_timer>(new boost::asio::steady_timer {*ioService})} {}
 
 const void *nwm::DeadlineTimer::operator*() const { return const_cast<DeadlineTimer *>(this)->operator*(); }
 void *nwm::DeadlineTimer::operator*() { return GetBoostObject(); }
